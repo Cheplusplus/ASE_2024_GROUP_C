@@ -48,7 +48,7 @@ const RecipeDetail = ({ params }) => {
   const totalTime = recipe.prepTimeMinutes + recipe.cookTimeMinutes;
 
   return (
-    <div className="p-6 max-w-6xl mx-auto font-sans">
+    <div className="p-6 max-w-6xl mx-auto mt-10 font-sans">
       <button
         onClick={() => router.back()}
         className="text-gray-600 hover:text-gray-900 mb-4 flex items-center"
@@ -61,12 +61,25 @@ const RecipeDetail = ({ params }) => {
           <img
             src={recipe.images[0]}
             alt={recipe.title}
-            className="w-3/4 rounded-lg object-cover"
+            className="w-[540px] h-[403px] rounded-lg object-cover"
           />
         </div>
+        
 
         <div>
           <h1 className="text-3xl font-bold mb-2 text-gray-800">{recipe.title}</h1>
+
+          <div className="flex flex-wrap gap-2 my-4">
+            {recipe.tags &&
+              recipe.tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full"
+                >
+                  {tag}
+                </span>
+              ))}
+          </div>
 
           <p className="text-lg italic text-gray-600 mb-6">
             Discover how to make this delicious {recipe.title}.
