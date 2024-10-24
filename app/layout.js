@@ -3,42 +3,16 @@ import Navbar from './components/Navbar';
 import ClientNavWrapper from './components/ClientNavWrapper';
 import Footer from './components/Footer';
 import './globals.css';
-'use client';
-import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import localFont from 'next/font/local';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import './globals.css';
 
-// Font Definitions
-const geistSans = localFont({
-  src: './fonts/GeistVF.woff',
-  variable: '--font-geist-sans',
-  weight: '100 900',
-});
-const geistMono = localFont({
-  src: './fonts/GeistMonoVF.woff',
-  variable: '--font-geist-mono',
-  weight: '100 900',
-});
+
+
+
 
 export default function RootLayout({ children }) {
-  const [navbarPosition, setNavbarPosition] = useState(0);
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'ArrowLeft') {
-        setNavbarPosition((prev) => Math.max(prev - 10, -100));
-      } else if (e.key === 'ArrowRight') {
-        setNavbarPosition((prev) => Math.min(prev + 10, 100));
-      }
-    };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
+ 
   return (
     <html lang="en">
       <body>
@@ -96,16 +70,11 @@ export default function RootLayout({ children }) {
         <title>Recipe Rush - Your Source for Culinary Inspiration</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Navbar position={navbarPosition} />
-        <main className="min-h-screen pt-16"> {/* Add padding-top to account for fixed navbar */}
-          {children}
-        </main>
-        <Footer />
       </body>
     </html>
   );
 }
+
 
 
 
