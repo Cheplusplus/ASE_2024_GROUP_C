@@ -18,6 +18,7 @@ jobs:
     environment: build
     env: 
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
+      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
     strategy:
       matrix:
         node-version: [18.x, 20.x, 22.x]
