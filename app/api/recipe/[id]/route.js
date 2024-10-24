@@ -1,6 +1,7 @@
 import connectToDatabase from "@/lib/connectMongoose";
 import Recipe from "@/models/Recipe";
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
 
 /**
  *
@@ -12,8 +13,11 @@ import { NextResponse } from "next/server";
 export async function GET(req, { params }) {
   try {
     let { id } = params;
+    console.log(id)
+    // id = new mongoose.Types.ObjectId();
+    console.log(id)
     await connectToDatabase();
-    const recipe = await Recipe.findOne({ _id: id }).lean();
+    const recipe = await Recipe.findOne({ _id: id });
 
     return NextResponse.json({ recipe }, { status: 200 });
   } catch (error) {

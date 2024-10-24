@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 
+
 const Navbar = ({ position = 0 }) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isSubNavVisible, setIsSubNavVisible] = useState(false);
