@@ -1,10 +1,9 @@
 'use client';
-
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 
 
-const Navbar = ({ position }) => {
+const Navbar = ({ position = 0 }) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isSubNavVisible, setIsSubNavVisible] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -42,7 +41,6 @@ const Navbar = ({ position }) => {
     const currentX = e.touches ? e.touches[0].clientX : e.clientX;
     const newPosition = currentX - startXRef.current;
     
-    // Limit the drag range
     const limitedPosition = Math.min(Math.max(newPosition, -100), 100);
     setDragPosition(limitedPosition);
   };
@@ -75,11 +73,14 @@ const Navbar = ({ position }) => {
     },
   ];
 
+  // Combine the position prop from the wrapper with the dragPosition
+  const totalPosition = position + dragPosition;
+
   return (
     <>
       <nav 
         className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/30 shadow-lg transition-all duration-300 ease-in-out"
-        style={{ transform: `translateX(${position + dragPosition}px)` }}
+        style={{ transform: `translateX(${totalPosition}px)` }}
         ref={dragRef}
         onTouchStart={handleDragStart}
         onTouchMove={handleDragMove}
@@ -89,6 +90,7 @@ const Navbar = ({ position }) => {
         onMouseUp={handleDragEnd}
         onMouseLeave={handleDragEnd}
       >
+        {/* Rest of your existing Navbar JSX */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
