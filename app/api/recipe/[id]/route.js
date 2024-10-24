@@ -1,6 +1,5 @@
-
-import connectToDatabase from "@/lib/connectMongoose";
-import Recipe from "@/models/Recipe";
+import connectToDatabase from "../../../lib/connectMongoose";
+import Recipe from "../../../models/Recipe";
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 
@@ -18,8 +17,8 @@ export async function GET(req, { params }) {
     // id = new mongoose.Types.ObjectId();
     console.log(id)
     await connectToDatabase();
-    const recipe = await Recipe.findOne({_id: id}).lean();
-    console.log(recipe,'123456789df')
+    const recipe = await Recipe.findOne({ _id: id });
+
     return NextResponse.json({ recipe }, { status: 200 });
   } catch (error) {
     console.error(error);
