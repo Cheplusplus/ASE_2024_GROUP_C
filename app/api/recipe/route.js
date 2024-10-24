@@ -1,5 +1,5 @@
-import connectToDatabase from "../../../lib/connectMongoose";
-import Recipe from "../../../models/Recipe";
+import connectToDatabase from "@/lib/connectMongoose";
+import Recipe from "@/models/Recipe";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {
