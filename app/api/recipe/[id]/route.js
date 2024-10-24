@@ -1,10 +1,6 @@
-<<<<<<< HEAD
+
 import connectToDatabase from "@/lib/connectMongoose";
 import Recipe from "@/models/Recipe";
-=======
-import connectToDatabase from "../../../../lib/connectMongoose";
-import Recipe from "../../../../models/Recipe";
->>>>>>> 6ba9c9d561279271507ca3a6ad94c3d498d55f2b
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 

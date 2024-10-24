@@ -3,7 +3,8 @@ import Link from 'next/link';
 
 const RecipeCard = ({ recipe }) => {
   const MAX_VISIBLE_TAGS = 2;
-  const remainingTags = recipe.tags.length - MAX_VISIBLE_TAGS;
+  const tags = recipe.tags || []; // Ensure tags is an array, even if undefined
+  const remainingTags = tags.length - MAX_VISIBLE_TAGS;
 
   return (
     <Link href={`/recipes/${recipe._id}`} className="block">
@@ -58,7 +59,7 @@ const RecipeCard = ({ recipe }) => {
 
           {/* Tags with "more" indicator */}
           <div className="flex flex-wrap items-center gap-2">
-            {recipe.tags.slice(0, MAX_VISIBLE_TAGS).map((tag, index) => (
+            {tags.slice(0, MAX_VISIBLE_TAGS).map((tag, index) => (
               <span
                 key={index}
                 className="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full"
