@@ -1,10 +1,5 @@
 // app/components/RecipeGrid.jsx
-<<<<<<< HEAD
-"use client"
-import { useEffect, useState } from 'react';
-=======
 import React from 'react';
->>>>>>> e1cfe239cf649cc2a7558124d0829c677d901aaa
 import RecipeCard from './RecipeCard'; // Update this import
 import SkeletonGrid from './SkeletonMain';
 
@@ -36,9 +31,9 @@ const RecipeGrid = async () => {
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Recipe Rush
         </h1>
-        <p className="text-gray-600 max-w-2xl mx-auto">
+        <i className="text-gray-600 max-w-2xl mx-auto">
           Discover our collection of easy-to-make recipes that are perfect for any occasion.
-        </p>
+        </i>
       </div>
 
       {/* Recipe Grid */}
