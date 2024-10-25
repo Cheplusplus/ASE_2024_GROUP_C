@@ -1,34 +1,14 @@
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
-
 
 const Navbar = ({ position = 0 }) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isSubNavVisible, setIsSubNavVisible] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [dragPosition, setDragPosition] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const dragRef = useRef(null);
   const startXRef = useRef(0);
-
-  useEffect(() => {
-    let timeoutId;
-    const handleMouseMove = (e) => {
-      if (e.clientY <= 100) {
-        setIsSubNavVisible(true);
-        clearTimeout(timeoutId);
-      } else {
-        timeoutId = setTimeout(() => setIsSubNavVisible(false), 1000);
-      }
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      clearTimeout(timeoutId);
-    };
-  }, []);
 
   const handleDragStart = (e) => {
     setIsDragging(true);
@@ -90,10 +70,24 @@ const Navbar = ({ position = 0 }) => {
         onMouseUp={handleDragEnd}
         onMouseLeave={handleDragEnd}
       >
-        {/* Rest of your existing Navbar JSX */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
+            <div className="flex items-center space-x-4">
+              {/* Mobile Navigation Button - Moved here */}
+              <div className="md:hidden">
+                <button
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  className="p-2 rounded-md text-gray-800 hover:text-gray-600 focus:outline-none"
+                  aria-label="Toggle menu"
+                >
+                  <div className="w-6 h-6 flex flex-col justify-between">
+                    <span className={`block w-full h-0.5 bg-current transform transition duration-300 ease-in-out ${isMobileMenuOpen ? 'rotate-45 translate-y-2.5' : ''}`} />
+                    <span className={`block w-full h-0.5 bg-current transition duration-300 ease-in-out ${isMobileMenuOpen ? 'opacity-0' : ''}`} />
+                    <span className={`block w-full h-0.5 bg-current transform transition duration-300 ease-in-out ${isMobileMenuOpen ? '-rotate-45 -translate-y-2.5' : ''}`} />
+                  </div>
+                </button>
+              </div>
+              
               <Link href="/" className="text-2xl font-bold text-gray-800">
                 RecipeApp
               </Link>
@@ -123,26 +117,12 @@ const Navbar = ({ position = 0 }) => {
               </div>
             </div>
 
-            {/* Mobile Navigation Button */}
-            <div className="md:hidden flex items-center">
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 rounded-md text-gray-800 hover:text-gray-600 focus:outline-none"
-                aria-label="Toggle menu"
-              >
-                <div className="w-6 h-6 flex flex-col justify-between">
-                  <span className={`block w-full h-0.5 bg-current transform transition duration-300 ease-in-out ${isMobileMenuOpen ? 'rotate-45 translate-y-2.5' : ''}`} />
-                  <span className={`block w-full h-0.5 bg-current transition duration-300 ease-in-out ${isMobileMenuOpen ? 'opacity-0' : ''}`} />
-                  <span className={`block w-full h-0.5 bg-current transform transition duration-300 ease-in-out ${isMobileMenuOpen ? '-rotate-45 -translate-y-2.5' : ''}`} />
-                </div>
-              </button>
-            </div>
-
             {/* Search Button */}
-            <div className="flex items-center ml-4">
+            <div className="flex items-center">
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className="p-2 rounded-md text-gray-800 hover:text-gray-600 focus:outline-none"
+                className={`p-2 rounded-md text-gray-800 hover:text-gray-600 focus:outline-none ${isSearchOpen ? 'bg-gray-100' : ''}`}
+                aria-label="Toggle search"
               >
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -178,7 +158,7 @@ const Navbar = ({ position = 0 }) => {
       {/* Search Overlay */}
       <div 
         className={`fixed top-16 left-0 right-0 z-40 backdrop-blur-md bg-white/30 shadow-lg transition-all duration-300 ease-in-out ${
-          isSubNavVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'
+          isSearchOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -186,6 +166,7 @@ const Navbar = ({ position = 0 }) => {
             type="text"
             placeholder="Search recipes..."
             className="w-full px-4 py-2 rounded-md bg-white/50 focus:outline-none focus:ring-2 focus:ring-purple-300"
+            autoFocus={isSearchOpen}
           />
         </div>
       </div>
