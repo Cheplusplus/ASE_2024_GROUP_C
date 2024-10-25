@@ -9,7 +9,7 @@ const fetchRecipes = async () => {
     const response = await fetch(`${url}/api/recipe`, { cache: 'no-store' });
     if (!response.ok) {
       throw new Error('Failed to fetch recipes');
-    }
+    }git 
     const data = await response.json();
     return data.recipes;
   } catch (error) {
