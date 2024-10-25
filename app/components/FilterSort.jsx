@@ -5,6 +5,8 @@ const FilterSort = ({ recipes, onFilterSort }) => {
   const [sortOption, setSortOption] = useState('default');
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
   
   const categoryRef = useRef(null);
   const sortRef = useRef(null);
@@ -40,9 +42,39 @@ const FilterSort = ({ recipes, onFilterSort }) => {
   }, []);
 
   useEffect(() => {
-    filterAndSortRecipes();
+    fetchFilteredAndSortedRecipes();
   }, [selectedCategory, sortOption]);
 
+  const fetchFilteredAndSortedRecipes = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      // Construct query parameters
+      const queryParams = new URLSearchParams({
+        category: selectedCategory,
+        sort: sortOption
+      });
+
+      // Make API call
+      const response = await fetch(`/api/recipes/filter?${queryParams}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch recipes');
+      }
+
+      const data = await response.json();
+      onFilterSort(data);
+    } catch (err) {
+      setError(err.message);
+      // Fallback to client-side filtering if API fails
+      filterAndSortRecipes();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fallback client-side filtering
   const filterAndSortRecipes = () => {
     let filteredRecipes = [...recipes];
 
@@ -223,6 +255,16 @@ const FilterSort = ({ recipes, onFilterSort }) => {
           </span>
         )}
       </div>
+
+      {/* Loading and Error States */}
+      {isLoading && (
+        <div className="text-gray-600">Loading...</div>
+      )}
+      {error && (
+        <div className="text-red-600">
+          Error loading recipes. Showing locally filtered results instead.
+        </div>
+      )}
     </div>
   );
 };
