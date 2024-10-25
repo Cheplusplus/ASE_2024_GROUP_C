@@ -15,7 +15,7 @@ const RecipeDetailCard = ({ recipe }) => {
   const totalTime = recipe.prepTimeMinutes + recipe.cookTimeMinutes;
 
   return (
-    <div className="grid items-start bg-white grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid items-start grid-cols-1 md:grid-cols-2 gap-6">
       <div className="w-full lg:sticky top-0 flex flex-col gap-3">
         <div className="w-full">
           <img
