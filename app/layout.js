@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import './globals.css';
 import Head from 'next/head';
 
+
 export default function RootLayout({ children }) {
 
   return (
