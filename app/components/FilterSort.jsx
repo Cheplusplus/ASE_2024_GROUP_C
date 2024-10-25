@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect, useRef } from 'react';
 
 const FilterSort = ({ recipes, onFilterSort }) => {
@@ -42,39 +43,9 @@ const FilterSort = ({ recipes, onFilterSort }) => {
   }, []);
 
   useEffect(() => {
-    fetchFilteredAndSortedRecipes();
-  }, [selectedCategory, sortOption]);
+    filterAndSortRecipes();
+  }, [selectedCategory, sortOption, recipes]); // Added recipes to the dependency array
 
-  const fetchFilteredAndSortedRecipes = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      // Construct query parameters
-      const queryParams = new URLSearchParams({
-        category: selectedCategory,
-        sort: sortOption
-      });
-
-      // Make API call
-      const response = await fetch(`/api/recipes/filter?${queryParams}`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch recipes');
-      }
-
-      const data = await response.json();
-      onFilterSort(data);
-    } catch (err) {
-      setError(err.message);
-      // Fallback to client-side filtering if API fails
-      filterAndSortRecipes();
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Fallback client-side filtering
   const filterAndSortRecipes = () => {
     let filteredRecipes = [...recipes];
 
@@ -138,9 +109,7 @@ const FilterSort = ({ recipes, onFilterSort }) => {
                   : selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}
               </span>
               <svg
-                className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${
-                  isCategoryOpen ? 'transform rotate-180' : ''
-                }`}
+                className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${isCategoryOpen ? 'transform rotate-180' : ''}`}
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -191,9 +160,7 @@ const FilterSort = ({ recipes, onFilterSort }) => {
                 {sortOptions.find(option => option.value === sortOption)?.label || 'Sort By'}
               </span>
               <svg
-                className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${
-                  isSortOpen ? 'transform rotate-180' : ''
-                }`}
+                className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${isSortOpen ? 'transform rotate-180' : ''}`}
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -206,7 +173,7 @@ const FilterSort = ({ recipes, onFilterSort }) => {
             <div className="absolute left-0 right-0 z-50 mt-2 bg-white rounded-xl shadow-lg 
                           border-2 border-blue-100 max-h-60 overflow-y-auto
                           transform transition-all duration-300 ease-in-out">
-              {sortOptions.map((option) => (
+              {sortOptions.map(option => (
                 <button
                   key={option.value}
                   onClick={() => {
@@ -226,45 +193,8 @@ const FilterSort = ({ recipes, onFilterSort }) => {
         </div>
       </div>
 
-      {/* Active Filters Display */}
-      <div className="flex flex-wrap gap-2 mt-4">
-        {selectedCategory !== 'all' && (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm
-                         bg-purple-100 text-purple-800">
-            Category: {selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}
-            <button
-              onClick={() => setSelectedCategory('all')}
-              className="ml-2 focus:outline-none hover:text-purple-900"
-              aria-label="Remove category filter"
-            >
-              ×
-            </button>
-          </span>
-        )}
-        {sortOption !== 'default' && (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm
-                         bg-blue-100 text-blue-800">
-            {sortOptions.find(option => option.value === sortOption)?.label}
-            <button
-              onClick={() => setSortOption('default')}
-              className="ml-2 focus:outline-none hover:text-blue-900"
-              aria-label="Remove sort filter"
-            >
-              ×
-            </button>
-          </span>
-        )}
-      </div>
-
-      {/* Loading and Error States */}
-      {isLoading && (
-        <div className="text-gray-600">Loading...</div>
-      )}
-      {error && (
-        <div className="text-red-600">
-          Error loading recipes. Showing locally filtered results instead.
-        </div>
-      )}
+      {isLoading && <p>Loading...</p>}
+      {error && <p className="text-red-600">{error}</p>}
     </div>
   );
 };
