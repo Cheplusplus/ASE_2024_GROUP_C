@@ -1,6 +1,11 @@
 import connectToDatabase from "@/lib/connectMongoose";
 import Recipe from "@/models/Recipe";
 import { NextResponse } from "next/server";
+/**
+ * 
+ * @param {searchParams} req - This will get
+ * @returns 
+ */
 
 export async function GET(req) {
   try {
