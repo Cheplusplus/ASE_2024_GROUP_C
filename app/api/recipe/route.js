@@ -5,16 +5,24 @@ import { NextResponse } from "next/server";
 export async function GET(req) {
   try {
     await connectToDatabase(); // Ensure the database is connected
-
-    const { search, category, sort } = req.nextUrl.searchParams; // Get search, category, and sort parameters
+    console.log('123')
+    const {searchParams} = new URL(req.url);
+    console.log(searchParams)
+    const search = searchParams.get('search'); // Get search, category, and sort parameters
+    const category = searchParams.get('category');
+    const sort = searchParams.get('sort');
     let query = {};
-
+    console.log(search)
     // Build the query based on the search parameter
-    if (search) {
-      query.$or = [
-        { name: { $regex: search, $options: "i" } }, // Assuming 'name' is a field in your Recipe model
-        { ingredients: { $regex: search, $options: "i" } } // Assuming 'ingredients' is another field
-      ];
+    // if (search) {
+    //   query.$or = [
+    //     { title: { $regex: search} }, // Assuming 'name' is a field in your Recipe model
+    //     { ingredients: { $regex: search} } // Assuming 'ingredients' is another field
+    //   ];
+    // }
+
+    if(search){
+      query.title =  { $regex: search,$options: 'i'} 
     }
 
     // Filter by category if provided
