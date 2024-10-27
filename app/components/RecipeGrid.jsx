@@ -14,7 +14,7 @@ const fetchRecipes = async () => {
     return data.recipes;
   } catch (error) {
     console.error('Error fetching recipes1:', error);
-    return null; // Handle error gracefully
+    throw error;
   }
 };
 
