@@ -4,8 +4,9 @@ import RecipeCard from './RecipeCard'; // Update this import
 import SkeletonGrid from './SkeletonMain';
 
 const fetchRecipes = async () => {
+  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
   try {
-    const response = await fetch('http://localhost:3000/api/recipe', { cache: 'no-store' });
+    const response = await fetch(`${url}/api/recipe`, { cache: 'no-store' });
     if (!response.ok) {
       throw new Error('Failed to fetch recipes');
     }
