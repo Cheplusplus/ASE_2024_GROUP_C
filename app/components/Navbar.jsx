@@ -42,7 +42,7 @@ const Navbar = ({ position = 0 }) => {
     },
     { name: 'Favorites', href: '/favorites' },
     { name: 'About', href: '/about' },
-    { name: 'Contact', href: '/contact' },
+    { name: 'Contact', href: '/contactus' },
     {
       name: 'Account',
       href: '/account',
