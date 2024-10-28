@@ -5,24 +5,27 @@ import RecipeSkeleton from "../../components/RecipeDetailSkeleton";
 import RecipeDetailCard from "../../components/RecipeDetailCard";
 import { useEffect, useState } from "react";
 import Head from "next/head";
+import Link from "next/link"; // Import Link for navigation
 
 export default function RecipeDetail({ params }) {
   const { id } = params;
   const router = useRouter();
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null); // State to track errors
 
   useEffect(() => {
     const fetchRecipe = async (id) => {
       try {
         const response = await fetch(`/api/recipe/${id}`);
         if (!response.ok) {
-          throw new Error("Failed to fetch recipe");
+          throw new Error(`Failed to fetch recipe: ${response.statusText}`);
         }
         const data = await response.json();
         setRecipe(data.recipe);
       } catch (error) {
         console.error("Error fetching recipe:", error);
+        setError("Failed to load recipe. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -35,6 +38,17 @@ export default function RecipeDetail({ params }) {
 
   if (loading) {
     return <RecipeSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <div className="text-center text-red-500 relative mt-40">
+        <p>{error}</p>
+        <Link href="/" className="text-blue-500 hover:underline">
+          Go back to Home Page
+        </Link>
+      </div>
+    );
   }
 
   if (!recipe) {
