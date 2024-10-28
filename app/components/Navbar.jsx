@@ -2,6 +2,12 @@
 import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 
+/**
+ * The main navigation component for the app.
+ * @param {{position: number}} props Component props.
+ * @prop {number} [position=0] The horizontal position of the navbar, in pixels.
+ * @returns {JSX.Element} The rendered navbar component.
+ */
 const Navbar = ({ position = 0 }) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -10,6 +16,10 @@ const Navbar = ({ position = 0 }) => {
   const dragRef = useRef(null);
   const startXRef = useRef(0);
 
+  /**
+   * Handles the start of a drag event, whether by touch or mouse.
+   * @param {TouchEvent|MouseEvent} e - The event object.
+   */
   const handleDragStart = (e) => {
     setIsDragging(true);
     startXRef.current = e.touches ? e.touches[0].clientX - dragPosition : e.clientX - dragPosition;
@@ -25,6 +35,10 @@ const Navbar = ({ position = 0 }) => {
     setDragPosition(limitedPosition);
   };
 
+  /**
+   * Handles the end of a drag event, whether by touch or mouse.
+   * Resets the `isDragging` state to false.
+   */
   const handleDragEnd = () => {
     setIsDragging(false);
   };
