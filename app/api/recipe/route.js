@@ -8,7 +8,8 @@ export async function GET(req) {
 
     const { searchParams } = new URL(req.url);
     const search = searchParams.get('search');
-    
+    const skip = parseInt(searchParams.get('skip'), 10 ) || 0
+    let query ={};
 
     // Check if the search parameter is provided and build the query
     if (search) {
@@ -23,7 +24,7 @@ export async function GET(req) {
     };
 
     // Fetch recipes based on the search query
-    const recipes = await Recipe.find(query).limit(50); // Limit to 50 results
+    const recipes = await Recipe.find(query).skip(skip).limit(50); // Limit to 50 results
     return NextResponse.json({ success: true, recipes }); // Respond with recipes
   } catch (error) {
     console.error("Error searching recipes:", error);
