@@ -1,11 +1,6 @@
 import connectToDatabase from "@/lib/connectMongoose";
 import Recipe from "@/models/Recipe";
 import { NextResponse } from "next/server";
-/**
- * 
- * @param {searchParams} req - This will get
- * @returns 
- */
 
 export async function GET(req) {
   try {
@@ -14,7 +9,7 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const search = searchParams.get('search');
     const skip = parseInt(searchParams.get('skip'), 10 ) || 0
-    let query ={};
+    let query ={}
 
     // Check if the search parameter is provided and build the query
     if (search) {
