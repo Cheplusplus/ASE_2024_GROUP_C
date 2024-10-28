@@ -4,22 +4,23 @@ import RecipeCard from './RecipeCard'; // Update this import
 import SkeletonGrid from './SkeletonMain';
 
 const fetchRecipes = async () => {
+  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
   try {
-    const response = await fetch('http://localhost:3000/api/recipe', { cache: 'no-store' });
+    const response = await fetch(`${url}/api/recipe`, { cache: 'no-store' });
     if (!response.ok) {
       throw new Error('Failed to fetch recipes');
     }
     const data = await response.json();
     return data.recipes;
   } catch (error) {
-    console.error('Error fetching recipes:', error);
-    return null; // Handle error gracefully
+    console.error('Error fetching recipes1:', error);
+    throw error;
   }
 };
 
 const RecipeGrid = async () => {
   const recipes = await fetchRecipes();
-
+  
   if (!recipes) {
     return <SkeletonGrid />;
   }
@@ -31,7 +32,7 @@ const RecipeGrid = async () => {
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Recipe Rush
         </h1>
-        <p className="text-gray-600 max-w-2xl mx-auto">
+        <p className="text-gray-600 max-w-2xl mx-auto italic hover:not-italic">
           Discover our collection of easy-to-make recipes that are perfect for any occasion.
         </p>
       </div>

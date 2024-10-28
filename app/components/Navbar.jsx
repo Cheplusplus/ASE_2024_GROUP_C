@@ -103,7 +103,7 @@ const Navbar = ({ position = 0 }) => {
               </div>
               
               <Link href="/" className="text-2xl font-bold text-gray-800">
-                RecipeApp
+                Recipe Rush
               </Link>
             </div>
 
