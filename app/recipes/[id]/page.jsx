@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import RecipeSkeleton from "../../components/RecipeDetailSkeleton";
 import RecipeDetailCard from "../../components/RecipeDetailCard";
 import { useEffect, useState } from "react";
+import Head from "next/head";
 
 export default function RecipeDetail({ params }) {
   const { id } = params;
@@ -41,16 +42,48 @@ export default function RecipeDetail({ params }) {
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto font-sans">
-    
-      <button
-        onClick={() => router.back()}
-        className="text-gray-600 hover:text-gray-900 mb-4 flex items-center"
-      >
-        ← Back
-      </button>
+    <>
+      {/* Dynamic meta tags for SEO */}
+      <Head>
+        <title>{recipe.title} - Recipe Rush</title>
+        <meta name="description" content={recipe.description} />
+        <meta property="og:title" content={recipe.title} />
+        <meta property="og:description" content={recipe.description} />
+        <meta property="og:url" content={`https://recipe-rush.vercel.app/recipes/${id}`} />
+        {recipe.images && <meta property="og:image" content={recipe.images[0]} />}
 
-      <RecipeDetailCard recipe={recipe} />
-    </div>
+        {/* Structured Data for Recipe */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Recipe",
+            name: recipe.title,
+            description: recipe.description,
+            image: recipe.images ? recipe.images[0] : "",
+            recipeIngredient: recipe.ingredients,
+            recipeInstructions: recipe.instructions,
+            author: {
+              "@type": "Person",
+              name: recipe.author || "Recipe Rush"
+            }
+          })}
+        </script>
+      </Head>
+
+      <div className="p-6 max-w-6xl mx-auto font-sans">
+        {/* Main heading for SEO */}
+        <h1 className="text-3xl font-bold">{recipe.title}</h1>
+        
+        <button
+          onClick={() => router.back()}
+          className="text-gray-600 hover:text-gray-900 mb-4 flex items-center"
+        >
+          ← Back
+        </button>
+
+        {/* RecipeDetailCard should ensure alt text is included for images */}
+        <RecipeDetailCard recipe={recipe} />
+      </div>
+    </>
   );
 }
