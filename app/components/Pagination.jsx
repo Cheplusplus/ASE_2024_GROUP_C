@@ -1,24 +1,29 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
-const RECIPES_PER_PAGE = 52; // Recipes per page
+const Pagination = ({ currentPage, totalPages }) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-const Pagination = ({ onPageChange, totalRecipes }) => {
-  const [currentPage, setCurrentPage] = useState(1); // Track current page
+  const createPageURL = (pageNumber) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', pageNumber.toString());
+    return `${pathname}?${params.toString()}`;
+  };
 
-  // Calculate total pages based on the recipe count and recipes per page
-  const totalPages = Math.ceil(totalRecipes / RECIPES_PER_PAGE);
-
-  // Handler for changing pages
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-    onPageChange(newPage); // Call parent function to fetch new data
+  const goToPage = (page) => {
+    if (page > 0 && page <= totalPages) {
+      const newUrl = createPageURL(page);
+      router.push(newUrl);
+    }
   };
 
   return (
     <div className="flex justify-center mt-8">
       <button
-        onClick={() => handlePageChange(currentPage - 1)}
+        onClick={() => goToPage(currentPage - 1)}
         disabled={currentPage === 1}
         className="px-4 py-2 mx-2 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
       >
@@ -28,7 +33,7 @@ const Pagination = ({ onPageChange, totalRecipes }) => {
         Page {currentPage} of {totalPages}
       </span>
       <button
-        onClick={() => handlePageChange(currentPage + 1)}
+        onClick={() => goToPage(currentPage + 1)}
         disabled={currentPage === totalPages}
         className="px-4 py-2 mx-2 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
       >
