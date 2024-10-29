@@ -149,6 +149,14 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
     setIngredients(value);
   };
 
+  const handleTagSelect = (value) => {
+    if (selectedTags.includes(value)) {
+      setSelectedTags(selectedTags.filter(tag => tag !== value));
+    } else {
+      setSelectedTags([...selectedTags, value]);
+    }
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -218,21 +226,43 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
               <label className="text-sm font-medium text-gray-700">
                 Tags
               </label>
-              <Select
-                value={selectedTags}
-                onValueChange={(value) => setSelectedTags([value])}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select tag..." />
-                </SelectTrigger>
-                <SelectContent className="max-h-[200px] overflow-y-auto">
-                  {tags.map((tag) => (
-                    <SelectItem key={tag} value={tag}>
-                      {tag}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="space-y-2">
+                {selectedTags.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {selectedTags.map(tag => (
+                      <span
+                        key={tag}
+                        className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800"
+                      >
+                        {tag}
+                        <button
+                          onClick={() => handleTagSelect(tag)}
+                          className="ml-2 text-blue-600 hover:text-blue-800"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <Select
+                  value=""
+                  onValueChange={handleTagSelect}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select tag..." />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[200px] overflow-y-auto">
+                    {tags
+                      .filter(tag => !selectedTags.includes(tag))
+                      .map((tag) => (
+                        <SelectItem key={tag} value={tag}>
+                          {tag}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             <div className="space-y-2">
