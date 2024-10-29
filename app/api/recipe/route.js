@@ -18,12 +18,12 @@ export async function GET(req) {
     let query ={};
 
     // Check if the search parameter is provided and build the query
-    if (search) {
-      query.$or = [
-        { title:{$regex:search}},  //Assuming 'name' is a field in your Recipe model
-        { ingredients:{$regex:search}} //Assuming 'ingredients' is another field
-      ];
-    }
+    // if (search) {
+    //   query.$or = [
+    //     { title:{$regex:search}},  //Assuming 'name' is a field in your Recipe model
+    //     { ingredients:{$regex:search}} //Assuming 'ingredients' is another field
+    //   ];
+    // }
 
     if(search){
       query.title = {$regex:search,$options: 'i'}

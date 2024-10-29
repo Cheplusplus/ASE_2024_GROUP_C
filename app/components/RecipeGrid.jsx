@@ -3,10 +3,10 @@ import React from 'react';
 import RecipeCard from './RecipeCard'; // Update this import
 import SkeletonGrid from './SkeletonMain';
 
-const fetchRecipes = async () => {
+const fetchRecipes = async (search) => {
   const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
   try {
-    const response = await fetch(`${url}/api/recipe`, { cache: 'no-store' });
+    const response = await fetch(`${url}/api/recipe/?search=${search}`, { cache: 'no-store' });
     if (!response.ok) {
       throw new Error('Failed to fetch recipes');
     }
@@ -18,8 +18,9 @@ const fetchRecipes = async () => {
   }
 };
 
-const RecipeGrid = async () => {
-  const recipes = await fetchRecipes();
+const RecipeGrid = async ({ searchParams }) => {
+  const {search}  = searchParams
+  const recipes = await fetchRecipes(search || '');
   
   if (!recipes) {
     return <SkeletonGrid />;
