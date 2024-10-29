@@ -301,14 +301,6 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
               >
                 Cancel
               </Button>
-              <Button 
-                onClick={() => {
-                  filterAndSortRecipes();
-                  setIsOpen(false);
-                }}
-              >
-                Apply Filters
-              </Button>
             </div>
           </div>
         </DialogContent>
