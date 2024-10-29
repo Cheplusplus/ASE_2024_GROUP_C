@@ -42,6 +42,12 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
     { value: 'oldest', label: '📅 Oldest First' }
   ];
 
+  // Get the current sort option label
+  const getCurrentSortLabel = () => {
+    const option = sortOptions.find(opt => opt.value === sortOption);
+    return option ? option.label : 'Sort By: Default';
+  };
+
   // Filter and sort logic
   useEffect(() => {
     filterAndSortRecipes();
@@ -106,28 +112,36 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
 
     switch (sortOption) {
       case 'prep_asc':
-        filteredRecipes.sort((a, b) => a.prepTime - b.prepTime);
+        filteredRecipes.sort((a, b) => (a.prepTime || 0) - (b.prepTime || 0));
         break;
       case 'prep_desc':
-        filteredRecipes.sort((a, b) => b.prepTime - a.prepTime);
+        filteredRecipes.sort((a, b) => (b.prepTime || 0) - (a.prepTime || 0));
         break;
       case 'cook_asc':
-        filteredRecipes.sort((a, b) => a.cookTime - b.cookTime);
+        filteredRecipes.sort((a, b) => (a.cookTime || 0) - (b.cookTime || 0));
         break;
       case 'cook_desc':
-        filteredRecipes.sort((a, b) => b.cookTime - a.cookTime);
+        filteredRecipes.sort((a, b) => (b.cookTime || 0) - (a.cookTime || 0));
         break;
       case 'steps_asc':
-        filteredRecipes.sort((a, b) => a.instructions.length - b.instructions.length);
+        filteredRecipes.sort((a, b) => 
+          (a.instructions?.length || 0) - (b.instructions?.length || 0)
+        );
         break;
       case 'steps_desc':
-        filteredRecipes.sort((a, b) => b.instructions.length - a.instructions.length);
+        filteredRecipes.sort((a, b) => 
+          (b.instructions?.length || 0) - (a.instructions?.length || 0)
+        );
         break;
       case 'newest':
-        filteredRecipes.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        filteredRecipes.sort((a, b) => 
+          new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+        );
         break;
       case 'oldest':
-        filteredRecipes.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        filteredRecipes.sort((a, b) => 
+          new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime()
+        );
         break;
       default:
         break;
@@ -162,9 +176,15 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Recipes</h1>
         <div className="flex items-center space-x-4">
-          <Select value={sortOption} onValueChange={setSortOption}>
+          <Select 
+            value={sortOption} 
+            onValueChange={(value) => {
+              setSortOption(value);
+              filterAndSortRecipes();
+            }}
+          >
             <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Sort by..." />
+              <SelectValue>{getCurrentSortLabel()}</SelectValue>
             </SelectTrigger>
             <SelectContent className="max-h-[300px] overflow-y-auto">
               {sortOptions.map((option) => (
