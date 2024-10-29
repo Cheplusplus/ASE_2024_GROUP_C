@@ -1,10 +1,11 @@
 // app/components/RecipeGrid.jsx
-import React from 'react';
-import RecipeCard from './RecipeCard'; // Update this import
+"use client";
+import React, { useEffect, useState } from 'react';
+import RecipeCard from './RecipeCard';
 import SkeletonGrid from './SkeletonMain';
 
 const fetchRecipes = async () => {
-  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
   try {
     const response = await fetch(`${url}/api/recipe`, { cache: 'no-store' });
     if (!response.ok) {
@@ -14,12 +15,21 @@ const fetchRecipes = async () => {
     return data.recipes;
   } catch (error) {
     console.error('Error fetching recipes:', error);
-    return null; // Handle error gracefully
+    return null;
   }
 };
 
-const RecipeGrid = async () => {
-  const recipes = await fetchRecipes();
+const RecipeGrid = () => {
+  const [recipes, setRecipes] = useState(null);
+
+  useEffect(() => {
+    const loadRecipes = async () => {
+      const fetchedRecipes = await fetchRecipes();
+      setRecipes(fetchedRecipes);
+    };
+
+    loadRecipes();
+  }, []);
 
   if (!recipes) {
     return <SkeletonGrid />;
@@ -29,9 +39,7 @@ const RecipeGrid = async () => {
     <div className="max-w-7xl mx-auto">
       {/* Grid Header */}
       <div className="mb-12 text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Recipe Rush
-        </h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">Recipe Rush</h1>
         <p className="text-gray-600 max-w-2xl mx-auto">
           Discover our collection of easy-to-make recipes that are perfect for any occasion.
         </p>
@@ -39,7 +47,7 @@ const RecipeGrid = async () => {
 
       {/* Recipe Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {recipes.map(recipe => (
+        {recipes.map((recipe) => (
           <RecipeCard key={recipe._id} recipe={recipe} />
         ))}
       </div>

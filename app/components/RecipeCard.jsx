@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 const RecipeCard = ({ recipe }) => {
@@ -6,13 +6,50 @@ const RecipeCard = ({ recipe }) => {
   const tags = recipe.tags || []; // Ensure tags is an array, even if undefined
   const remainingTags = tags.length - MAX_VISIBLE_TAGS;
 
+  // State for the current image index
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isSliding, setIsSliding] = useState(false); // State to control auto-sliding
+
+  // Handle mouse enter and leave to start/stop the automatic sliding
+  const handleMouseEnter = () => {
+    setCurrentImageIndex(0); // Reset to first image
+    setIsSliding(true); // Start the sliding effect
+  };
+
+  const handleMouseLeave = () => {
+    setIsSliding(false); // Stop the sliding effect
+    clearInterval(slideInterval); // Clear the interval to stop changing images
+  };
+
+  let slideInterval;
+
+  // Auto slide function
+  const autoSlide = () => {
+    slideInterval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) =>
+        prevIndex === recipe.images.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 1000); // Change image every 2 seconds
+  };
+
+  // Effect to start/stop auto-sliding based on isSliding state
+  useEffect(() => {
+    if (isSliding && recipe.images.length > 1) {
+      autoSlide(); // Start auto-sliding if active and there are multiple images
+    } else {
+      clearInterval(slideInterval); // Clear the interval if not sliding
+    }
+
+    return () => clearInterval(slideInterval); // Cleanup interval on unmount
+  }, [isSliding, recipe.images.length]); // Re-run effect when isSliding or number of images changes
+
   return (
-    <Link href={`/recipes/${recipe._id}`} className="block">
+    <Link href={`/recipes/${recipe._id}`} className="block" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <div className="group relative bg-white rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg">
         {/* Main Image Container */}
-        <div className="relative h-64 overflow-hidden">
+        <div className="relative h-64 sm:overflow-hidden">
           <img
-            src={recipe.images[0]}
+            src={recipe.images[currentImageIndex]}
             alt={recipe.title}
             className="w-full h-full object-cover transform transition-transform duration-300 group-hover:scale-105"
           />
