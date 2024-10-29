@@ -1,4 +1,3 @@
-// app/components/RecipeGrid.jsx
 import React from 'react';
 import RecipeCard from './RecipeCard'; // Update this import
 import SkeletonGrid from './SkeletonMain';
@@ -40,9 +39,7 @@ const RecipeGrid = async ({ skip }) => {
 
       {/* Recipe Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {recipes.map(recipe => (
-          <RecipeCard key={recipe._id} recipe={recipe} />
-        ))}
+        {recipes.map(recipe => <RecipeCard key={recipe._id} recipe={recipe} />)}
       </div>
       <Paginate skip={skip}/>
     </div>
