@@ -15,10 +15,8 @@ import {
 } from "./ui/select";
 import { Button } from "./ui/button";
 import { Slider } from "./ui/slider";
-import { ScrollArea } from "./ui/scroll-area";
 
 const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
-  // Rest of the component code remains the same...
   // State management
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -49,6 +47,40 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
     filterAndSortRecipes();
   }, [selectedCategory, selectedTags, numSteps, ingredients, sortOption]);
 
+  // Fixed ingredient search helper function
+  const matchesIngredientSearch = (recipeIngredients, searchTerms) => {
+    // Handle empty search
+    if (!searchTerms.length) return true;
+
+    // Ensure recipeIngredients is an array and handle empty/null cases
+    const ingredientsArray = Array.isArray(recipeIngredients) ? recipeIngredients : [];
+    if (ingredientsArray.length === 0) return false;
+
+    // Normalize recipe ingredients for better matching
+    const normalizedIngredients = ingredientsArray.map(ingredient => {
+      if (typeof ingredient !== 'string') return '';
+      
+      // Remove quantities and common measurements
+      return ingredient.toLowerCase()
+        .replace(/\d+(\.\d+)?/g, '') // Remove numbers
+        .replace(/\s*(cup|tbsp|tsp|oz|gram|kg|ml|g|lb|pound|ounce)s?\b/gi, '') // Remove common measurements
+        .replace(/\s+/g, ' ') // Normalize spaces
+        .trim();
+    });
+
+    // Check if all search terms match any ingredient
+    return searchTerms.every(term => {
+      const normalizedTerm = term
+        .toLowerCase()
+        .replace(/\s+/g, ' ')
+        .trim();
+      
+      return normalizedIngredients.some(ingredient => 
+        ingredient.includes(normalizedTerm)
+      );
+    });
+  };
+
   const filterAndSortRecipes = () => {
     let filteredRecipes = [...recipes];
 
@@ -68,14 +100,16 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
       recipe.instructions?.length >= numSteps[0]
     );
 
+    // Improved ingredient filtering
     if (ingredients) {
-      const searchTerms = ingredients.toLowerCase().split(',').map(term => term.trim());
+      const searchTerms = ingredients
+        .toLowerCase()
+        .split(',')
+        .map(term => term.trim())
+        .filter(term => term.length > 0); // Remove empty terms
+
       filteredRecipes = filteredRecipes.filter(recipe =>
-        searchTerms.every(term =>
-          recipe.ingredients.some(ingredient => 
-            ingredient.toLowerCase().includes(term)
-          )
-        )
+        matchesIngredientSearch(recipe.ingredients || [], searchTerms)
       );
     }
 
@@ -119,6 +153,12 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
     setSortOption('default');
   };
 
+  // Handle ingredient input
+  const handleIngredientInput = (e) => {
+    const value = e.target.value;
+    setIngredients(value);
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -128,7 +168,7 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Sort by..." />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="max-h-[300px] overflow-y-auto">
               {sortOptions.map((option) => (
                 <SelectItem key={option.value} value={option.value}>
                   {option.label}
@@ -172,16 +212,14 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
                 <SelectTrigger>
                   <SelectValue placeholder="Select category..." />
                 </SelectTrigger>
-                <SelectContent>
-                  <ScrollArea className="h-[200px] w-full">
-                    {categories.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category === 'all' 
-                          ? 'All Categories' 
-                          : category.charAt(0).toUpperCase() + category.slice(1)}
-                      </SelectItem>
-                    ))}
-                  </ScrollArea>
+                <SelectContent className="max-h-[200px] overflow-y-auto">
+                  {categories.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category === 'all' 
+                        ? 'All Categories' 
+                        : category.charAt(0).toUpperCase() + category.slice(1)}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -197,14 +235,12 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
                 <SelectTrigger>
                   <SelectValue placeholder="Select tag..." />
                 </SelectTrigger>
-                <SelectContent>
-                  <ScrollArea className="h-[200px] w-full">
-                    {tags.map((tag) => (
-                      <SelectItem key={tag} value={tag}>
-                        {tag}
-                      </SelectItem>
-                    ))}
-                  </ScrollArea>
+                <SelectContent className="max-h-[200px] overflow-y-auto">
+                  {tags.map((tag) => (
+                    <SelectItem key={tag} value={tag}>
+                      {tag}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -229,10 +265,13 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
               <input
                 type="text"
                 value={ingredients}
-                onChange={(e) => setIngredients(e.target.value)}
+                onChange={handleIngredientInput}
                 placeholder="Enter ingredients (comma-separated)"
                 className="w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+              <p className="text-xs text-gray-500 mt-1">
+                Separate multiple ingredients with commas (e.g., tomatoes, garlic, olive oil)
+              </p>
             </div>
 
             <div className="flex justify-end space-x-2 pt-4">
