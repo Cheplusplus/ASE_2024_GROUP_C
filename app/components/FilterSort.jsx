@@ -49,32 +49,24 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
 
   // Fixed ingredient search helper function
   const matchesIngredientSearch = (recipeIngredients, searchTerms) => {
-    // Handle empty search
     if (!searchTerms.length) return true;
-
-    // Ensure recipeIngredients is an array and handle empty/null cases
     const ingredientsArray = Array.isArray(recipeIngredients) ? recipeIngredients : [];
     if (ingredientsArray.length === 0) return false;
 
-    // Normalize recipe ingredients for better matching
     const normalizedIngredients = ingredientsArray.map(ingredient => {
       if (typeof ingredient !== 'string') return '';
-      
-      // Remove quantities and common measurements
       return ingredient.toLowerCase()
-        .replace(/\d+(\.\d+)?/g, '') // Remove numbers
-        .replace(/\s*(cup|tbsp|tsp|oz|gram|kg|ml|g|lb|pound|ounce)s?\b/gi, '') // Remove common measurements
-        .replace(/\s+/g, ' ') // Normalize spaces
+        .replace(/\d+(\.\d+)?/g, '')
+        .replace(/\s*(cup|tbsp|tsp|oz|gram|kg|ml|g|lb|pound|ounce)s?\b/gi, '')
+        .replace(/\s+/g, ' ')
         .trim();
     });
 
-    // Check if all search terms match any ingredient
     return searchTerms.every(term => {
       const normalizedTerm = term
         .toLowerCase()
         .replace(/\s+/g, ' ')
         .trim();
-      
       return normalizedIngredients.some(ingredient => 
         ingredient.includes(normalizedTerm)
       );
@@ -100,13 +92,12 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
       recipe.instructions?.length >= numSteps[0]
     );
 
-    // Improved ingredient filtering
     if (ingredients) {
       const searchTerms = ingredients
         .toLowerCase()
         .split(',')
         .map(term => term.trim())
-        .filter(term => term.length > 0); // Remove empty terms
+        .filter(term => term.length > 0);
 
       filteredRecipes = filteredRecipes.filter(recipe =>
         matchesIngredientSearch(recipe.ingredients || [], searchTerms)
@@ -153,7 +144,6 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
     setSortOption('default');
   };
 
-  // Handle ingredient input
   const handleIngredientInput = (e) => {
     const value = e.target.value;
     setIngredients(value);
@@ -188,7 +178,7 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-[375px]">
+        <DialogContent className="sm:max-w-[375px] [&>button]:hidden">
           <DialogHeader>
             <DialogTitle className="flex justify-between items-center">
               Filter
