@@ -29,12 +29,11 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
       <div className="group relative bg-white rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg">
         {/* Main Image Container */}
         <div className="relative h-64 overflow-hidden">
-          <Image
+        <Image
             src={images[0]}
             alt={title}
-            width={555}
-            height={416}
-            style={{ objectFit: 'cover' }}
+            fill
+            style={{ objectFit: 'contain' }}
             className="transform transition-transform duration-300 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
