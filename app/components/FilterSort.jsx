@@ -26,7 +26,20 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
   const [sortOption, setSortOption] = useState('default');
 
   // Extract unique categories and tags from recipes
-  const categories = ['all', ...new Set(recipes.map(recipe => recipe.category))];
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    async function fetchCategories() {
+      const response = await fetch('http://localhost:3000/api/categories');
+      //console.log(response)
+      const data = await response.json();
+      
+      setCategories(['All Categories',...data.categories]);
+    }
+
+    fetchCategories();
+  }, []);
+  
   const tags = [...new Set(recipes.flatMap(recipe => recipe.tags || []))];
 
   // Sort options

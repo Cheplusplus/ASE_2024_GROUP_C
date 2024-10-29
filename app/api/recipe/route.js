@@ -116,7 +116,7 @@ export async function GET(req) {
     aggregationPipeline.push({ $limit: 50 });
 
     const recipes = await Recipe.aggregate(aggregationPipeline);
-
+    console.log(recipes[0])
     return NextResponse.json({
       success: true,
       recipes,
