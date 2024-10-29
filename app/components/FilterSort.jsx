@@ -1,70 +1,96 @@
-'use client';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Filter } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { Button } from "./ui/button";
+import { Slider } from "./ui/slider";
+import { ScrollArea } from "./ui/scroll-area";
 
-const FilterSort = ({ recipes, onFilterSort }) => {
-  const [selectedCategory, setSelectedCategory] = useState('all');
+const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
+  // Rest of the component code remains the same...
+  // State management
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [numSteps, setNumSteps] = useState([0]);
+  const [ingredients, setIngredients] = useState('');
   const [sortOption, setSortOption] = useState('default');
-  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
-  const [isSortOpen, setIsSortOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  
-  const categoryRef = useRef(null);
-  const sortRef = useRef(null);
 
-  // Extract unique categories from recipes
+  // Extract unique categories and tags from recipes
   const categories = ['all', ...new Set(recipes.map(recipe => recipe.category))];
-  
+  const tags = [...new Set(recipes.flatMap(recipe => recipe.tags || []))];
+
+  // Sort options
   const sortOptions = [
-    { value: 'default', label: 'Default Order' },
+    { value: 'default', label: 'Sort By: Default' },
     { value: 'prep_asc', label: '⏱️ Prep Time: Low to High' },
     { value: 'prep_desc', label: '⏱️ Prep Time: High to Low' },
     { value: 'cook_asc', label: '🍳 Cook Time: Low to High' },
     { value: 'cook_desc', label: '🍳 Cook Time: High to Low' },
     { value: 'steps_asc', label: '📝 Steps: Least to Most' },
     { value: 'steps_desc', label: '📝 Steps: Most to Least' },
-    { value: 'newest', label: '🆕 Newest Recipes' },
-    { value: 'oldest', label: '📅 Oldest Recipes' },
+    { value: 'newest', label: '🆕 Newest First' },
+    { value: 'oldest', label: '📅 Oldest First' }
   ];
 
-  // Close dropdowns when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (categoryRef.current && !categoryRef.current.contains(event.target)) {
-        setIsCategoryOpen(false);
-      }
-      if (sortRef.current && !sortRef.current.contains(event.target)) {
-        setIsSortOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
+  // Filter and sort logic
   useEffect(() => {
     filterAndSortRecipes();
-  }, [selectedCategory, sortOption, recipes]); // Added recipes to the dependency array
+  }, [selectedCategory, selectedTags, numSteps, ingredients, sortOption]);
 
   const filterAndSortRecipes = () => {
     let filteredRecipes = [...recipes];
 
-    if (selectedCategory !== 'all') {
-      filteredRecipes = filteredRecipes.filter(recipe => recipe.category === selectedCategory);
+    if (selectedCategory && selectedCategory !== 'all') {
+      filteredRecipes = filteredRecipes.filter(recipe => 
+        recipe.category === selectedCategory
+      );
+    }
+
+    if (selectedTags.length > 0) {
+      filteredRecipes = filteredRecipes.filter(recipe =>
+        selectedTags.every(tag => recipe.tags?.includes(tag))
+      );
+    }
+
+    filteredRecipes = filteredRecipes.filter(recipe => 
+      recipe.instructions?.length >= numSteps[0]
+    );
+
+    if (ingredients) {
+      const searchTerms = ingredients.toLowerCase().split(',').map(term => term.trim());
+      filteredRecipes = filteredRecipes.filter(recipe =>
+        searchTerms.every(term =>
+          recipe.ingredients.some(ingredient => 
+            ingredient.toLowerCase().includes(term)
+          )
+        )
+      );
     }
 
     switch (sortOption) {
       case 'prep_asc':
-        filteredRecipes.sort((a, b) => a.prep - b.prep);
+        filteredRecipes.sort((a, b) => a.prepTime - b.prepTime);
         break;
       case 'prep_desc':
-        filteredRecipes.sort((a, b) => b.prep - a.prep);
+        filteredRecipes.sort((a, b) => b.prepTime - a.prepTime);
         break;
       case 'cook_asc':
-        filteredRecipes.sort((a, b) => a.cook - b.cook);
+        filteredRecipes.sort((a, b) => a.cookTime - b.cookTime);
         break;
       case 'cook_desc':
-        filteredRecipes.sort((a, b) => b.cook - a.cook);
+        filteredRecipes.sort((a, b) => b.cookTime - a.cookTime);
         break;
       case 'steps_asc':
         filteredRecipes.sort((a, b) => a.instructions.length - b.instructions.length);
@@ -85,118 +111,151 @@ const FilterSort = ({ recipes, onFilterSort }) => {
     onFilterSort(filteredRecipes);
   };
 
-  return (
-    <div className="mb-8 space-y-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">Discover Recipes</h2>
-      
-      <div className="flex flex-col sm:flex-row gap-4">
-        {/* Category Dropdown */}
-        <div className="relative flex-1 sm:max-w-xs" ref={categoryRef}>
-          <button
-            onClick={() => {
-              setIsCategoryOpen(!isCategoryOpen);
-              setIsSortOpen(false);
-            }}
-            className="w-full px-4 py-3 text-left bg-gradient-to-r from-purple-50 to-pink-50 
-                     border-2 border-purple-200 rounded-xl shadow-sm hover:shadow-md
-                     transition-all duration-300 ease-in-out
-                     focus:outline-none focus:ring-2 focus:ring-purple-300"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-gray-700 truncate">
-                {selectedCategory === 'all' 
-                  ? 'All Categories' 
-                  : selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}
-              </span>
-              <svg
-                className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${isCategoryOpen ? 'transform rotate-180' : ''}`}
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </div>
-          </button>
-          
-          {isCategoryOpen && (
-            <div className="absolute left-0 right-0 z-50 mt-2 bg-white rounded-xl shadow-lg 
-                          border-2 border-purple-100 max-h-60 overflow-y-auto
-                          transform transition-all duration-300 ease-in-out">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => {
-                    setSelectedCategory(category);
-                    setIsCategoryOpen(false);
-                  }}
-                  className={`w-full px-4 py-3 text-left hover:bg-purple-50 transition-colors
-                            ${selectedCategory === category ? 'bg-purple-100' : ''}
-                            ${selectedCategory === category ? 'font-medium' : 'font-normal'}
-                            text-gray-700 hover:text-gray-900`}
-                >
-                  {category === 'all' 
-                    ? 'All Categories' 
-                    : category.charAt(0).toUpperCase() + category.slice(1)}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+  const clearFilters = () => {
+    setSelectedCategory('');
+    setSelectedTags([]);
+    setNumSteps([0]);
+    setIngredients('');
+    setSortOption('default');
+  };
 
-        {/* Sort Dropdown */}
-        <div className="relative flex-1 sm:max-w-xs" ref={sortRef}>
-          <button
-            onClick={() => {
-              setIsSortOpen(!isSortOpen);
-              setIsCategoryOpen(false);
-            }}
-            className="w-full px-4 py-3 text-left bg-gradient-to-r from-blue-50 to-purple-50 
-                     border-2 border-blue-200 rounded-xl shadow-sm hover:shadow-md
-                     transition-all duration-300 ease-in-out
-                     focus:outline-none focus:ring-2 focus:ring-blue-300"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-gray-700 truncate max-w-[calc(100%-2rem)]">
-                {sortOptions.find(option => option.value === sortOption)?.label || 'Sort By'}
-              </span>
-              <svg
-                className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${isSortOpen ? 'transform rotate-180' : ''}`}
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </div>
-          </button>
-          
-          {isSortOpen && (
-            <div className="absolute left-0 right-0 z-50 mt-2 bg-white rounded-xl shadow-lg 
-                          border-2 border-blue-100 max-h-60 overflow-y-auto
-                          transform transition-all duration-300 ease-in-out">
-              {sortOptions.map(option => (
-                <button
-                  key={option.value}
-                  onClick={() => {
-                    setSortOption(option.value);
-                    setIsSortOpen(false);
-                  }}
-                  className={`w-full px-4 py-3 text-left hover:bg-blue-50 transition-colors
-                            ${sortOption === option.value ? 'bg-blue-100' : ''}
-                            ${sortOption === option.value ? 'font-medium' : 'font-normal'}
-                            text-gray-700 hover:text-gray-900`}
-                >
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Recipes</h1>
+        <div className="flex items-center space-x-4">
+          <Select value={sortOption} onValueChange={setSortOption}>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Sort by..." />
+            </SelectTrigger>
+            <SelectContent>
+              {sortOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
                   {option.label}
-                </button>
+                </SelectItem>
               ))}
-            </div>
-          )}
+            </SelectContent>
+          </Select>
+          <Button 
+            variant="outline"
+            onClick={() => setIsOpen(true)}
+            className="flex items-center space-x-2"
+          >
+            <Filter className="h-4 w-4" />
+            <span>Filters</span>
+          </Button>
         </div>
       </div>
 
-      {isLoading && <p>Loading...</p>}
-      {error && <p className="text-red-600">{error}</p>}
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="sm:max-w-[375px]">
+          <DialogHeader>
+            <DialogTitle className="flex justify-between items-center">
+              Filter
+              <Button 
+                variant="destructive"
+                size="sm"
+                onClick={clearFilters}
+                className="text-sm"
+              >
+                Clear Filters
+              </Button>
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                Category
+              </label>
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select category..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <ScrollArea className="h-[200px] w-full">
+                    {categories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category === 'all' 
+                          ? 'All Categories' 
+                          : category.charAt(0).toUpperCase() + category.slice(1)}
+                      </SelectItem>
+                    ))}
+                  </ScrollArea>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                Tags
+              </label>
+              <Select
+                value={selectedTags}
+                onValueChange={(value) => setSelectedTags([value])}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select tag..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <ScrollArea className="h-[200px] w-full">
+                    {tags.map((tag) => (
+                      <SelectItem key={tag} value={tag}>
+                        {tag}
+                      </SelectItem>
+                    ))}
+                  </ScrollArea>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                Number of Steps: {numSteps[0]}
+              </label>
+              <Slider
+                value={numSteps}
+                onValueChange={setNumSteps}
+                max={20}
+                step={1}
+                className="w-full"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                Search by Ingredients
+              </label>
+              <input
+                type="text"
+                value={ingredients}
+                onChange={(e) => setIngredients(e.target.value)}
+                placeholder="Enter ingredients (comma-separated)"
+                className="w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="flex justify-end space-x-2 pt-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setIsOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={() => {
+                  filterAndSortRecipes();
+                  setIsOpen(false);
+                }}
+              >
+                Apply Filters
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
 
-export default FilterSort;
+export default FilterSortComponent;
