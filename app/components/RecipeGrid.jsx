@@ -1,48 +1,29 @@
 import React from 'react';
 import RecipeCard from './RecipeCard';
 import SkeletonGrid from './SkeletonMain';
-import Pagination from './Pagination';
+import Paginate from './Paginate';
 
-const RECIPES_PER_PAGE = 52;
-
-// Fetch recipes from the API
-async function fetchRecipes(currentPage) {
-  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-  const skip = (currentPage - 1) * RECIPES_PER_PAGE;
-  
+const fetchRecipes = async (skip= 0) => {
+  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
   try {
-    // Make sure to include skip in the URL
-    const response = await fetch(
-      `${url}/api/recipe?skip=${skip}&limit=${RECIPES_PER_PAGE}`,
-      { 
-        cache: 'no-store',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-
+    const response = await fetch(`${url}/api/recipe/?skip=${skip}`, { cache: 'no-store' });
     if (!response.ok) {
       throw new Error('Failed to fetch recipes');
     }
     
     const data = await response.json();
-    console.log(`Fetching recipes with skip=${skip}, page=${currentPage}`); // Debug log
+    console.log(`Fetching recipes with skip=${skip},`); // Debug log
     return { recipes: data.recipes, total: data.total };
   } catch (error) {
-    console.error('Error fetching recipes:', error);
-    return { recipes: null, total: 0 };
+    console.error('Error fetching recipes1:', error);
+    throw error;
   }
-}
+};
 
 const RecipeGrid = async ({ skip }) => {
+  const recipes = await fetchRecipes(skip);
   
-  
-  // Fetch recipes with current page
-  const { recipes, total } = await fetchRecipes(currentPage);
-  const totalPages = Math.ceil(total / RECIPES_PER_PAGE);
-
-  if (!recipes) {
+  if (!recipes || recipes.length === 0) {
     return <SkeletonGrid />;
   }
 
@@ -59,7 +40,7 @@ const RecipeGrid = async ({ skip }) => {
           <RecipeCard key={recipe._id} recipe={recipe} />
         ))}
       </div>
-      <Pagination currentPage={currentPage} totalPages={totalPages} />
+      <Paginate skip={skip}/>
     </div>
   );
 };
