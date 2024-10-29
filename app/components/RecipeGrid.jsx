@@ -2,11 +2,12 @@
 import React from 'react';
 import RecipeCard from './RecipeCard'; // Update this import
 import SkeletonGrid from './SkeletonMain';
+import Paginate from './Paginate';
 
-const fetchRecipes = async () => {
+const fetchRecipes = async (skip= 0) => {
   const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
   try {
-    const response = await fetch(`${url}/api/recipe`, { cache: 'no-store' });
+    const response = await fetch(`${url}/api/recipe/?skip=${skip}`, { cache: 'no-store' });
     if (!response.ok) {
       throw new Error('Failed to fetch recipes');
     }
@@ -18,10 +19,10 @@ const fetchRecipes = async () => {
   }
 };
 
-const RecipeGrid = async () => {
-  const recipes = await fetchRecipes();
+const RecipeGrid = async ({ skip }) => {
+  const recipes = await fetchRecipes(skip);
   
-  if (!recipes) {
+  if (!recipes || recipes.length === 0) {
     return <SkeletonGrid />;
   }
 
@@ -43,6 +44,7 @@ const RecipeGrid = async () => {
           <RecipeCard key={recipe._id} recipe={recipe} />
         ))}
       </div>
+      <Paginate skip={skip}/>
     </div>
   );
 };

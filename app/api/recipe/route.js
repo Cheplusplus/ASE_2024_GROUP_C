@@ -17,21 +17,15 @@ export async function GET(req) {
     const limit = parseInt(searchParams.get('limit'), 10) || 52
     let query ={};
 
-    // Check if the search parameter is provided and build the query
-    if (search) {
-      query.$or = [
-        { title:{$regex:search}},  //Assuming 'name' is a field in your Recipe model
-        { ingredients:{$regex:search}} //Assuming 'ingredients' is another field
-      ];
-    }
 
     if(search){
       query.title = {$regex:search,$options: 'i'}
     };
 
     // Fetch recipes based on the search query
-    const recipes = await Recipe.find(query).skip(skip).limit(limit); // Limit to 52 results
-    return NextResponse.json({ success: true, recipes }); // Respond with recipes
+    const recipes = await Recipe.find(query).skip(skip).limit(limit).lean();
+    const total = await Recipe.countDocuments() // Limit to 52 results
+    return NextResponse.json({ success: true, recipes , total}); // Respond with recipes
   } catch (error) {
     console.error("Error searching recipes:", error);
     return NextResponse.json(
