@@ -1,8 +1,18 @@
 'use client';
 import React, { useState, useRef } from 'react';
 import Link from 'next/link';
+import SearchBar from './SearchBar';
 
+
+/**
+ * The main navigation component for the app.
+ * @param {{position: number}} props Component props.
+ * @prop {number} [position=0] The horizontal position of the navbar, in pixels.
+ * @returns {JSX.Element} The rendered navbar component.
+ */
 const Navbar = ({ position = 0 }) => {
+
+
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [dragPosition, setDragPosition] = useState(0);
@@ -10,6 +20,7 @@ const Navbar = ({ position = 0 }) => {
   const dragRef = useRef(null);
   const startXRef = useRef(0);
 
+  // Original drag handling code
   const handleDragStart = (e) => {
     setIsDragging(true);
     startXRef.current = e.touches ? e.touches[0].clientX - dragPosition : e.clientX - dragPosition;
@@ -29,6 +40,7 @@ const Navbar = ({ position = 0 }) => {
     setIsDragging(false);
   };
 
+  // Navigation links
   const navLinks = [
     { name: 'Home', href: '/' },
     { 
@@ -53,7 +65,6 @@ const Navbar = ({ position = 0 }) => {
     },
   ];
 
-  // Combine the position prop from the wrapper with the dragPosition
   const totalPosition = position + dragPosition;
 
   return (
@@ -73,7 +84,6 @@ const Navbar = ({ position = 0 }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              {/* Mobile Navigation Button - Moved here */}
               <div className="md:hidden">
                 <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -155,21 +165,11 @@ const Navbar = ({ position = 0 }) => {
         </div>
       </nav>
 
-      {/* Search Overlay */}
-      <div 
-        className={`fixed top-16 left-0 right-0 z-40 backdrop-blur-md bg-white/30 shadow-lg transition-all duration-300 ease-in-out ${
-          isSearchOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <input
-            type="text"
-            placeholder="Search recipes..."
-            className="w-full px-4 py-2 rounded-md bg-white/50 focus:outline-none focus:ring-2 focus:ring-purple-300"
-            autoFocus={isSearchOpen}
-          />
-        </div>
-      </div>
+      {/* SearchBar Component */}
+      <SearchBar 
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+      />
     </>
   );
 };
