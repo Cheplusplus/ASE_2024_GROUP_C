@@ -32,9 +32,9 @@ const RecipeGrid = async () => {
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Recipe Rush
         </h1>
-        <i className="text-gray-600 max-w-2xl mx-auto">
+        <p className="text-gray-600 max-w-2xl mx-auto italic hover:not-italic">
           Discover our collection of easy-to-make recipes that are perfect for any occasion.
-        </i>
+        </p>
       </div>
 
       {/* Recipe Grid */}
