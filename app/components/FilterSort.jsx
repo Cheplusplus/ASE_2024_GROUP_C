@@ -42,23 +42,24 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
   
   const tags = [...new Set(recipes.flatMap(recipe => recipe.tags || []))];
 
-  // Sort options
+  // Updated sort options to match MongoDB sorting
   const sortOptions = [
     { value: 'default', label: 'Sort By: Default' },
-    { value: 'prep_asc', label: '⏱️ Prep Time: Low to High' },
-    { value: 'prep_desc', label: '⏱️ Prep Time: High to Low' },
-    { value: 'cook_asc', label: '🍳 Cook Time: Low to High' },
-    { value: 'cook_desc', label: '🍳 Cook Time: High to Low' },
-    { value: 'steps_asc', label: '📝 Steps: Least to Most' },
-    { value: 'steps_desc', label: '📝 Steps: Most to Least' },
-    { value: 'newest', label: '🆕 Newest First' },
-    { value: 'oldest', label: '📅 Oldest First' }
+    { value: 'published(latest)', label: '🆕 Latest Published' },
+    { value: 'published(oldest)', label: '📅 Oldest Published' },
+    { value: 'prepTime(Ascending)', label: '⏱️ Prep Time: Low to High' },
+    { value: 'prepTime(Descending)', label: '⏱️ Prep Time: High to Low' },
+    { value: 'cookTime(Ascending)', label: '🍳 Cook Time: Low to High' },
+    { value: 'cookTime(Descending)', label: '🍳 Cook Time: High to Low' },
+    { value: 'numberOfSteps(Ascending)', label: '📝 Steps: Least to Most' },
+    { value: 'numberOfSteps(Descending)', label: '📝 Steps: Most to Least' }
   ];
 
-  // Filter and sort logic
-  useEffect(() => {
-    filterAndSortRecipes();
-  }, [selectedCategory, selectedTags, numSteps, ingredients, sortOption]);
+  // Get the current sort option label
+  const getCurrentSortLabel = () => {
+    const option = sortOptions.find(opt => opt.value === sortOption);
+    return option ? option.label : 'Sort By: Default';
+  };
 
   // Fixed ingredient search helper function
   const matchesIngredientSearch = (recipeIngredients, searchTerms) => {
@@ -86,9 +87,11 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
     });
   };
 
+  // Updated filter and sort logic to match MongoDB sorting
   const filterAndSortRecipes = () => {
     let filteredRecipes = [...recipes];
 
+    // Apply filters
     if (selectedCategory && selectedCategory !== 'all') {
       filteredRecipes = filteredRecipes.filter(recipe => 
         recipe.category === selectedCategory
@@ -117,37 +120,48 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
       );
     }
 
+    // Updated sorting logic to match MongoDB sorting
     switch (sortOption) {
-      case 'prep_asc':
-        filteredRecipes.sort((a, b) => a.prepTime - b.prepTime);
+      case 'published(latest)':
+        filteredRecipes.sort((a, b) => new Date(b.published) - new Date(a.published));
         break;
-      case 'prep_desc':
-        filteredRecipes.sort((a, b) => b.prepTime - a.prepTime);
+      case 'published(oldest)':
+        filteredRecipes.sort((a, b) => new Date(a.published) - new Date(b.published));
         break;
-      case 'cook_asc':
-        filteredRecipes.sort((a, b) => a.cookTime - b.cookTime);
+      case 'prepTime(Ascending)':
+        filteredRecipes.sort((a, b) => (a.prep || 0) - (b.prep || 0));
         break;
-      case 'cook_desc':
-        filteredRecipes.sort((a, b) => b.cookTime - a.cookTime);
+      case 'prepTime(Descending)':
+        filteredRecipes.sort((a, b) => (b.prep || 0) - (a.prep || 0));
         break;
-      case 'steps_asc':
-        filteredRecipes.sort((a, b) => a.instructions.length - b.instructions.length);
+      case 'cookTime(Ascending)':
+        filteredRecipes.sort((a, b) => (a.cook || 0) - (b.cook || 0));
         break;
-      case 'steps_desc':
-        filteredRecipes.sort((a, b) => b.instructions.length - a.instructions.length);
+      case 'cookTime(Descending)':
+        filteredRecipes.sort((a, b) => (b.cook || 0) - (a.cook || 0));
         break;
-      case 'newest':
-        filteredRecipes.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      case 'numberOfSteps(Ascending)':
+        filteredRecipes.sort((a, b) => 
+          (a.instructions?.length || 0) - (b.instructions?.length || 0)
+        );
         break;
-      case 'oldest':
-        filteredRecipes.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      case 'numberOfSteps(Descending)':
+        filteredRecipes.sort((a, b) => 
+          (b.instructions?.length || 0) - (a.instructions?.length || 0)
+        );
         break;
       default:
+        // Keep original order for default sorting
         break;
     }
 
     onFilterSort(filteredRecipes);
   };
+
+  // Effect to run filtering and sorting when dependencies change
+  useEffect(() => {
+    filterAndSortRecipes();
+  }, [selectedCategory, selectedTags, numSteps, ingredients, sortOption]);
 
   const clearFilters = () => {
     setSelectedCategory('');
@@ -158,8 +172,7 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
   };
 
   const handleIngredientInput = (e) => {
-    const value = e.target.value;
-    setIngredients(value);
+    setIngredients(e.target.value);
   };
 
   const handleTagSelect = (value) => {
@@ -175,9 +188,12 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Recipes</h1>
         <div className="flex items-center space-x-4">
-          <Select value={sortOption} onValueChange={setSortOption}>
+          <Select 
+            value={sortOption} 
+            onValueChange={(value) => setSortOption(value)}
+          >
             <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Sort by..." />
+              <SelectValue>{getCurrentSortLabel()}</SelectValue>
             </SelectTrigger>
             <SelectContent className="max-h-[300px] overflow-y-auto">
               {sortOptions.map((option) => (
@@ -313,14 +329,6 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
                 onClick={() => setIsOpen(false)}
               >
                 Cancel
-              </Button>
-              <Button 
-                onClick={() => {
-                  filterAndSortRecipes();
-                  setIsOpen(false);
-                }}
-              >
-                Apply Filters
               </Button>
             </div>
           </div>
