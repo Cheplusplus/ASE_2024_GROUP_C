@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 /**
- * A search bar component for searching recipes by title.
+ * A search bar component for searching recipes by title with highlighted matches.
  *
  * @param {{ isOpen: boolean, onClose: () => void }} props
  * @prop {boolean} isOpen - Whether the search bar should be shown.
@@ -16,6 +16,7 @@ const SearchBar = ({ isOpen, onClose }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
 
   const router = useRouter()
 
@@ -24,6 +25,7 @@ const SearchBar = ({ isOpen, onClose }) => {
     if (!isOpen) {
       setSearchQuery('');
       setSearchResults([]);
+      setHasSearched(false);
     }
   }, [isOpen]);
 
@@ -31,17 +33,38 @@ const SearchBar = ({ isOpen, onClose }) => {
   const handleSearchChange = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
+    setHasSearched(false);  // Reset search state when input changes
+  };
+
+  // Highlight matching text in title
+  const highlightMatch = (text, query) => {
+    if (!query) return text;
+    
+    const parts = text.split(new RegExp(`(${query})`, 'gi'));
+    return (
+      <>
+        {parts.map((part, index) => 
+          part.toLowerCase() === query.toLowerCase() ? (
+            <span key={index} className="bg-yellow-200 font-semibold">{part}</span>
+          ) : (
+            part
+          )
+        )}
+      </>
+    );
   };
 
   // Fetch search results
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
       setSearchResults([]);
+      setHasSearched(false);
       return;
     }
 
     try {
       setIsLoading(true);
+      setHasSearched(true);  // Mark that a search has been performed
       const response = await fetch(`/api/recipe/?search=${encodeURIComponent(searchQuery)}`);
       
       if (!response.ok) {
@@ -65,6 +88,13 @@ const SearchBar = ({ isOpen, onClose }) => {
     }
   };
 
+  // Handle Enter key press
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   return (
     <div 
       className={`fixed top-16 left-0 right-0 z-40 backdrop-blur-md bg-white/30 shadow-lg transition-all duration-300 ease-in-out ${
@@ -78,6 +108,7 @@ const SearchBar = ({ isOpen, onClose }) => {
               type="text"
               value={searchQuery}
               onChange={handleSearchChange}
+              onKeyPress={handleKeyPress}
               placeholder="Search recipes by title..."
               className="w-full px-4 py-2 rounded-md bg-white/50 focus:outline-none focus:ring-2 focus:ring-purple-300 text-black"
               autoFocus={isOpen}
@@ -108,7 +139,9 @@ const SearchBar = ({ isOpen, onClose }) => {
                   className="block px-4 py-2 hover:bg-gray-100 transition-colors duration-150"
                   onClick={onClose}
                 >
-                  <div className="text-gray-900 font-medium">{recipe.title}</div>
+                  <div className="text-gray-900 font-medium">
+                    {highlightMatch(recipe.title, searchQuery)}
+                  </div>
                   {recipe.description && (
                     <div className="text-gray-600 text-sm truncate">{recipe.description}</div>
                   )}
@@ -117,8 +150,8 @@ const SearchBar = ({ isOpen, onClose }) => {
             </div>
           )}
 
-          {/* No Results Message */}
-          {searchQuery && !isLoading && searchResults.length === 0 && (
+          {/* No Results Message - Only show after search button is clicked */}
+          {hasSearched && !isLoading && searchResults.length === 0 && (
             <div className="absolute w-full mt-2 bg-white rounded-md shadow-lg p-4 text-center text-gray-600">
               No recipes found matching {searchQuery}
             </div>
