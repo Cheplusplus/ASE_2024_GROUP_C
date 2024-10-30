@@ -1,24 +1,26 @@
 // app/components/Paginate.js
 "use client"
-import React, {useState} from 'react';
+import React, {useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 const RECIPES_PER_PAGE = 52; // Recipes per page
 
-const Paginate = ({ skip, totalRecipes }) => {
+const Paginate = ({ skip: initialSkip, totalRecipes }) => {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1); // Track current page
+  const [skip, setSkip] = useState(initialSkip);
+  const [search, setSearch] = useState(null) // Store skip in state
 
   const handleNext = (newPage) => {
     const newSkip = skip + 52;
-    setCurrentPage(newPage);
-    router.push(`/?skip=${newSkip}`); // Update the URL with the new skip value
+    setCurrentPage(newPage); // Update current page
+    router.push(`/?search=${new URLSearchParams(window.location.search).get('search')}&skip=${newSkip}`); // Update the URL with the new skip value
   };
 
   const handlePrevious = (newPage) => {
-    const newSkip = skip > 52 ? skip - 52 : 0;
-    setCurrentPage(newPage);
-    router.push(`/?skip=${newSkip}`);
+    const newSkip = skip > 52 ? skip - 52 : 0; // Prevent negative skip
+    setCurrentPage(newPage); // Decrement page
+    router.push(`/?search=${new URLSearchParams(window.location.search).get('search')}&skip=${newSkip}`);
   };
 
   const totalPages = Math.ceil(totalRecipes / RECIPES_PER_PAGE);
