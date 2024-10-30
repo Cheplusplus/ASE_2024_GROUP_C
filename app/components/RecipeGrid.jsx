@@ -46,8 +46,10 @@ const RecipeGrid = async ({ search , skip }) => {
           Discover our collection of easy-to-make recipes that are perfect for any occasion.
         </p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {recipes.recipes.map((recipe) => (
+
+      {/* Recipe Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-8">
+        {recipes.recipes.map(recipe => (
           <RecipeCard key={recipe._id} recipe={recipe} />
         ))}
       </div>
