@@ -3,6 +3,16 @@ import RecipeCard from './RecipeCard';
 import SkeletonGrid from './SkeletonMain';
 import Paginate from './Paginate';
 
+/**
+ * Fetches recipes from the API, using the skip parameter for pagination.
+ * 
+ * @async
+ * @function fetchRecipes
+ * @param {number} [skip=0] - The number of recipes to skip for pagination.
+ * @returns {Promise<Array>} - A promise that resolves to an array of recipe objects.
+ * @throws Will throw an error if the network request fails.
+ */
+
 const fetchRecipes = async (skip= 0) => {
   const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
   try {
