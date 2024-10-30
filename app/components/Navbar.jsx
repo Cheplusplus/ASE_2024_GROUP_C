@@ -1,43 +1,25 @@
 'use client';
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import SearchBar from './SearchBar';
-
 
 /**
  * The main navigation component for the app.
- * @param {{position: number}} props Component props.
- * @prop {number} [position=0] The horizontal position of the navbar, in pixels.
  * @returns {JSX.Element} The rendered navbar component.
  */
-const Navbar = ({ position = 0 }) => {
-
-
+const Navbar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [dragPosition, setDragPosition] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const dragRef = useRef(null);
-  const startXRef = useRef(0);
+  const [openSublinks, setOpenSublinks] = useState({});
+  const pathname = usePathname(); // Initialize pathname
 
-  // Original drag handling code
-  const handleDragStart = (e) => {
-    setIsDragging(true);
-    startXRef.current = e.touches ? e.touches[0].clientX - dragPosition : e.clientX - dragPosition;
-  };
-
-  const handleDragMove = (e) => {
-    if (!isDragging) return;
-    
-    const currentX = e.touches ? e.touches[0].clientX : e.clientX;
-    const newPosition = currentX - startXRef.current;
-    
-    const limitedPosition = Math.min(Math.max(newPosition, -100), 100);
-    setDragPosition(limitedPosition);
-  };
-
-  const handleDragEnd = () => {
-    setIsDragging(false);
+  // Toggles sublink visibility
+  const handleSublinkToggle = (linkName) => {
+    setOpenSublinks((prev) => ({
+      ...prev,
+      [linkName]: !prev[linkName],
+    }));
   };
 
   // Navigation links
@@ -65,22 +47,9 @@ const Navbar = ({ position = 0 }) => {
     },
   ];
 
-  const totalPosition = position + dragPosition;
-
   return (
     <>
-      <nav 
-        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/30 shadow-lg transition-all duration-300 ease-in-out"
-        style={{ transform: `translateX(${totalPosition}px)` }}
-        ref={dragRef}
-        onTouchStart={handleDragStart}
-        onTouchMove={handleDragMove}
-        onTouchEnd={handleDragEnd}
-        onMouseDown={handleDragStart}
-        onMouseMove={handleDragMove}
-        onMouseUp={handleDragEnd}
-        onMouseLeave={handleDragEnd}
-      >
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/30 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
@@ -107,12 +76,21 @@ const Navbar = ({ position = 0 }) => {
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-4">
                 {navLinks.map((link) => (
-                  <div key={link.name} className="relative group">
-                    <Link href={link.href} className="text-gray-800 hover:text-gray-600 px-3 py-2 rounded-md text-sm font-medium">
+                  <div key={link.name} className="relative">
+                    <button 
+                      onClick={() => {
+                        if (link.name === 'Home' && pathname !== '/') {
+                          window.location.href = '/';
+                        } else {
+                          handleSublinkToggle(link.name);
+                        }
+                      }}
+                      className="text-gray-800 hover:text-gray-600 px-3 py-2 rounded-md text-sm font-medium focus:outline-none"
+                    >
                       {link.name}
-                    </Link>
-                    {link.sublinks && (
-                      <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">
+                    </button>
+                    {link.sublinks && openSublinks[link.name] && (
+                      <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
                         <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                           {link.sublinks.map((sublink) => (
                             <Link key={sublink.name} href={sublink.href} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
@@ -147,10 +125,19 @@ const Navbar = ({ position = 0 }) => {
           <div className="px-2 pt-2 pb-3 space-y-1">
             {navLinks.map((link) => (
               <div key={link.name}>
-                <Link href={link.href} className="block px-3 py-2 rounded-md text-base font-medium text-gray-800 hover:text-gray-600 hover:bg-gray-50">
+                <button 
+                  onClick={() => {
+                    if (link.name === 'Home' && pathname !== '/') {
+                      window.location.href = '/';
+                    } else {
+                      handleSublinkToggle(link.name);
+                    }
+                  }}
+                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-800 hover:text-gray-600 hover:bg-gray-50 focus:outline-none"
+                >
                   {link.name}
-                </Link>
-                {link.sublinks && (
+                </button>
+                {link.sublinks && openSublinks[link.name] && (
                   <div className="pl-4 space-y-1">
                     {link.sublinks.map((sublink) => (
                       <Link key={sublink.name} href={sublink.href} className="block px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50">
