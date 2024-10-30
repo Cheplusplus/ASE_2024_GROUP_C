@@ -5,7 +5,7 @@ import Categories from "@/models/categories";
 
 export async function GET() {
     // Connect to MongoDB
-    await connectToDatabaseCate ();
+    await connectToDatabaseCate();
   
     try {
      // console.log('123concate')

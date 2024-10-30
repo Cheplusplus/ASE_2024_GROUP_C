@@ -152,7 +152,7 @@ import { NextResponse } from "next/server";
 export async function GET(req) {
   try {
     await connectToDatabase();
-    
+    console.log('route')
     const { searchParams } = new URL(req.url);
     const search = searchParams.get('search');
     const category = searchParams.get('category');
@@ -224,7 +224,7 @@ export async function GET(req) {
    console.log(query,'query')
     // Fetch recipes with the built query and sort options, limited to 50 results
     const recipes = await Recipe.find(query).sort(sortOptions).limit(52);
-
+   console.log(recipes)
     // Get the count of recipes matching the search or category filter
     let count;
     if (search || (category && category !== 'All Categories' && category !== 'all')) {

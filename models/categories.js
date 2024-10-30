@@ -2,8 +2,9 @@
 import mongoose from 'mongoose';
 
 const CategorySchema = new mongoose.Schema({
-  categories: [String], // Array of category names
-});
+  categories: [String], 
+   
+},{collection: 'categories'});
 
 const Categories =  mongoose.models.Category || mongoose.model('Category', CategorySchema);
 
