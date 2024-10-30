@@ -16,7 +16,7 @@ import Paginate from './Paginate';
 const fetchRecipes = async (search = '', skip= 0) => {
   const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
   try {
-    const response = await fetch(`${url}/api/recipe/?search=${encodeURIComponent(search)}&skip=${skip}`, { cache: 'no-store' });
+    const response = await fetch(`${url}/api/recipe/?search=${(search)}&skip=${skip}`, { cache: 'no-store' });
     if (!response.ok) {
       throw new Error('Failed to fetch recipes');
     }

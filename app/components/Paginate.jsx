@@ -1,24 +1,28 @@
 // app/components/Paginate.js
 "use client"
 import React, {useEffect, useState} from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter,useSearchParams  } from 'next/navigation';
 
 const RECIPES_PER_PAGE = 52; // Recipes per page
 
 const Paginate = ({ skip, totalRecipes }) => {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1); // Track current page
+  const searchParams = useSearchParams();
+  const search = searchParams.get("search") || ""; 
 
   const handleNext = (newPage) => {
     const newSkip = skip + 52;
     setCurrentPage(newPage);
-    router.push(`/?search=${new URLSearchParams(window.location.search).get('search')}&skip=${newSkip}`); // Update the URL with the new skip value
+    const newUrl = search ? `/?search=${search}&skip=${newSkip}` : `/?skip=${newSkip}`
+    router.push(newUrl); // Update the URL with the new skip value
   };
 
   const handlePrevious = (newPage) => {
     const newSkip = skip > 52 ? skip - 52 : 0;
     setCurrentPage(newPage);
-    router.push(`/?search=${new URLSearchParams(window.location.search).get('search')}&skip=${newSkip}`);
+    const newUrl = search ? `/?search=${search}&skip=${newSkip}` : `/?skip=${newSkip}`
+    router.push(newUrl);
   };
 
   const totalPages = Math.ceil(totalRecipes / RECIPES_PER_PAGE);
