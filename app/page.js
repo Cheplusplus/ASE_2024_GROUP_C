@@ -17,7 +17,7 @@ export default function Home({ searchParams }) {
         {/* Content */}
         <div className="relative">
           <section className="w-full">
-            <RecipeGrid skip={skip} />
+            <RecipeGrid searchParams={searchParams} skip={skip} />
           </section>
         </div>
       </main>
