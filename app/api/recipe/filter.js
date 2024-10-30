@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 export async function GET(req) {
   try {
     await connectToDatabase();
-
+   console.log('filter')
     // Get all query parameters
     const { searchParams } = req.nextUrl;
     const category = searchParams.get('category');

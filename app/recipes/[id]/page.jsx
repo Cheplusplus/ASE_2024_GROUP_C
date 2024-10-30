@@ -44,7 +44,7 @@ export default function RecipeDetail({ params }) {
     <div className="p-6 max-w-6xl mx-auto font-sans">
     
       <button
-        onClick={() => router.back()}
+        onClick={(e) => {e.preventDefault(); router.back()}}
         className="text-gray-600 hover:text-gray-900 mb-4 flex items-center"
       >
         ← Back
