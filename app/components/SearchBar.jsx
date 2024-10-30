@@ -1,10 +1,17 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-// import {useSearch} from "../contexts/SearchContext" 
 import { useRouter } from 'next/navigation';
 
-
+/**
+ * A search bar component for searching recipes by title.
+ *
+ * @param {{ isOpen: boolean, onClose: () => void }} props
+ * @prop {boolean} isOpen - Whether the search bar should be shown.
+ * @prop {() => void} onClose - Called when the search bar should be closed.
+ *
+ * @returns {JSX.Element} The rendered search bar component.
+ */
 const SearchBar = ({ isOpen, onClose }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -32,8 +39,6 @@ const SearchBar = ({ isOpen, onClose }) => {
       setSearchResults([]);
       return;
     }
-    // Update the URL with the search query
-    
 
     try {
       setIsLoading(true);
@@ -73,7 +78,7 @@ const SearchBar = ({ isOpen, onClose }) => {
               type="text"
               value={searchQuery}
               onChange={handleSearchChange}
-              placeholder="Search recipes by title or ingredients..."
+              placeholder="Search recipes by title..."
               className="w-full px-4 py-2 rounded-md bg-white/50 focus:outline-none focus:ring-2 focus:ring-purple-300 text-black"
               autoFocus={isOpen}
             />
