@@ -30,6 +30,7 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
         {/* Main Image Container */}
         <div className="relative h-64 overflow-hidden">
         <Image
+        priority="true"
             src={images[0]}
             alt={title}
             fill
