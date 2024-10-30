@@ -1,6 +1,7 @@
 import RecipeGrid from "./components/RecipeGrid";
 
 export default function Home({ searchParams }) {
+  const search = searchParams.search || ''
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
       <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
@@ -15,7 +16,7 @@ export default function Home({ searchParams }) {
         {/* Content */}
         <div className="relative">
           <section className="w-full">
-            <RecipeGrid searchParams={searchParams} />
+            <RecipeGrid search={search} />
           </section>
         </div>
       </main>

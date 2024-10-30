@@ -18,8 +18,8 @@ const fetchRecipes = async (search) => {
   }
 };
 
-const RecipeGrid = async ({ searchParams }) => {
-  const {search}  = searchParams
+const RecipeGrid = async ({search}) => {
+  
   const recipes = await fetchRecipes(search || '');
   
   if (!recipes) {
