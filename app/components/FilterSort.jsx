@@ -28,37 +28,11 @@ const FilterSortComponent = ({ categories = [], tags = [] }) => {
     if (ingredients) params.set('ingredients', ingredients);
     if (sortOption) params.set('sortOption', value);
     // Store filters in localStorage
-    localStorage.setItem('filterSort', JSON.stringify({
-      category: selectedCategory,
-      tags: selectedTags,
-      numSteps,
-      ingredients,
-      sortOption,
-    }));
+    setIsOpen(false)
 
     router.push(`/?${params.toString()}`);
   };
 
-  useEffect(() => {
-    // Retrieve filters from localStorage
-    const savedFilters = JSON.parse(localStorage.getItem('filterSort'));
-    if (savedFilters) {
-      if (savedFilters.category) setSelectedCategory(savedFilters.category);
-      if (savedFilters.tags) setSelectedTags(savedFilters.tags);
-      if (savedFilters.numSteps) setNumSteps(savedFilters.numSteps);
-      if (savedFilters.ingredients) setIngredients(savedFilters.ingredients);
-      if (savedFilters.sortOption) setSortOption(savedFilters.sortOption);
-      
-      // Update URL parameters with saved filters
-      if (savedFilters.category) params.set('category', savedFilters.category);
-      if (savedFilters.tags) params.set('tags', savedFilters.tags.join(','));
-      if (savedFilters.numSteps) params.set('numSteps', savedFilters.numSteps);
-      if (savedFilters.ingredients) params.set('ingredients', savedFilters.ingredients);
-      if (savedFilters.sortOption) params.set('sortOption', savedFilters.sortOption);
-      
-      router.push(`/?${params.toString()}`);
-    }
-  }, []);
   const clearFilters = () => {
     setSelectedCategory('');
     setSelectedTags([]);
