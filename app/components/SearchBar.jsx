@@ -1,26 +1,16 @@
-"use client"
+
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-/**
- * A search bar component for searching recipes by title with highlighted matches.
- *
- * @param {{ isOpen: boolean, onClose: () => void }} props
- * @prop {boolean} isOpen - Whether the search bar should be shown.
- * @prop {() => void} onClose - Called when the search bar should be closed.
- *
- * @returns {JSX.Element} The rendered search bar component.
- */
 const SearchBar = ({ isOpen, onClose }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
-  const router = useRouter()
+  const router = useRouter();
 
-  // Clear search when closing search overlay
   useEffect(() => {
     if (!isOpen) {
       setSearchQuery('');
@@ -29,14 +19,12 @@ const SearchBar = ({ isOpen, onClose }) => {
     }
   }, [isOpen]);
 
-  // Handle search input changes
   const handleSearchChange = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
-    setHasSearched(false);  // Reset search state when input changes
+    setHasSearched(false);
   };
 
-  // Highlight matching text in title
   const highlightMatch = (text, query) => {
     if (!query) return text;
     
@@ -54,7 +42,6 @@ const SearchBar = ({ isOpen, onClose }) => {
     );
   };
 
-  // Fetch search results
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
       setSearchResults([]);
@@ -64,8 +51,8 @@ const SearchBar = ({ isOpen, onClose }) => {
 
     try {
       setIsLoading(true);
-      setHasSearched(true);  // Mark that a search has been performed
-      const response = await fetch(`/api/recipe/?search=${encodeURIComponent(searchQuery)}`);
+      setHasSearched(true);
+      const response = await fetch(`/api/recipe?search=${encodeURIComponent(searchQuery)}&limit=10`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -88,7 +75,6 @@ const SearchBar = ({ isOpen, onClose }) => {
     }
   };
 
-  // Handle Enter key press
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       handleSearch();
@@ -122,14 +108,12 @@ const SearchBar = ({ isOpen, onClose }) => {
             </button>
           </div>
           
-          {/* Loading indicator */}
           {isLoading && (
             <div className="absolute right-3 top-2">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-600"></div>
             </div>
           )}
 
-          {/* Search Results */}
           {searchResults.length > 0 && (
             <div className="absolute w-full mt-2 bg-white rounded-md shadow-lg max-h-96 overflow-y-auto">
               {searchResults.map((recipe) => (
@@ -150,7 +134,6 @@ const SearchBar = ({ isOpen, onClose }) => {
             </div>
           )}
 
-          {/* No Results Message - Only show after search button is clicked */}
           {hasSearched && !isLoading && searchResults.length === 0 && (
             <div className="absolute w-full mt-2 bg-white rounded-md shadow-lg p-4 text-center text-gray-600">
               No recipes found matching {searchQuery}
