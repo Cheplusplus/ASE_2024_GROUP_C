@@ -37,12 +37,12 @@ const SearchBar = ({ isOpen, onClose }) => {
 
     try {
       setIsLoading(true);
-      const response = await fetch(`/api/recipe/?search=${encodeURIComponent(searchQuery)}`);
+      const response = await fetch(`/api/recipe/?search=${encodeURIComponent(searchQuery)}&skip=${0}`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      router.push(`/?search=${encodeURIComponent(searchQuery)}`);
+      router.push(`/?search=${encodeURIComponent(searchQuery)}&skip=${0}`);
       
       const data = await response.json();
       
