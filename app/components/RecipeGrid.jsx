@@ -1,18 +1,21 @@
+'server only'
+
 import React from 'react';
 import RecipeCard from './RecipeCard';
 import SkeletonGrid from './SkeletonMain';
 import Paginate from './Paginate';
 
-const fetchRecipes = async (search, skip= 0) => {
+const fetchRecipes = async (search = '', skip= 0) => {
   const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
   try {
-    const response = await fetch(`${url}/api/recipe/?search=${search}&skip=${skip}`, { cache: 'no-store' });
+    const response = await fetch(`${url}/api/recipe/?search=${encodeURIComponent(search)}&skip=${skip}`, { cache: 'no-store' });
     if (!response.ok) {
       throw new Error('Failed to fetch recipes');
     }
     
     const data = await response.json();
-    console.log(`Fetching recipes with skip=${skip},`); // Debug log
+    
+    console.log(`Fetching recipes with search=${search}, skip=${skip},`); // Debug log
     return { recipes: data.recipes, total: data.total };
   } catch (error) {
     console.error('Error fetching recipes1:', error);
@@ -20,13 +23,17 @@ const fetchRecipes = async (search, skip= 0) => {
   }
 };
 
-const RecipeGrid = async ({ searchParams ,skip}) => {
-  const {search}  = searchParams
-  const recipes = await fetchRecipes(search || '', skip);
-  
-  if (!recipes.recipes || recipes.length === 0) {
+const RecipeGrid = async ({ search, skip }) => {
+  // const {search = '', skip}  = searchParams
+  const recipes= await fetchRecipes(search || '', skip);
+  console.log(recipes.recipes)
+  if (!recipes || recipes.length=== 0) {
+    console.log( 'No recipes found')
+    
     return <SkeletonGrid />;
   }
+
+  // console.log(recipes.recipes)
 
   return (
     <div className="max-w-7xl mx-auto">
