@@ -6,27 +6,42 @@ export async function GET(req) {
   try {
     await connectToDatabase(); // Ensure the database is connected
 
-    const { search } = req.nextUrl.searchParams; // Get the 'search' query parameter
+    const { search, page = 1, limit = 10 } = req.nextUrl.searchParams; // Get query parameters
     let query = {};
 
-    // Check if the search parameter is provided and build the query
+    // Build the search query if the search parameter is provided
     if (search) {
       query = {
         $or: [
-          { name: { $regex: search, $options: "i" } }, // Assuming 'name' is a field in your Recipe model
-          { ingredients: { $regex: search, $options: "i" } } // Assuming 'ingredients' is another field
+          { name: { $regex: search, $options: "i" } },
+          { ingredients: { $regex: search, $options: "i" } }
         ]
       };
     }
 
-    // Fetch recipes based on the search query
-    const recipes = await Recipe.find(query).limit(50); // Limit to 50 results
-    return NextResponse.json({ success: true, recipes }); // Respond with recipes
+    // Calculate pagination values
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const recipes = await Recipe.find(query).skip(skip).limit(parseInt(limit)); // Apply skip and limit for pagination
+
+    // Get the total count for the query to calculate total pages
+    const totalRecipes = await Recipe.countDocuments(query);
+    const totalPages = Math.ceil(totalRecipes / limit);
+
+    return NextResponse.json({
+      success: true,
+      recipes,
+      pagination: {
+        totalRecipes,
+        currentPage: parseInt(page),
+        totalPages,
+        limit: parseInt(limit),
+      }
+    });
   } catch (error) {
     console.error("Error searching recipes:", error);
     return NextResponse.json(
       { success: false, message: "Failed to search recipes." },
-      { status: 500 } // Return a 500 status code
+      { status: 500 }
     );
   }
 }
