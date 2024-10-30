@@ -143,6 +143,11 @@
 import connectToDatabase from "@/lib/connectMongoose";
 import Recipe from "@/models/Recipe";
 import { NextResponse } from "next/server";
+/**
+ * 
+ * @param {searchParams} req - This will get
+ * @returns 
+ */
 
 export async function GET(req) {
   try {
@@ -155,7 +160,7 @@ export async function GET(req) {
     const tags = searchParams.get('tags');
     const ingredients = searchParams.get('ingredients');
     const numSteps = parseInt(searchParams.get('numSteps'), 10); // Convert numSteps to integer
-
+  
     let query = {};
 
     // Build the query based on the search parameter
