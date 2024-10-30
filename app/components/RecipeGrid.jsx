@@ -13,10 +13,10 @@ import Paginate from './Paginate';
  * @throws Will throw an error if the network request fails.
  */
 
-const fetchRecipes = async (skip= 0) => {
+const fetchRecipes = async (search = '', skip= 0) => {
   const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
   try {
-    const response = await fetch(`${url}/api/recipe/?skip=${skip}`, { cache: 'no-store' });
+    const response = await fetch(`${url}/api/recipe/?search=${encodeURIComponent(search)}&skip=${skip}`, { cache: 'no-store' });
     if (!response.ok) {
       throw new Error('Failed to fetch recipes');
     }
@@ -30,10 +30,11 @@ const fetchRecipes = async (skip= 0) => {
   }
 };
 
-const RecipeGrid = async ({ skip }) => {
-  const recipes = await fetchRecipes(skip);
+const RecipeGrid = async ({ search , skip }) => {
   
-  if (!recipes.recipes || recipes.length === 0) {
+  const recipes = await fetchRecipes(search || '', skip);
+  
+  if (!recipes || recipes.length === 0) {
     return <SkeletonGrid />;
   }
 
