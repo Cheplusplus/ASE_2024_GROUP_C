@@ -6,16 +6,16 @@ import Categories from "@/models/categories";
 export async function GET() {
     // Connect to MongoDB
     await connectToDatabaseCate();
-  
+    console.log('123concatea')
     try {
-     // console.log('123concate')
+      console.log('123concate')
       // Fetch the categories document
-      const categoryDoc = await Categories.findOne({});
-      
-      if (!categoryDoc) {
-        return NextResponse.json({ message: "Categories not found" }, { status: 404 });
-      }
-     console.log(categoryDoc.categories)
+      const categoryDoc = await Categories.findOne();
+      console.log('123concate2')
+      // if (!categoryDoc) {
+      //   return NextResponse.json({ message: "Categories not found" }, { status: 404 });
+      // }
+      console.log(categoryDoc)
       // Send back the categories array
       
       return NextResponse.json({ categories: categoryDoc.categories }, { status: 200 });

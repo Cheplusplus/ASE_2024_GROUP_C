@@ -4,7 +4,8 @@ import RecipeCard from './RecipeCard'; // Update this import
 import Paginate from './Paginate';
 import SkeletonGrid from './SkeletonMain';
 import FilterSortComponent from './FilterSort';
-import { getRecipes, getCategories } from '../../lib/api';
+import { getCategories } from '../../lib/api';
+import { getRecipes } from '@/lib/data';
 
 const RecipeGrid = async ({ searchParams }) => {
   const category = searchParams?.category || '';
@@ -36,7 +37,7 @@ const RecipeGrid = async ({ searchParams }) => {
     return (
       <div className="max-w-7xl mx-auto px-1 sm:px-6 lg:px-8 py-8">
         {/* Pass categories to FilterSortComponent */}
-        <FilterSortComponent categories={categories} search={search} />
+        <FilterSortComponent categories={categories} search={search} count1={recipeData.count} />
 
         {recipes.length === 0 ? (
           <div className="min-h-[400px] flex items-center justify-center">

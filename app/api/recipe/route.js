@@ -229,7 +229,7 @@ export async function GET(req) {
     const recipes = await Recipe.find(query).sort(sortOptions).limit(limit).skip(skip).lean();
     console.log("this is recipes:",recipes)
 
-   //console.log(recipes)
+  // console.log(recipes,'123456yhb')
     // Get the count of recipes matching the search or category filter
     let count;
     if (search || (category && category !== 'All Categories' && category !== 'all')) {

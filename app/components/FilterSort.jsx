@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Button } from "./ui/button";
 import { Slider } from "./ui/slider";
 
-const FilterSortComponent = ({ categories = [], tags = [],search }) => {
+const FilterSortComponent = ({ categories = [],count1=null,search }) => {
   const router = useRouter();
   
   // State management for filters and sorting
@@ -18,6 +18,8 @@ const FilterSortComponent = ({ categories = [], tags = [],search }) => {
   const [numSteps, setNumSteps] = useState(0);
   const [ingredients, setIngredients] = useState('');
   const [sortOption, setSortOption] = useState('default');
+  const [displayCount,setDisplayCount] = useState(false);
+  const [count,setCount] = useState(count1)
   const params = new URLSearchParams();
   // Apply the filters by updating the URL query parameters
   const applyFilters = (value = sortOption) => {
@@ -31,6 +33,14 @@ const FilterSortComponent = ({ categories = [], tags = [],search }) => {
     setIsOpen(false)
 
     router.push(`/?${params.toString()}`);
+    console.log(count1)
+    if(count1){
+      setDisplayCount(true);
+      }
+      else{
+        setDisplayCount(false)
+      }
+      setCount(count1);
   };
 
   const clearFilters = () => {
@@ -182,7 +192,10 @@ const FilterSortComponent = ({ categories = [], tags = [],search }) => {
     </div>
   </div>
 )}
-
+         {console.log(displayCount)}
+     {displayCount && <div >
+       {count} results found
+      </div>}
 
     </div>
   );
