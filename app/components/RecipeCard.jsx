@@ -29,19 +29,21 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
       <div className="group relative bg-white rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg">
         {/* Main Image Container */}
         <div className="relative h-64 overflow-hidden">
-          <Image
+        <Image
+        priority="true"
             src={images[0]}
             alt={title}
-            layout="fill"
-            objectFit="cover"
+            fill
+            style={{ objectFit: 'cover' }}
             className="transform transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         </div>
         
         {/* Content Container */}
-        <div className="p-6">
+        <div className="p-1">
           {/* Title */}
           <h2 className="text-xl font-semibold text-gray-900 mb-3 line-clamp-2">
             {title}
