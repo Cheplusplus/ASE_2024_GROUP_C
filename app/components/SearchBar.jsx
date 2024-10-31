@@ -148,7 +148,7 @@ const SearchBar = ({ isOpen, onClose }) => {
             <div className="absolute w-full mt-2 bg-white rounded-md shadow-lg max-h-96 overflow-y-auto">
               {searchResults.map((recipe) => (
                 <Link
-                  key={recipe.index}
+                  key={recipe._id}
                   onClick={()=>handleSuggestionClick(recipe.title)}
                   href={`/`}
                   className="block px-4 py-2 hover:bg-gray-100 transition-colors duration-150"

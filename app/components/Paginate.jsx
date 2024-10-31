@@ -3,7 +3,7 @@
 import React, {useEffect, useState} from 'react';
 import { useRouter,useSearchParams  } from 'next/navigation';
 
-const RECIPES_PER_PAGE = 52; // Recipes per page
+const RECIPES_PER_PAGE = 50; // Recipes per page
 
 const Paginate = ({ skip, totalRecipes }) => {
   const router = useRouter();
@@ -11,17 +11,23 @@ const Paginate = ({ skip, totalRecipes }) => {
   const searchParams = useSearchParams();
   const search = searchParams.get("search") || ""; 
 
+  const category = searchParams.get('category') || '';
+  const tags = searchParams.get('tags') ? searchParams.get('tags').split(',') : [];
+  const numSteps = parseInt(searchParams.get('numSteps')) || '';
+  const ingredients = searchParams.get('ingredients') || '';
+  const sortOption = searchParams.get('sortOption') || '';
+
   const handleNext = (newPage) => {
     const newSkip = skip + RECIPES_PER_PAGE;
     setCurrentPage(newPage);
-    const newUrl = search ? `/?search=${search}&skip=${newSkip}` : `/?skip=${newSkip}`
+    const newUrl = search || category || numSteps || sortOption || tags ? `/?search=${search}&skip=${newSkip}&category=${category}&tags=${tags.join(',')}&numSteps=${numSteps}&ingredients=${ingredients}&sortOption=${sortOption}` : `/?skip=${newSkip}`
     router.push(newUrl); // Update the URL with the new skip value
   };
 
   const handlePrevious = (newPage) => {
     const newSkip = skip > RECIPES_PER_PAGE ? skip - RECIPES_PER_PAGE : 0;
     setCurrentPage(newPage);
-    const newUrl = search ? `/?search=${search}&skip=${newSkip}` : `/?skip=${newSkip}`
+    const newUrl = search || category || numSteps || sortOption || tags ? `/?search=${search}&skip=${newSkip}&category=${category}&tags=${tags.join(',')}&numSteps=${numSteps}&ingredients=${ingredients}&sortOption=${sortOption}` : `/?skip=${newSkip}`
     router.push(newUrl);
   };
 
