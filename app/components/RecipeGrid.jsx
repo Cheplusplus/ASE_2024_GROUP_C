@@ -29,7 +29,7 @@ const RecipeGrid = async ({ searchParams }) => {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Pass categories to FilterSortComponent */}
-        <FilterSortComponent categories={categories} />
+        <FilterSortComponent categories={categories} count1={recipeData.count} />
 
         {recipes.length === 0 ? (
           <div className="min-h-[400px] flex items-center justify-center">
@@ -44,6 +44,7 @@ const RecipeGrid = async ({ searchParams }) => {
             ))}
           </div>
         )}
+
       </div>
     );
   } catch (error) {
