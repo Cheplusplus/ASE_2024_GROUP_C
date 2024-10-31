@@ -1,50 +1,72 @@
 // app/components/RecipeGrid.jsx
-import React from 'react';
-import RecipeCard from './RecipeCard'; // Update this import
-import SkeletonGrid from './SkeletonMain';
+import React from "react";
+import RecipeCard from "./RecipeCard"; // Update this import
+import Paginate from "./Paginate";
+import SkeletonGrid from "./SkeletonMain";
+import FilterSortComponent from "./FilterSort";
+import { getCategories ,getRecipes } from "../lib/api";
 
-const fetchRecipes = async () => {
-  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+const RecipeGrid = async ({ searchParams }) => {
+  const category = searchParams?.category || "";
+  const tags = searchParams?.tags ? searchParams.tags.split(",") : [];
+  const numSteps = parseInt(searchParams?.numSteps) || "";
+  const ingredients = searchParams?.ingredients || "";
+  const sortOption = searchParams?.sortOption || "";
+  const skip = parseInt(searchParams.skip, 10) || 0;
+  const search = searchParams.search || "";
+
   try {
-    const response = await fetch(`${url}/api/recipe`, { cache: 'no-store' });
-    if (!response.ok) {
-      throw new Error('Failed to fetch recipes');
-    }
-    const data = await response.json();
-    return data.recipes;
+    // Fetch recipes and categories based on URL parameters
+    const [recipeData, categoryData] = await Promise.all([
+      getRecipes({
+        category,
+        tags,
+        numSteps,
+        ingredients,
+        sortOption,
+        skip,
+        search,
+      }),
+      getCategories(),
+    ]);
+
+    const recipes = recipeData.recipes;
+    const categories = categoryData;
+
+    return (
+      <div className="max-w-7xl mx-auto px-1 sm:px-6 lg:px-8 py-8">
+        {/* Pass categories to FilterSortComponent */}
+        <FilterSortComponent
+          categories={categories}
+          search={search}
+          count1={recipeData.count}
+        />
+
+        {recipes.length === 0 ? (
+          <div className="min-h-[400px] flex items-center justify-center">
+            <div className="text-gray-500 bg-gray-50 px-6 py-4 rounded-lg shadow-sm">
+              No recipes found matching your criteria
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6">
+            {recipes.map((recipe) => (
+              <RecipeCard key={recipe._id} recipe={recipe} />
+            ))}
+          </div>
+        )}
+        <Paginate skip={skip} />
+      </div>
+    );
   } catch (error) {
-    console.error('Error fetching recipes:', error);
-    return null; // Handle error gracefully
-  }
-};
-
-const RecipeGrid = async () => {
-  const recipes = await fetchRecipes();
-
-  if (!recipes) {
-    return <SkeletonGrid />;
-  }
-
-  return (
-    <div className="max-w-7xl mx-auto">
-      {/* Grid Header */}
-      <div className="mb-12 text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Recipe Rush
-        </h1>
-        <p className="text-gray-600 max-w-2xl mx-auto">
-          Discover our collection of easy-to-make recipes that are perfect for any occasion.
-        </p>
+    return (
+      <div className="min-h-[400px] flex items-center justify-center">
+        <div className="text-red-500 bg-red-50 px-6 py-4 rounded-lg shadow-sm">
+          Error: {error.message}
+        </div>
       </div>
-
-      {/* Recipe Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {recipes.map(recipe => (
-          <RecipeCard key={recipe._id} recipe={recipe} />
-        ))}
-      </div>
-    </div>
-  );
+    );
+  }
 };
 
 export default RecipeGrid;
