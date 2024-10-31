@@ -1,3 +1,4 @@
+
 import connectToDatabase from "@/app/lib/connectMongoose";
 import Recipe from "@/app/models/Recipe";
 import { NextResponse } from "next/server";
@@ -89,7 +90,7 @@ export async function GET(req) {
       .skip(skip)
     console.log("this is recipes:", recipes);
 
-     console.log(recipes,'123456yhb')
+   //console.log(recipes,'123456yhb')
     // Get the count of recipes matching the search or category filter
     let count;
     if (
