@@ -1,8 +1,8 @@
 import RecipeCard from './RecipeCard';
 import SkeletonGrid from './SkeletonMain';
 import FilterSortComponent from './FilterSort';
-import { getCategories } from '../../lib/api';
-import { getRecipes } from '@/lib/data';
+import { getCategories } from '../lib/api';
+import { getRecipes } from '../lib/api';
 
 const RecipeGrid = async ({ searchParams }) => {
   const category = searchParams?.category || '';

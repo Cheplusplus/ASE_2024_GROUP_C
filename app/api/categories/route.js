@@ -1,7 +1,7 @@
-import { connectToDatabaseCate } from "@/lib/connectToCategoriesDB";
+import { connectToDatabaseCate } from "@/app/lib/connectToCategoriesDB";
 // pages/api/categories.js
 import { NextResponse } from 'next/server';
-import Categories from "@/models/categories";
+import Categories from "@/app/models/categories";
 
 export async function GET() {
     // Connect to MongoDB
