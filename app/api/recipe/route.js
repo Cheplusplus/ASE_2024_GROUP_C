@@ -224,7 +224,8 @@ export async function GET(req) {
    console.log(query,'query')
     // Fetch recipes with the built query and sort options, limited to 50 results
     const recipes = await Recipe.find(query).sort(sortOptions).limit(52);
-   console.log(recipes)
+
+   //console.log(recipes)
     // Get the count of recipes matching the search or category filter
     let count;
     if (search || (category && category !== 'All Categories' && category !== 'all')) {

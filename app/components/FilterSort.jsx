@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Filter } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Button } from "./ui/button";
 import { Slider } from "./ui/slider";
@@ -89,86 +88,101 @@ const FilterSortComponent = ({ categories = [], tags = [] }) => {
         </div>
       </div>
 
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-[375px]">
-          <DialogHeader>
-            <DialogTitle>Filter Options</DialogTitle>
-            <Button variant="destructive" size="sm" onClick={clearFilters}>
-              Clear Filters
-            </Button>
-          </DialogHeader>
+      {isOpen && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="bg-white rounded-lg shadow-lg w-full max-w-sm p-6 sm:max-w-[375px]">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold">Filter Options</h2>
+        <Button variant="destructive" size="sm" onClick={clearFilters}>
+          Clear Filters
+        </Button>
+      </div>
 
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium">Category</label>
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select category..." />
-                </SelectTrigger>
-                <SelectContent className="max-h-[200px] overflow-y-auto">
-                  <SelectItem value="All Categories">All Categories</SelectItem>
-                  {categories.map((category) => (
-                    <SelectItem key={category} value={category}>{category}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+      <div className="text-sm text-gray-600 mb-4">
+        Use the filters below to narrow down the recipe results.
+      </div>
 
-            <div>
-              <label className="text-sm font-medium">Tags</label>
-              <div className="flex items-center space-x-2">
-                <input
-                  type="text"
-                  value={tagInput}
-                  onChange={handleTagInputChange}
-                  placeholder="Type and press enter..."
-                  onKeyDown={(e) => e.key === 'Enter' && addTag()}
-                  className="input"
-                />
-                <Button onClick={addTag}>Add</Button>
-              </div>
-              <div className="flex flex-wrap mt-2 space-x-2">
-                {selectedTags.map(tag => (
-                  <span
-                    key={tag}
-                    className="flex items-center space-x-1 px-2 py-1 bg-gray-200 rounded-full cursor-pointer"
-                    onClick={() => removeTag(tag)}
-                  >
-                    {tag}
-                    <span className="text-red-500">×</span>
-                  </span>
-                ))}
-              </div>
-            </div>
+      <div className="space-y-4">
+        {/* Category filter */}
+        <div>
+          <label className="text-sm font-medium">Category</label>
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select category..." />
+            </SelectTrigger>
+            <SelectContent className="max-h-[200px] overflow-y-auto">
+              <SelectItem value="All Categories">All Categories</SelectItem>
+              {categories.map((category) => (
+                <SelectItem key={category} value={category}>{category}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-            <div>
-              <label className="text-sm font-medium ">Number of Steps</label>
-              <Slider
-              
-                value={[numSteps]}
-                onValueChange={(value) => setNumSteps(value[0])}
-                max={20}
-                step={1}
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium">Ingredients</label><br/>
-              <input
-                type="text"
-                value={ingredients}
-                onChange={(e) => setIngredients(e.target.value)}
-                placeholder="e.g., tomatoes, garlic"
-                className="input"
-              />
-            </div>
-
-            <Button variant="primary" onClick={applyFilters}>
-              Apply Filters
-            </Button>
+        {/* Tags filter */}
+        <div>
+          <label className="text-sm font-medium">Tags</label>
+          <div className="flex items-center space-x-2">
+            <input
+              type="text"
+              value={tagInput}
+              onChange={handleTagInputChange}
+              placeholder="Type and press enter..."
+              onKeyDown={(e) => e.key === 'Enter' && addTag()}
+              className="input"
+            />
+            <Button onClick={addTag}>Add</Button>
           </div>
-        </DialogContent>
-      </Dialog>
+          <div className="flex flex-wrap mt-2 space-x-2">
+            {selectedTags.map(tag => (
+              <span
+                key={tag}
+                className="flex items-center space-x-1 px-2 py-1 bg-gray-200 rounded-full cursor-pointer"
+                onClick={() => removeTag(tag)}
+              >
+                {tag}
+                <span className="text-red-500">×</span>
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Number of Steps filter */}
+        <div>
+          <label className="text-sm font-medium">Number of Steps</label>
+          <Slider
+            value={[numSteps]}
+            onValueChange={(value) => setNumSteps(value[0])}
+            max={20}
+            step={1}
+          />
+        </div>
+
+        {/* Ingredients filter */}
+        <div>
+          <label className="text-sm font-medium">Ingredients</label><br/>
+          <input
+            type="text"
+            value={ingredients}
+            onChange={(e) => setIngredients(e.target.value)}
+            placeholder="e.g., tomatoes, garlic"
+            className="input"
+          />
+          <button className='w-fit bg-yellow-400 rounded hover:bg-yellow-500 text-black' onClick={()=>setIngredients('')}>Clear Ingredients</button>
+        </div>
+
+        <Button variant="primary" onClick={applyFilters} className="mt-4 w-full">
+          Apply Filters
+        </Button>
+        <Button variant="outline" onClick={() => setIsOpen(false)} className="mt-2 bg-red-600 hover:bg-red-700 w-full text-white">
+          Close
+        </Button>
+      </div>
+    </div>
+  </div>
+)}
+
+
     </div>
   );
 };
