@@ -22,11 +22,7 @@ const SearchBar = ({ isOpen, onClose }) => {
 
   // Clear search when closing search overlay
   useEffect(() => {
-    // if (!isOpen) {
-    //   setSearchQuery('');
-    //   setSearchResults([]);
-    //   setHasSearched(false);
-    // }
+  
 
     if(searchQuery.trim().length >= 3) {
       const debounceTimeout = setTimeout(()=> {
@@ -73,22 +69,17 @@ const SearchBar = ({ isOpen, onClose }) => {
 
   // Fetch search results
   const fetchSuggestions = async (query) => {
-    // if (!searchQuery.trim()) {
-    //   setSearchResults([]);
-    //   setHasSearched(false);
-    //   return;
-    // }
+   
 
     try {
       setIsLoading(true);
       // setHasSearched(true);  // Mark that a search has been performed
       const response = await fetch(`/api/recipe/?search=${encodeURIComponent(query)}&limit=10`);
-      
+      // router.push(`/?search=${encodeURIComponent(searchQuery)}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      router.push(`/?search=${encodeURIComponent(searchQuery)}`);
-      
+      // 
       const data = await response.json();
       
       if (data.success) {
@@ -108,10 +99,14 @@ const SearchBar = ({ isOpen, onClose }) => {
   
 
   // Handle Enter key press
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
+  const handleSuggestionClick = (title) => {
+
+    const debounceTimeout = setTimeout(()=> {
+      router.push(`/?search=${encodeURIComponent(title)}`);
+    onClose();
+    }, 500)
+    return ()=> clearTimeout(debounceTimeout)
+    
   };
 
   return (
@@ -132,13 +127,13 @@ const SearchBar = ({ isOpen, onClose }) => {
               className="w-full px-4 py-2 rounded-md bg-white/50 focus:outline-none focus:ring-2 focus:ring-purple-300 text-black"
               autoFocus={isOpen}
             />
-            {/* <button
-              onClick={handleSearch}
+            <button
+              onClick={()=>handleSuggestionClick(searchQuery)}
               className="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors duration-200"
               disabled={isLoading}
             >
               {isLoading ? 'Searching...' : 'Search'}
-            </button> */}
+            </button>
           </div>
           
           {/* Loading indicator */}
@@ -153,12 +148,13 @@ const SearchBar = ({ isOpen, onClose }) => {
             <div className="absolute w-full mt-2 bg-white rounded-md shadow-lg max-h-96 overflow-y-auto">
               {searchResults.map((recipe) => (
                 <Link
-                  key={recipe._id}
+                  key={recipe.index}
+                  onClick={()=>handleSuggestionClick(recipe.title)}
                   href={`/`}
                   className="block px-4 py-2 hover:bg-gray-100 transition-colors duration-150"
-                  onClick={onClose}
+                  
                 >
-                  <div  className="text-gray-900 font-medium">
+                  <div className="text-gray-900 font-medium">
                     {highlightMatch(recipe.title, searchQuery)}
                   </div>
                   
