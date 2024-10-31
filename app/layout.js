@@ -2,6 +2,7 @@ import Navbar from "./components/Navbar";
 import ClientNavWrapper from "./components/ClientNavWrapper";
 import Footer from "./components/Footer";
 import "./globals.css";
+// import searchProvider from "./contexts/SearchContext"
 
 // metadata for the RootLayout
 export const metadata = {

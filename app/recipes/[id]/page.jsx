@@ -89,7 +89,7 @@ export default function RecipeDetail({ params }) {
         <h1 className="text-3xl font-bold">{recipe.title}</h1>
         
         <button
-          onClick={() => router.back()}
+          onClick={(e) => {e.preventDefault();router.back()}}
           className="text-gray-600 hover:text-gray-900 mb-4 flex items-center"
         >
           ← Back
