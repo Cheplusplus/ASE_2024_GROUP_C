@@ -14,7 +14,7 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const search = searchParams.get('search');
     const skip = parseInt(searchParams.get('skip'), 10 ) || 0
-    const limit = parseInt(searchParams.get('limit'), 10) || 52
+    const limit = parseInt(searchParams.get('limit'), 10) || 50
     let query ={};
 
 

@@ -22,12 +22,18 @@ const SearchBar = ({ isOpen, onClose }) => {
 
   // Clear search when closing search overlay
   useEffect(() => {
-    if (!isOpen) {
-      setSearchQuery('');
+  
+
+    if(searchQuery.trim().length >= 3) {
+      const debounceTimeout = setTimeout(()=> {
+        fetchSuggestions(searchQuery)
+      }, 300)
+      return ()=> clearTimeout(debounceTimeout)
+    }else {
       setSearchResults([]);
-      setHasSearched(false);
+      
     }
-  }, [isOpen]);
+  }, [searchQuery]);
 
   // Handle search input changes
   const handleSearchChange = (e) => {
@@ -37,6 +43,13 @@ const SearchBar = ({ isOpen, onClose }) => {
   };
 
   // Highlight matching text in title
+  /**
+   * Highlights matching text in the title.
+   *
+   * @param {string} text - The text to highlight.
+   * @param {string} query - The current search query.
+   * @returns {JSX.Element} The highlighted text.
+   */
   const highlightMatch = (text, query) => {
     if (!query) return text;
     
@@ -55,23 +68,18 @@ const SearchBar = ({ isOpen, onClose }) => {
   };
 
   // Fetch search results
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) {
-      setSearchResults([]);
-      setHasSearched(false);
-      return;
-    }
+  const fetchSuggestions = async (query) => {
+   
 
     try {
       setIsLoading(true);
-      setHasSearched(true);  // Mark that a search has been performed
-      const response = await fetch(`/api/recipe/?search=${encodeURIComponent(searchQuery)}`);
-      
+      // setHasSearched(true);  // Mark that a search has been performed
+      const response = await fetch(`/api/recipe/?search=${encodeURIComponent(query)}&limit=10`);
+      // router.push(`/?search=${encodeURIComponent(searchQuery)}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      router.push(`/?search=${encodeURIComponent(searchQuery)}`);
-      
+      // 
       const data = await response.json();
       
       if (data.success) {
@@ -88,11 +96,17 @@ const SearchBar = ({ isOpen, onClose }) => {
     }
   };
 
+  
+
   // Handle Enter key press
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
+  const handleSuggestionClick = (title) => {
+
+    const debounceTimeout = setTimeout(()=> {
+      router.push(`/?search=${encodeURIComponent(title)}`);
+    onClose();
+    }, 500)
+    return ()=> clearTimeout(debounceTimeout)
+    
   };
 
   return (
@@ -108,13 +122,13 @@ const SearchBar = ({ isOpen, onClose }) => {
               type="text"
               value={searchQuery}
               onChange={handleSearchChange}
-              onKeyPress={handleKeyPress}
+              // onKeyPress={handleKeyPress}
               placeholder="Search recipes by title..."
               className="w-full px-4 py-2 rounded-md bg-white/50 focus:outline-none focus:ring-2 focus:ring-purple-300 text-black"
               autoFocus={isOpen}
             />
             <button
-              onClick={handleSearch}
+              onClick={()=>handleSuggestionClick(searchQuery)}
               className="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors duration-200"
               disabled={isLoading}
             >
@@ -129,22 +143,21 @@ const SearchBar = ({ isOpen, onClose }) => {
             </div>
           )}
 
-          {/* Search Results */}
+          {/* Search Results / Auto Suggestion */}
           {searchResults.length > 0 && (
             <div className="absolute w-full mt-2 bg-white rounded-md shadow-lg max-h-96 overflow-y-auto">
               {searchResults.map((recipe) => (
                 <Link
-                  key={recipe._id}
-                  href={`/recipes/${recipe._id}`}
+                  key={recipe.index}
+                  onClick={()=>handleSuggestionClick(recipe.title)}
+                  href={`/`}
                   className="block px-4 py-2 hover:bg-gray-100 transition-colors duration-150"
-                  onClick={onClose}
+                  
                 >
                   <div className="text-gray-900 font-medium">
                     {highlightMatch(recipe.title, searchQuery)}
                   </div>
-                  {recipe.description && (
-                    <div className="text-gray-600 text-sm truncate">{recipe.description}</div>
-                  )}
+                  
                 </Link>
               ))}
             </div>
