@@ -1,49 +1,48 @@
-import connectToDatabase from "@/app/lib/mongodb";
-import Recipe from "@/models/Recipe";
+import connectToDatabase from "@/app/lib/connectMongoose";
+import Recipe from "@/app/models/Recipe";
 import { NextResponse } from "next/server";
 /**
- * 
+ *
  * @param {searchParams} req - This will get
- * @returns 
+ * @returns
  */
 
 export async function GET(req) {
   try {
     await connectToDatabase();
-    console.log('route')
+    console.log("route");
     const { searchParams } = new URL(req.url);
-    const search = searchParams.get('search');
-    const skip = parseInt(searchParams.get('skip'), 10 ) || 0
-    const limit = parseInt(searchParams.get('limit'), 10) || 50
-    let query ={};
-    const category = searchParams.get('category');
-    const sort = searchParams.get('sortOption');
-    const tags = searchParams.get('tags');
-    const ingredients = searchParams.get('ingredients');
-    const numSteps = parseInt(searchParams.get('numSteps'), 10); // Convert numSteps to integer
-   console.log('1234f')
-    
+    const search = searchParams.get("search");
+    const skip = parseInt(searchParams.get("skip"), 10) || 0;
+    const limit = parseInt(searchParams.get("limit"), 10) || 50;
+    let query = {};
+    const category = searchParams.get("category");
+    const sort = searchParams.get("sortOption");
+    const tags = searchParams.get("tags");
+    const ingredients = searchParams.get("ingredients");
+    const numSteps = parseInt(searchParams.get("numSteps"), 10); // Convert numSteps to integer
+    console.log("1234f");
 
     // Build the query based on the search parameter
     if (search) {
-      query.title = { $regex: search, $options: 'i' };
+      query.title = { $regex: search, $options: "i" };
     }
 
     // Filter by category if provided
-    if (category && category !== 'All Categories') {
+    if (category && category !== "All Categories") {
       query.category = category;
     }
 
     // Filter by tags if provided
     if (tags && tags.length > 0) {
-      query.tags = { $all: tags.split(',') }; // Matches all selected tags
+      query.tags = { $all: tags.split(",") }; // Matches all selected tags
     }
 
     // Filter by ingredients if provided
     if (ingredients && ingredients.length > 0) {
-      const ingredientsArray = ingredients.split(','); // Assuming ingredients are comma-separated in the query
-      query['$and'] = ingredientsArray.map(ingredient => ({
-        [`ingredients.${ingredient}`]: { $exists: true }
+      const ingredientsArray = ingredients.split(","); // Assuming ingredients are comma-separated in the query
+      query["$and"] = ingredientsArray.map((ingredient) => ({
+        [`ingredients.${ingredient}`]: { $exists: true },
       }));
     }
 
@@ -55,47 +54,52 @@ export async function GET(req) {
     // Define the sorting options based on the sort parameter
     let sortOptions = {};
     switch (sort) {
-      case 'prep_asc':
+      case "prep_asc":
         sortOptions.prep = 1;
         break;
-      case 'prep_desc':
+      case "prep_desc":
         sortOptions.prep = -1;
         break;
-      case 'cook_asc':
+      case "cook_asc":
         sortOptions.cook = 1;
         break;
-      case 'cook_desc':
+      case "cook_desc":
         sortOptions.cook = -1;
         break;
-      case 'steps_asc':
+      case "steps_asc":
         sortOptions.instructions = 1;
         break;
-      case 'steps_desc':
+      case "steps_desc":
         sortOptions.instructions = -1;
         break;
-      case 'newest':
+      case "newest":
         sortOptions.createdAt = -1;
         break;
-      case 'oldest':
+      case "oldest":
         sortOptions.createdAt = 1;
         break;
       default:
         break;
     }
-   console.log(query,'query')
+    console.log(query, "query");
     // Fetch recipes with the built query and sort options, limited to 50 results
-    const recipes = await Recipe.find(query).sort(sortOptions).limit(limit).skip(skip).lean();
-    console.log("this is recipes:",recipes)
+    const recipes = await Recipe.find(query)
+      .sort(sortOptions)
+      .limit(limit)
+      .skip(skip)
+    console.log("this is recipes:", recipes);
 
-  // console.log(recipes,'123456yhb')
+     console.log(recipes,'123456yhb')
     // Get the count of recipes matching the search or category filter
     let count;
-    if (search || (category && category !== 'All Categories' && category !== 'all')) {
+    if (
+      search ||
+      (category && category !== "All Categories" && category !== "all")
+    ) {
       count = recipes.length;
     }
 
     return NextResponse.json({ success: true, recipes, count });
-
   } catch (error) {
     console.error("Error searching recipes:", error);
     return NextResponse.json(
@@ -104,4 +108,3 @@ export async function GET(req) {
     );
   }
 }
-

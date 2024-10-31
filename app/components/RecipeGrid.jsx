@@ -1,20 +1,19 @@
 // app/components/RecipeGrid.jsx
-import React from 'react';
-import RecipeCard from './RecipeCard'; // Update this import
-import Paginate from './Paginate';
-import SkeletonGrid from './SkeletonMain';
-import FilterSortComponent from './FilterSort';
-import { getCategories } from '../../lib/api';
-import { getRecipes } from '../../lib/data';
+import React from "react";
+import RecipeCard from "./RecipeCard"; // Update this import
+import Paginate from "./Paginate";
+import SkeletonGrid from "./SkeletonMain";
+import FilterSortComponent from "./FilterSort";
+import { getCategories ,getRecipes } from "../lib/api";
 
 const RecipeGrid = async ({ searchParams }) => {
-  const category = searchParams?.category || '';
-  const tags = searchParams?.tags ? searchParams.tags.split(',') : [];
-  const numSteps = parseInt(searchParams?.numSteps) || '';
-  const ingredients = searchParams?.ingredients || '';
-  const sortOption = searchParams?.sortOption || '';
+  const category = searchParams?.category || "";
+  const tags = searchParams?.tags ? searchParams.tags.split(",") : [];
+  const numSteps = parseInt(searchParams?.numSteps) || "";
+  const ingredients = searchParams?.ingredients || "";
+  const sortOption = searchParams?.sortOption || "";
   const skip = parseInt(searchParams.skip, 10) || 0;
-  const search = searchParams.search || '';
+  const search = searchParams.search || "";
 
   try {
     // Fetch recipes and categories based on URL parameters
@@ -26,7 +25,7 @@ const RecipeGrid = async ({ searchParams }) => {
         ingredients,
         sortOption,
         skip,
-        search
+        search,
       }),
       getCategories(),
     ]);
@@ -37,7 +36,11 @@ const RecipeGrid = async ({ searchParams }) => {
     return (
       <div className="max-w-7xl mx-auto px-1 sm:px-6 lg:px-8 py-8">
         {/* Pass categories to FilterSortComponent */}
-        <FilterSortComponent categories={categories} search={search} count1={recipeData.count} />
+        <FilterSortComponent
+          categories={categories}
+          search={search}
+          count1={recipeData.count}
+        />
 
         {recipes.length === 0 ? (
           <div className="min-h-[400px] flex items-center justify-center">
@@ -51,11 +54,9 @@ const RecipeGrid = async ({ searchParams }) => {
               <RecipeCard key={recipe._id} recipe={recipe} />
             ))}
           </div>
-          
         )}
         <Paginate skip={skip} />
       </div>
-      
     );
   } catch (error) {
     return (
@@ -69,5 +70,3 @@ const RecipeGrid = async ({ searchParams }) => {
 };
 
 export default RecipeGrid;
-
-
