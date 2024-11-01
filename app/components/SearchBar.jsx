@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -17,70 +17,35 @@ const SearchBar = ({ isOpen, onClose }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+
   const router = useRouter();
-  let debounceTimeout;
 
-  // debounce function: delays function execution by delay ms
-  const debounce = (func, delay) => {
-    clearTimeout(debounceTimeout);
-    debounceTimeout = setTimeout(func, delay);
-  };
-
-  // fetch search suggestions after debounce delay
-  const fetchSuggestions = async (query) => {
-    if (!query.trim()) return; 
-
-    try { 
+  // debounce function to handle delayed search
+  const debounceSearch = useCallback(() => {
+    // only trigger search if the query is 3 or more characters
+    if ( searchQuery.trim().length >= 3 ) {
       setIsLoading(true);
-            const response = await fetch(`/api/recipe/?search=${encodeURIComponent(query)}&limit=10`);
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
+      fetchSuggestions(searchQuery); 
+    } else {
+      setSearchResults([]);
+      setHasSearched(false);
+    }
+  }, [ searchQuery ]);
 
-            const data = await response.json();
-            if (data.success) {
-              setSearchResults(data.recipes);
-              setHasSearched(true);
-            } else {
-              console.error('Search failed:', data.message);
-              setSearchResults([]);
-              setHasSearched(true);
-            }
-          } catch (error) {
-            console.error('Error fetching search results:', error);
-            setSearchResults([]);
-            setHasSearched(true);
-          } finally {
-            setIsLoading(false);
-          }
-        };
+  useEffect(() => {
+    const debounceTimeout = setTimeout(debounceSearch, 500); // delay of 500ms after typing stops
 
- // useEffect(() => {
-  //   if (searchQuery.trim().length >= 3) {
-  //     const debounceTimeout = setTimeout(() => {
-  //       fetchSuggestions(searchQuery);
-  //     }, 300);
-  //     return () => clearTimeout(debounceTimeout);
-  //   } else {
-  //     setSearchResults([]);
-  //     setHasSearched(false);
-  //   }
-  // }, [searchQuery]);
+    return () => clearTimeout(debounceTimeout); // cancel previous timer if typing resumes
+  }, [searchQuery, debounceSearch]);
 
-  // handle search query changes with debounce for optimal UX
-  // debounce auto submission (short query)
-  const handleSearchChange = (e) => {
+  // handle input changes and reset search status 
+   const handleSearchChange = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
     setHasSearched(false);
+  };
 
-    if (query.length >= 3) {
-      debounce(() => fetchSuggestions(query), 500); // delay for 500ms
-  } else {
-    // clear results if query is too short
-    setSearchResults([]);
-  }
-}; 
-
+  // highlight matched text within recipe titles
   const highlightMatch = (text, query) => {
     if (!query) return text;
     
@@ -98,6 +63,7 @@ const SearchBar = ({ isOpen, onClose }) => {
     );
   };
 
+  // fetch suggestions from the API
   const fetchSuggestions = async (query) => {
     try {
       setIsLoading(true);
@@ -127,12 +93,10 @@ const SearchBar = ({ isOpen, onClose }) => {
   };
 
   const handleSuggestionClick = (title) => {
-    const debounceTimeout = setTimeout(() => {
       router.push(`/?search=${encodeURIComponent(title)}`);
       onClose();
-    }, 500);
-    return () => clearTimeout(debounceTimeout);
-  };
+    };
+  
 
   return (
     <div 
