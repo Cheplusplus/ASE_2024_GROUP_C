@@ -51,9 +51,9 @@ const PeopleIcon = (
   </svg>
 );
 
-const RecipeCard = ({
-  recipe: { _id, title, images, prep, cook, servings, tags = [] },
-}) => {
+const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags = [] } }) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [intervalId, setIntervalId] = useState(null);
   const remainingTags = tags.length - MAX_VISIBLE_TAGS;
 
   return (
