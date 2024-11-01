@@ -17,7 +17,7 @@ const RecipeGrid = async ({ searchParams }) => {
 
   try {
     // Fetch recipes and categories based on URL parameters
-    const [recipeData,] = await Promise.all([
+    const [recipeData,categoriesData] = await Promise.all([
       getRecipes({
         category,
         tags,
@@ -26,11 +26,11 @@ const RecipeGrid = async ({ searchParams }) => {
         sortOption,
         skip,
         search,
-      })
+      }),getCategories()
     ]);
 
     const recipes = recipeData.recipes;
-    const categories = []
+    const categories = categoriesData
 
     return (
       <div className="max-w-7xl mx-auto px-1 sm:px-6 lg:px-8 py-8">
