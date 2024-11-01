@@ -71,7 +71,12 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
 
   return (
     <Link href={`/recipes/${_id}`} className="block">
-      <div className="group relative bg-white rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg">
+      <div 
+      className="group relative bg-white rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      
+      >
         {/* Main Image Container */}
         <div className="relative h-64 overflow-hidden">
           <Image
