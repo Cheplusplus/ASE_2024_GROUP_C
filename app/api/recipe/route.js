@@ -89,8 +89,8 @@ export async function GET(req) {
       .limit(limit)
       .skip(skip)
    
-      const recipesTotal = await Recipe.find(query)
-      .sort(sortOptions)
+      // const recipesTotal = await Recipe.find(query)
+      // .sort(sortOptions)
 
 
 
