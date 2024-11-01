@@ -1,11 +1,11 @@
-import { connectToDatabaseCate } from "@/app/lib/connectToCategoriesDB";
+import connectToDatabase from '@/app/lib/connectMongoose';
 // pages/api/categories.js
 import { NextResponse } from 'next/server';
 import Categories from "@/app/models/categories";
 
 export async function GET() {
     // Connect to MongoDB
-    await connectToDatabaseCate();
+    await connectToDatabase();
     console.log('123concatea')
     try {
       console.log('123concate')
