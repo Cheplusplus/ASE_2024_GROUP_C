@@ -89,11 +89,6 @@ export async function GET(req) {
       .limit(limit)
       .skip(skip)
    
-    
-
-
-
-   console.log(recipes[0],'123456yhb')
    // Get the count of recipes matching the search or category filter
     let count;
     if (

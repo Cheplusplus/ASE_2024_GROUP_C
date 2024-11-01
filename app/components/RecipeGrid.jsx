@@ -31,8 +31,7 @@ const RecipeGrid = async ({ searchParams }) => {
     ]);
 
     const recipes = recipeData.recipes;
-    const categories = categoriesData
-     console.log(categories)
+    const categories = categoriesData;
     return (
       <div className="max-w-7xl mx-auto px-1 sm:px-6 lg:px-8 py-8">
         {/* Pass categories to FilterSortComponent */}
