@@ -63,6 +63,12 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
     setIntervalId(id);
   };
 
+  const handleMouseLeave = () => {
+    clearInterval(intervalId);
+    setIntervalId(null);
+    setCurrentImageIndex(0); // Reset to the first image
+  };
+
   return (
     <Link href={`/recipes/${_id}`} className="block">
       <div className="group relative bg-white rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg">
