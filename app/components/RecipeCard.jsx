@@ -56,6 +56,13 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
   const [intervalId, setIntervalId] = useState(null);
   const remainingTags = tags.length - MAX_VISIBLE_TAGS;
 
+  const handleMouseEnter = () => {
+    const id = setInterval(() => {
+      setCurrentImageIndex(prevIndex => (prevIndex + 1) % images.length);
+    }, 1000); // Change image every 1 second
+    setIntervalId(id);
+  };
+
   return (
     <Link href={`/recipes/${_id}`} className="block">
       <div className="group relative bg-white rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg">
