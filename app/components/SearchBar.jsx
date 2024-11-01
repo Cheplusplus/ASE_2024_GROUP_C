@@ -17,8 +17,14 @@ const SearchBar = ({ isOpen, onClose }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
-
   const router = useRouter();
+  let debounceTimeout;
+
+  // debounce function: delays function execution by delay ms
+  const debounce = (func, delay) => {
+    clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(func, delay);
+  };
 
   useEffect(() => {
     if (searchQuery.trim().length >= 3) {
