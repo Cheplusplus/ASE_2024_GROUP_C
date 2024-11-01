@@ -54,24 +54,32 @@ const SearchBar = ({ isOpen, onClose }) => {
           }
         };
 
+ // useEffect(() => {
+  //   if (searchQuery.trim().length >= 3) {
+  //     const debounceTimeout = setTimeout(() => {
+  //       fetchSuggestions(searchQuery);
+  //     }, 300);
+  //     return () => clearTimeout(debounceTimeout);
+  //   } else {
+  //     setSearchResults([]);
+  //     setHasSearched(false);
+  //   }
+  // }, [searchQuery]);
 
-  useEffect(() => {
-    if (searchQuery.trim().length >= 3) {
-      const debounceTimeout = setTimeout(() => {
-        fetchSuggestions(searchQuery);
-      }, 300);
-      return () => clearTimeout(debounceTimeout);
-    } else {
-      setSearchResults([]);
-      setHasSearched(false);
-    }
-  }, [searchQuery]);
-
+  // handle search query changes with debounce for optimal UX
+  // debounce auto submission (short query)
   const handleSearchChange = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
     setHasSearched(false);
-  };
+
+    if (query.length >= 3) {
+      debounce(() => fetchSuggestions(query), 500); // delay for 500ms
+  } else {
+    // clear results if query is too short
+    setSearchResults([]);
+  }
+}; 
 
   const highlightMatch = (text, query) => {
     if (!query) return text;
