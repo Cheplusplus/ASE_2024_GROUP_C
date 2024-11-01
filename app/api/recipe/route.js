@@ -89,19 +89,18 @@ export async function GET(req) {
       .limit(limit)
       .skip(skip)
    
-      // const recipesTotal = await Recipe.find(query)
-      // .sort(sortOptions)
+    
 
 
 
    console.log(recipes[0],'123456yhb')
-    // Get the count of recipes matching the search or category filter
+   // Get the count of recipes matching the search or category filter
     let count;
     if (
       search ||
       (category && category !== "All Categories" && category !== "all")
     ) {
-      count = recipesTotal.length;
+      count = recipes.length;
     }
 
     return NextResponse.json({ success: true, recipes, count });
