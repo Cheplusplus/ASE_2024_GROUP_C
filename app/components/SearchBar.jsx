@@ -26,6 +26,35 @@ const SearchBar = ({ isOpen, onClose }) => {
     debounceTimeout = setTimeout(func, delay);
   };
 
+  // fetch search suggestions after debounce delay
+  const fetchSuggestions = async (query) => {
+    if (!query.trim()) return; 
+
+    try { 
+      setIsLoading(true);
+            const response = await fetch(`/api/recipe/?search=${encodeURIComponent(query)}&limit=10`);
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+
+            const data = await response.json();
+            if (data.success) {
+              setSearchResults(data.recipes);
+              setHasSearched(true);
+            } else {
+              console.error('Search failed:', data.message);
+              setSearchResults([]);
+              setHasSearched(true);
+            }
+          } catch (error) {
+            console.error('Error fetching search results:', error);
+            setSearchResults([]);
+            setHasSearched(true);
+          } finally {
+            setIsLoading(false);
+          }
+        };
+
+
   useEffect(() => {
     if (searchQuery.trim().length >= 3) {
       const debounceTimeout = setTimeout(() => {
