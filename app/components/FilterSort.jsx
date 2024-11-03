@@ -22,30 +22,37 @@ const FilterSortComponent = ({ categories = [],count1=null,search }) => {
   const [count,setCount] = useState(count1)
   const params = new URLSearchParams();
   // Apply the filters by updating the URL query parameters
-  const applyFilters = (value) => {
-    if(typeof value == 'object'){
-      value = sortOption
+  const applyFilters = (value,clear=false) => {
+    if(!clear){
+      if(typeof value == 'object'){
+        value = sortOption
+      }
+      console.log(value == sortOption)
+      console.log(selectedCategory,sortOption,value)
+      if (selectedCategory) params.set('category', selectedCategory);
+      if (selectedTags.length) params.set('tags', selectedTags.join(','));
+      if (numSteps > 0) params.set('numSteps', numSteps);
+      if (ingredients) params.set('ingredients', ingredients);
+      if (value) params.set('sortOption', value);
+      if (search) params.set('search', search);
+      // Store filters in localStorage
+      setIsOpen(false)
+  
+      router.push(`/?${params.toString()}`);
+      console.log(count1)
+      if(count1){
+        setDisplayCount(true);
+        }
+        else{
+          setDisplayCount(false)
+        }
+        setCount(count1);
     }
-    console.log(value == sortOption)
-    console.log(selectedCategory,sortOption,value)
-    if (selectedCategory) params.set('category', selectedCategory);
-    if (selectedTags.length) params.set('tags', selectedTags.join(','));
-    if (numSteps > 0) params.set('numSteps', numSteps);
-    if (ingredients) params.set('ingredients', ingredients);
-    if (value) params.set('sortOption', value);
-    if (search) params.set('search', search);
-    // Store filters in localStorage
-    setIsOpen(false)
+    else{
+      setIsOpen(false)
+      router.push('/')
+    }
 
-    router.push(`/?${params.toString()}`);
-    console.log(count1)
-    if(count1){
-      setDisplayCount(true);
-      }
-      else{
-        setDisplayCount(false)
-      }
-      setCount(count1);
   };
 
   const clearFilters = () => {
@@ -55,7 +62,7 @@ const FilterSortComponent = ({ categories = [],count1=null,search }) => {
     setNumSteps(0);
     setIngredients('');
     setSortOption('default');
-    applyFilters();
+    applyFilters({},true);
   };
 
   const handleTagInputChange = (e) => {
