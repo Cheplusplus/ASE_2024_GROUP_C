@@ -22,7 +22,7 @@ export async function GET(req) {
     const tags = searchParams.get("tags");
     const ingredients = searchParams.get("ingredients");
     const numSteps = parseInt(searchParams.get("numSteps"), 10); // Convert numSteps to integer
-    console.log("1234f");
+    console.log(skip,"1234f");
 
     // Build the query based on the search parameter
     if (search) {
@@ -88,10 +88,8 @@ export async function GET(req) {
       .sort(sortOptions)
       .limit(limit)
       .skip(skip)
-    console.log("this is recipes:", recipes);
-
-   //console.log(recipes,'123456yhb')
-    // Get the count of recipes matching the search or category filter
+   
+   // Get the count of recipes matching the search or category filter
     let count;
     if (
       search ||

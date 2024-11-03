@@ -22,12 +22,17 @@ const FilterSortComponent = ({ categories = [],count1=null,search }) => {
   const [count,setCount] = useState(count1)
   const params = new URLSearchParams();
   // Apply the filters by updating the URL query parameters
-  const applyFilters = (value = sortOption) => {
+  const applyFilters = (value) => {
+    if(typeof value == 'object'){
+      value = sortOption
+    }
+    console.log(value == sortOption)
+    console.log(selectedCategory,sortOption,value)
     if (selectedCategory) params.set('category', selectedCategory);
     if (selectedTags.length) params.set('tags', selectedTags.join(','));
     if (numSteps > 0) params.set('numSteps', numSteps);
     if (ingredients) params.set('ingredients', ingredients);
-    if (sortOption) params.set('sortOption', value);
+    if (value) params.set('sortOption', value);
     if (search) params.set('search', search);
     // Store filters in localStorage
     setIsOpen(false)
