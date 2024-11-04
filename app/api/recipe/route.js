@@ -1,47 +1,60 @@
+
 import connectToDatabase from "@/app/lib/connectMongoose";
 import Recipe from "@/app/models/Recipe";
+import { NextResponse } from "next/server";
+/**
+ *
+ * @param {searchParams} req - This will get
+ * @returns
+ */
 
+export const dynamic = 'force-dynamic';  // Add this line to handle dynamic rendering
 
 export async function GET(req) {
   try {
     await connectToDatabase();
-    console.log("Route accessed");
+    console.log("route");
+    const { searchParams } = new URL(req.url);
+    const search = searchParams.get("search");
+    const skip = parseInt(searchParams.get("skip"), 10) || 0;
+    const limit = parseInt(searchParams.get("limit"), 10) || 50;
+    let query = {};
+    const category = searchParams.get("category");
+    const sort = searchParams.get("sortOption");
+    const tags = searchParams.get("tags");
+    const ingredients = searchParams.get("ingredients");
+    const numSteps = parseInt(searchParams.get("numSteps"), 10); // Convert numSteps to integer
+    console.log(skip,"1234f");
 
-    const { query } = req;
-    const search = query?.search;
-    const skip = parseInt(query?.skip, 10) || 0;
-    const limit = parseInt(query?.limit, 10) || 50;
-    const category = query?.category;
-    const sort = query?.sortOption;
-    const tags = query?.tags;
-    const ingredients = query?.ingredients;
-    const numSteps = parseInt(query?.numSteps, 10);
-
-    let queryFilter = {};
-
+    // Build the query based on the search parameter
     if (search) {
-      queryFilter.title = { $regex: search, $options: "i" };
+      query.title = { $regex: search, $options: "i" };
     }
 
+    // Filter by category if provided
     if (category && category !== "All Categories") {
-      queryFilter.category = category;
+      query.category = category;
     }
 
-    if (tags) {
-      queryFilter.tags = { $all: tags.split(",") };
+    // Filter by tags if provided
+    if (tags && tags.length > 0) {
+      query.tags = { $all: tags.split(",") }; // Matches all selected tags
     }
 
-    if (ingredients) {
-      const ingredientsArray = ingredients.split(",");
-      queryFilter["$and"] = ingredientsArray.map((ingredient) => ({
+    // Filter by ingredients if provided
+    if (ingredients && ingredients.length > 0) {
+      const ingredientsArray = ingredients.split(","); // Assuming ingredients are comma-separated in the query
+      query["$and"] = ingredientsArray.map((ingredient) => ({
         [`ingredients.${ingredient}`]: { $exists: true },
       }));
     }
 
+    // Filter by number of steps if provided
     if (numSteps) {
-      queryFilter.instructions = { $size: numSteps };
+      query.instructions = { $size: numSteps };
     }
 
+    // Define the sorting options based on the sort parameter
     let sortOptions = {};
     switch (sort) {
       case "prep_asc":
@@ -71,37 +84,33 @@ export async function GET(req) {
       default:
         break;
     }
-
-    console.log("Finding recipes...");
-    const recipes = await Recipe.find(queryFilter)
+    console.log(query, "query");
+    // Fetch recipes with the built query and sort options, limited to 50 results
+    const recipes = await Recipe.find(query)
       .sort(sortOptions)
       .limit(limit)
-      .skip(skip);
+      .skip(skip)
+   
+   // Get the count of recipes matching the search or category filter
+    let count;
+    if (
+      search ||
+      (category && category !== "All Categories" && category !== "all")
+    ) {
+      count = recipes.length;
+    }
 
-    const count = recipes.length;
-    console.log(recipes[0]);
-
-    // Create a response with custom headers using the Response constructor
-    return new Response(JSON.stringify({ success: true, recipes, count }), {
-      status: 200,
+    return NextResponse.json({ success: true, recipes, count }, {
       headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
       },
     });
   } catch (error) {
     console.error("Error searching recipes:", error);
-
-    // Handle errors with a 500 status and custom response
-    return new Response(
-      JSON.stringify({ success: false, message: "Failed to search recipes." }),
-      {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-      }
+    return NextResponse.json(
+      { success: false, message: "Failed to search recipes." },
+      { status: 500 }
     );
   }
 }
