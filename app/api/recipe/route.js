@@ -14,6 +14,7 @@ export async function GET(req) {
   try {
     await connectToDatabase();
     console.log("route");
+    console.log(req)
     const { searchParams } = new URL(req.url);
     const search = searchParams.get("search");
     const skip = parseInt(searchParams.get("skip"), 10) || 0;

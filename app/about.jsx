@@ -1,4 +1,4 @@
-const AboutUs = () => {
+const AboutUs = () =>{
     return (
         <section className="py-24 bg-white">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -10,20 +10,26 @@ const AboutUs = () => {
                 </div>
                 <div className="flex flex-wrap mt-12 justify-center gap-y-14 max-w-3xl mx-auto lg:max-w-full">
                     {[
-                        { name: "Nomusa Mtshali", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/nomusamtshali",  linkin: "https://www.linkedin.com/in/nomusa-mtshali/" },
-                        { name: "Phillip Bogopane", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/Phillip-tech",  linkin: "https://linkedin.com/in/username" },
-                        { name: "Kutlwano Ramotebele", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/kutlwano10",  linkin: "https://www.linkedin.com/in/kutlwano-ramotebele-769461296/" },
-                        { name: "Kealeboga A Ntheledi", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/Kea-Angel-Ntheledi",  linkin: "https://linkedin.com/in/username" },
-                        { name: "Koketso Moilwe", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/KoketsoMoilwe20",  linkin: "https://www.linkedin.com/in/koketsomoilwe/" },
+                        { name: "Nomusa Mtshali", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/nomusamtshali", linkin: "https://www.linkedin.com/in/nomusa-mtshali/" },
+                        { name: "Phillip Bogopane", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/Phillip-tech", linkin: "https://linkedin.com/in/username" },
+                        { name: "Kutlwano Ramotebele", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/kutlwano10", linkin: "https://www.linkedin.com/in/kutlwano-ramotebele-769461296/" },
+                        { name: "Kealeboga A Ntheledi", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/Kea-Angel-Ntheledi", linkin: "https://linkedin.com/in/username" },
+                        { name: "Koketso Moilwe", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/KoketsoMoilwe20", linkin: "https://www.linkedin.com/in/koketsomoilwe/" },
                         { name: "Karabo M. Radebe", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/Karabo-M-Radebe", linkin: "https://www.linkedin.com/in/karabo-m-radebe/" },
-                        { name: "Kitso Mogale", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/KitsoMogale",  linkin: "https://www.linkedin.com/in/kitso-mogale-200663321/" },
+                        { name: "Kitso Mogale", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/KitsoMogale", linkin: "https://www.linkedin.com/in/kitso-mogale-200663321/" },
                         { name: "Mmakgosana Makgaka", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/Mmakgosana", linkin: "https://www.linkedin.com/in/mmakgosana-makgaka-b32478313/" },
-                        { name: "Mateo Benzien", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/Mateo-Benzien",  linkin: "https://www.linkedin.com/in/mateo-benzien-857864302/" },
-                        { name: "Sabelo Mawela", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/SABELOMAWELA",  linkin: "https://www.linkedin.com/in/sabelo-mawela-480793296/" },
+                        { name: "Mateo Benzien", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/Mateo-Benzien", linkin: "https://www.linkedin.com/in/mateo-benzien-857864302/" },
+                        { name: "Sabelo Mawela", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/SABELOMAWELA", linkin: "https://www.linkedin.com/in/sabelo-mawela-480793296/" },
                     ].map((member, index) => (
                         <div key={index} className="group block text-center lg:w-1/5 sm:w-1/3 min-[450px]:w-1/2 w-full">
                             <div className="relative mb-5">
-                                <img src={member.imgSrc} alt={`${member.name} image`} className="w-28 h-28 rounded-2xl object-cover mx-auto transition-all duration-500 border-2 border-solid border-transparent group-hover:border-indigo-600"/>
+                                <Image 
+                                    src={member.imgSrc} 
+                                    alt={`${member.name} image`} 
+                                    width={112} // 112px for width
+                                    height={112} // 112px for height
+                                    className="rounded-2xl object-cover transition-all duration-500 border-2 border-solid border-transparent group-hover:border-indigo-600"
+                                />
                             </div>
                             <h4 className="text-xl text-gray-900 font-semibold text-center mb-2 transition-all duration-500 group-hover:text-indigo-600">{member.name}</h4>
                             <span className="text-gray-500 text-center block transition-all duration-500 group-hover:text-gray-900">{member.role}</span>

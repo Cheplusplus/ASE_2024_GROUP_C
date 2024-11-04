@@ -18,11 +18,13 @@ const RecipeDetailCard = ({ recipe }) => {
     <div className="grid items-start grid-cols-1 md:grid-cols-2 gap-6">
       <div className="w-full lg:sticky top-0 flex flex-col gap-3">
         <div className="w-full">
-          <img
-            src={selectedImage}
-            alt={recipe.title}
-            className="w-[540px] h-[403px] rounded-lg object-cover"
-          />
+        <Image
+    src={selectedImage}
+    alt={recipe.title}
+    width={540} // Define the width directly in the component
+    height={403} // Define the height directly in the component
+    className="rounded-lg object-cover"
+/>
         </div>
         <div className="flex flex-wrap gap-2 mt-4">
           {recipe.images.map((image, index) => (
