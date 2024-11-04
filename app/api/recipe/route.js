@@ -85,12 +85,17 @@ export async function GET(req) {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
       },
-    });
+    },{status:200});
   } catch (error) {
     console.error("Error searching recipes:", error);
     return NextResponse.json(
       { success: false, message: "Failed to search recipes." },
-      { status: 500 }
+      { status: 500 } , {
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      }
     );
   }
 }
