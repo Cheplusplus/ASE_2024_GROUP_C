@@ -15,7 +15,7 @@ export async function GET() {
       if (!categoryDoc) {
         return NextResponse.json({ message: "Categories not found" }, { status: 404 });
       }
-    //  console.log(categoryDoc)
+      console.log(categoryDoc.categories)
       // Send back the categories array
       return NextResponse.json({ categories: categoryDoc.categories }, { status: 200 });
     } catch (error) {
