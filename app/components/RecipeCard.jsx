@@ -1,4 +1,5 @@
-import React from 'react';
+"use client";
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -22,19 +23,40 @@ const PeopleIcon = (
 );
 
 const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags = [] } }) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [intervalId, setIntervalId] = useState(null);
   const remainingTags = tags.length - MAX_VISIBLE_TAGS;
+
+  const handleMouseEnter = () => {
+    const id = setInterval(() => {
+      setCurrentImageIndex(prevIndex => (prevIndex + 1) % images.length);
+    }, 1000); // Change image every 1 second
+    setIntervalId(id);
+  };
+
+  const handleMouseLeave = () => {
+    clearInterval(intervalId);
+    setIntervalId(null);
+    setCurrentImageIndex(0); // Reset to the first image
+  };
 
   return (
     <Link href={`/recipes/${_id}`} className="block">
-      <div className="group relative bg-white rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg">
+      <div
+        className="group relative bg-white rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
         {/* Main Image Container */}
         <div className="relative h-64 overflow-hidden">
           <Image
-            src={images[0]}
+            priority = 'true'
+            src={images[currentImageIndex]}
             alt={title}
-            layout="fill"
-            objectFit="cover"
+            fill
+            style={{objectFit:"cover"}}
             className="transform transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw , (max-width:1200px)  50vw ,33vw"
           />
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
