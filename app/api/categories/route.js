@@ -17,7 +17,12 @@ export async function GET() {
       }
       console.log(categoryDoc.categories)
       // Send back the categories array
-      return NextResponse.json({ categories: categoryDoc.categories }, { status: 200 });
+      return NextResponse.json({ categories: categoryDoc.categories }, { status: 200 }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
     } catch (error) {
       console.error("Error fetching categories:", error);
       return NextResponse.json({ message: "Internal server error" }, { status: 500 });

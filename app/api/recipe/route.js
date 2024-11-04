@@ -100,7 +100,12 @@ export async function GET(req) {
       count = recipes.length;
     }
 
-    return NextResponse.json({ success: true, recipes, count });
+    return NextResponse.json({ success: true, recipes, count }, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+    });
   } catch (error) {
     console.error("Error searching recipes:", error);
     return NextResponse.json(
