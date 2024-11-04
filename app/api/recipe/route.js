@@ -2,8 +2,7 @@ import connectToDatabase from "@/app/lib/connectMongoose";
 import Recipe from "@/app/models/Recipe";
 import { NextResponse } from "next/server";
 
-
-//export const dynamic = 'force-dynamic'; 
+// export const dynamic = 'force-dynamic';
 
 export async function GET(req) {
   try {
@@ -74,27 +73,32 @@ export async function GET(req) {
       default:
         break;
     }
-   console.log('finding')
+
+    console.log("finding");
     const recipes = await Recipe.find(queryFilter)
       .sort(sortOptions)
       .limit(limit)
       .skip(skip);
 
     const count = recipes.length;
-    console.log(recipes[0])
-    const data = { success: true, recipes, count }
+    console.log(recipes[0]);
 
-    return NextResponse.json(data, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-    },{status:200});
+    return NextResponse.json(
+      { success: true, recipes, count },
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      }
+    );
   } catch (error) {
     console.error("Error searching recipes:", error);
     return NextResponse.json(
       { success: false, message: "Failed to search recipes." },
-      { status: 500 } , {
+      {
+        status: 500,
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
