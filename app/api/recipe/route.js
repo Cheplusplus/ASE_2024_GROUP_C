@@ -74,14 +74,14 @@ export async function GET(req) {
       default:
         break;
     }
-
+   console.log('finding')
     const recipes = await Recipe.find(queryFilter)
       .sort(sortOptions)
       .limit(limit)
       .skip(skip);
 
     const count = recipes.length;
-    //console.log(recipes[0])
+    console.log(recipes[0])
 
     return NextResponse.json({ success: true, recipes, count }, {
       headers: {
