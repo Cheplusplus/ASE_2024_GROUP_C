@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -20,24 +20,42 @@ const SearchBar = ({ isOpen, onClose }) => {
 
   const router = useRouter();
 
-  useEffect(() => {
-    if (searchQuery.trim().length >= 3) {
-      const debounceTimeout = setTimeout(() => {
-        fetchSuggestions(searchQuery);
-      }, 300);
-      return () => clearTimeout(debounceTimeout);
+  // debounce function to handle delayed search
+  const debounceSearch = useCallback(() => {
+    // only trigger search if the query is 3 or more characters
+    if ( searchQuery.trim().length >= 3 ) {
+      setIsLoading(true);
+      fetchSuggestions(searchQuery); 
     } else {
       setSearchResults([]);
       setHasSearched(false);
     }
-  }, [searchQuery]);
+  }, [ searchQuery ]);
 
-  const handleSearchChange = (e) => {
+useEffect(() => {
+  const debounceTimeout = setTimeout(() => {
+    debounceSearch();
+  }, 500); 
+  
+  return () => clearTimeout(debounceTimeout);
+}, [searchQuery, debounceSearch]);
+
+ /**
+  * handles changes to the search input
+  * resets search status and updates query state
+  */
+   const handleSearchChange = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
     setHasSearched(false);
   };
 
+   /**
+   * Highlights matching text within search results
+   * @param {string} text - The full text to search within
+   * @param {string} query - The search query to highlight
+   * @returns {JSX.Element} Text with highlighted matches
+   */
   const highlightMatch = (text, query) => {
     if (!query) return text;
     
@@ -102,8 +120,7 @@ const SearchBar = ({ isOpen, onClose }) => {
     const debounceTimeout = setTimeout(() => {
       router.push(`/?search=${encodeURIComponent(title)}`);
       onClose();
-    }, 500);
-    return () => clearTimeout(debounceTimeout);
+    })
   };
 
   return (
