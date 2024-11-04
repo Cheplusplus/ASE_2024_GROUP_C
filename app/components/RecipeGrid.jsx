@@ -30,7 +30,7 @@ const RecipeGrid = async ({ searchParams }) => {
     //   getCategories()
     // ]);
 
-    const recipeData = getRecipes({
+    const recipeData = await getRecipes({
           category,
           tags,
           numSteps,
@@ -39,7 +39,8 @@ const RecipeGrid = async ({ searchParams }) => {
           skip,
           search,
         });
-    const categoriesData = getCategories()
+        console.log(recipeData,'slide 123')
+    const categoriesData = await getCategories()
     console.log('route 123')
     const recipes = recipeData.recipes;
     const categories = categoriesData;
