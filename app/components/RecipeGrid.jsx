@@ -17,18 +17,6 @@ const RecipeGrid = async ({ searchParams }) => {
 
   try {
     // Fetch recipes and categories based on URL parameters
-    // const [recipeData,categoriesData] = await Promise.all([
-    //   getRecipes({
-    //     category,
-    //     tags,
-    //     numSteps,
-    //     ingredients,
-    //     sortOption,
-    //     skip,
-    //     search,
-    //   }),
-    //   getCategories()
-    // ]);
 
     const recipeData = await getRecipes({
           category,
@@ -39,10 +27,9 @@ const RecipeGrid = async ({ searchParams }) => {
           skip,
           search,
         });
-        console.log(recipeData,'slide 123')
+        console.log(recipeData[0],'slide 123')
     const categoriesData = await getCategories()
-    console.log('route 123')
-    const recipes = recipeData.recipes;
+    const recipes = recipeData;
     const categories = categoriesData;
     return (
       <div className="max-w-7xl mx-auto px-1 sm:px-6 lg:px-8 py-8">

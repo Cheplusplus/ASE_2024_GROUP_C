@@ -10,7 +10,7 @@ export async function getRecipes({ category, tags, numSteps, ingredients, sortOp
   const data = await res.json();
   console.log(data.recipes[0])
   //console.log(data)
-  return  data;
+  return  data.recipes;
 }
   
   export async function getCategories() {
@@ -20,7 +20,7 @@ export async function getRecipes({ category, tags, numSteps, ingredients, sortOp
     if (!res.statusText == 'OK') throw new Error('Failed to fetch categories');
     const data = await res.json();
     console.log(data)
-    return  [];
+    return  data.categories;
   }
 
   

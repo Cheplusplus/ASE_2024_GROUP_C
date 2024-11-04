@@ -18,6 +18,7 @@ export default function RecipeDetail({ params }) {
     const fetchRecipe = async (id) => {
       try {
         const response = await fetch(`/api/recipe/${id}`);
+        console.log(response)
         if (!response.ok) {
           throw new Error(`Failed to fetch recipe: ${response.statusText}`);
         }
