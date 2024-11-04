@@ -17,18 +17,29 @@ const RecipeGrid = async ({ searchParams }) => {
 
   try {
     // Fetch recipes and categories based on URL parameters
-    const [recipeData,categoriesData] = await Promise.all([
-      getRecipes({
-        category,
-        tags,
-        numSteps,
-        ingredients,
-        sortOption,
-        skip,
-        search,
-      }),
-      getCategories()
-    ]);
+    // const [recipeData,categoriesData] = await Promise.all([
+    //   getRecipes({
+    //     category,
+    //     tags,
+    //     numSteps,
+    //     ingredients,
+    //     sortOption,
+    //     skip,
+    //     search,
+    //   }),
+    //   getCategories()
+    // ]);
+
+    const recipeData = getRecipes({
+          category,
+          tags,
+          numSteps,
+          ingredients,
+          sortOption,
+          skip,
+          search,
+        });
+    const categoriesData = getCategories()
     console.log('route 123')
     const recipes = recipeData.recipes;
     const categories = categoriesData;
