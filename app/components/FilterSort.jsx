@@ -15,6 +15,7 @@ import {
 } from "./ui/select";
 import { Button } from "./ui/button";
 import { Slider } from "./ui/slider";
+import { Alert, AlertDescription } from "./ui/alert";
 
 const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
   // State management
@@ -24,6 +25,7 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
   const [numSteps, setNumSteps] = useState([0]);
   const [ingredients, setIngredients] = useState('');
   const [sortOption, setSortOption] = useState('default');
+  const [filteredCount, setFilteredCount] = useState(recipes.length);
 
   // Extract unique categories and tags
   const categories = ['all', ...new Set(recipes.map(recipe => recipe.category))];
@@ -142,6 +144,7 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
         break;
     }
 
+    setFilteredCount(filteredRecipes.length);
     onFilterSort(filteredRecipes);
   };
 
@@ -200,6 +203,20 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
           </Button>
         </div>
       </div>
+
+      {filteredCount === 0 && (
+        <Alert className="mb-6">
+          <AlertDescription>
+            No recipes match your current filters. Try adjusting your criteria or{" "}
+            <button
+              onClick={clearFilters}
+              className="text-blue-600 hover:text-blue-800 underline"
+            >
+              clear all filters
+            </button>.
+          </AlertDescription>
+        </Alert>
+      )}
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-[375px] [&>button]:hidden">
@@ -283,7 +300,7 @@ const FilterSortComponent = ({ recipes = [], onFilterSort }) => {
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">
-                Number of Steps: {numSteps[0]}
+                Minimum Number of Steps: {numSteps[0]}
               </label>
               <Slider
                 value={numSteps}
