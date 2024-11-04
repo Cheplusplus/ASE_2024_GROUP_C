@@ -29,15 +29,17 @@ const RecipeDetailCard = ({ recipe }) => {
         </div>
         <div className="flex flex-wrap gap-2 mt-4">
           {recipe.images.map((image, index) => (
-            <img
-              key={index}
-              src={image}
-              alt={`Thumbnail ${index}`}
-              className={`w-16 h-16 rounded-md cursor-pointer object-cover ${
-                selectedImage === image ? "border-2 border-gray-800" : ""
-              }`}
-              onClick={() => setSelectedImage(image)}
-            />
+            <Image
+    key={index}
+    src={image}
+    alt={`Thumbnail ${index}`}
+    width={64} // Set width to 64px (16 * 4) for the thumbnail
+    height={64} // Set height to 64px
+    className={`rounded-md cursor-pointer object-cover ${
+        selectedImage === image ? "border-2 border-gray-800" : ""
+    }`}
+    onClick={() => setSelectedImage(image)}
+/>
           ))}
         </div>
       </div>

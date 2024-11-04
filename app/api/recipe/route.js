@@ -1,61 +1,50 @@
-
 import connectToDatabase from "@/app/lib/connectMongoose";
 import Recipe from "@/app/models/Recipe";
 import { NextResponse } from "next/server";
-/**
- *
- * @param {searchParams} req - This will get
- * @returns
- */
 
-export const dynamic = 'force-dynamic';  // Add this line to handle dynamic rendering
+export const dynamic = 'force-dynamic';
 
 export async function GET(req) {
   try {
     await connectToDatabase();
-    console.log("route");
-    console.log(req)
-    const { searchParams } = new URL(req.url);
-    const search = searchParams.get("search");
-    const skip = parseInt(searchParams.get("skip"), 10) || 0;
-    const limit = parseInt(searchParams.get("limit"), 10) || 50;
-    let query = {};
-    const category = searchParams.get("category");
-    const sort = searchParams.get("sortOption");
-    const tags = searchParams.get("tags");
-    const ingredients = searchParams.get("ingredients");
-    const numSteps = parseInt(searchParams.get("numSteps"), 10); // Convert numSteps to integer
-    console.log(skip,"1234f");
+    console.log("Route accessed");
 
-    // Build the query based on the search parameter
+    // Access query parameters with req.query, or fallback to URL parsing
+    const { query } = req;
+    const search = query?.search || new URL(req.url).searchParams.get("search");
+    const skip = parseInt(query?.skip || new URL(req.url).searchParams.get("skip"), 10) || 0;
+    const limit = parseInt(query?.limit || new URL(req.url).searchParams.get("limit"), 10) || 50;
+    const category = query?.category || new URL(req.url).searchParams.get("category");
+    const sort = query?.sortOption || new URL(req.url).searchParams.get("sortOption");
+    const tags = query?.tags || new URL(req.url).searchParams.get("tags");
+    const ingredients = query?.ingredients || new URL(req.url).searchParams.get("ingredients");
+    const numSteps = parseInt(query?.numSteps || new URL(req.url).searchParams.get("numSteps"), 10);
+
+    let queryFilter = {};
+
     if (search) {
-      query.title = { $regex: search, $options: "i" };
+      queryFilter.title = { $regex: search, $options: "i" };
     }
 
-    // Filter by category if provided
     if (category && category !== "All Categories") {
-      query.category = category;
+      queryFilter.category = category;
     }
 
-    // Filter by tags if provided
-    if (tags && tags.length > 0) {
-      query.tags = { $all: tags.split(",") }; // Matches all selected tags
+    if (tags) {
+      queryFilter.tags = { $all: tags.split(",") };
     }
 
-    // Filter by ingredients if provided
-    if (ingredients && ingredients.length > 0) {
-      const ingredientsArray = ingredients.split(","); // Assuming ingredients are comma-separated in the query
-      query["$and"] = ingredientsArray.map((ingredient) => ({
+    if (ingredients) {
+      const ingredientsArray = ingredients.split(",");
+      queryFilter["$and"] = ingredientsArray.map(ingredient => ({
         [`ingredients.${ingredient}`]: { $exists: true },
       }));
     }
 
-    // Filter by number of steps if provided
     if (numSteps) {
-      query.instructions = { $size: numSteps };
+      queryFilter.instructions = { $size: numSteps };
     }
 
-    // Define the sorting options based on the sort parameter
     let sortOptions = {};
     switch (sort) {
       case "prep_asc":
@@ -85,22 +74,14 @@ export async function GET(req) {
       default:
         break;
     }
-    console.log(query, "query");
-    // Fetch recipes with the built query and sort options, limited to 50 results
-    const recipes = await Recipe.find(query)
+
+    const recipes = await Recipe.find(queryFilter)
       .sort(sortOptions)
       .limit(limit)
-      .skip(skip)
-   
-   // Get the count of recipes matching the search or category filter
-    let count;
-    if (
-      search ||
-      (category && category !== "All Categories" && category !== "all")
-    ) {
-      count = recipes.length;
-    }
-     console.log(recipes[0])
+      .skip(skip);
+
+    const count = recipes.length;
+
     return NextResponse.json({ success: true, recipes, count }, {
       headers: {
         'Content-Type': 'application/json',
