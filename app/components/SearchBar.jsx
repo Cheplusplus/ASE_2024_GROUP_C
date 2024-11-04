@@ -73,10 +73,12 @@ useEffect(() => {
     );
   };
 
-    /**
-   * Fetches search suggestions from the API
-   * Handles loading states and error cases
-   * @param {string} query - The search query to send to the API
+  /**
+   * Fetches search suggestions from the server and updates the search results.
+   *
+   * @param {string} query - The search query to fetch suggestions for.
+   *
+   * @returns {Promise<void>} - Resolves when the search results have been fetched.
    */
   const fetchSuggestions = async (query) => {
     try {
@@ -107,9 +109,12 @@ useEffect(() => {
   };
 
   /**
-   * Handles clicking on a search suggestion
-   * Implements debounced navigation to prevent multiple rapid clicks
-   * @param {string} title - The recipe title to search for
+   * Handles a click on a search suggestion by pushing the search query to the browser
+   * and closing the search bar after a short delay.
+   *
+   * @param {string} title - The title of the recipe to search for.
+   *
+   * @returns {() => void} A function to clear the timeout.
    */
   const handleSuggestionClick = (title) => {
     const debounceTimeout = setTimeout(() => {
