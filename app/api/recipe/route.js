@@ -3,12 +3,12 @@ import Recipe from "@/app/models/Recipe";
 import { NextResponse } from "next/server";
 
 
-export const dynamic = 'force-dynamic'; 
+//export const dynamic = 'force-dynamic'; 
 
 export async function GET(req) {
   try {
     await connectToDatabase();
-    console.log("Route accessed", req);
+    console.log("Route accessed");
 
     const { query } = req;
     const search = query?.search;
