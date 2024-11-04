@@ -8,6 +8,8 @@ import { NextResponse } from "next/server";
  * @returns
  */
 
+export const dynamic = 'force-dynamic';  // Add this line to handle dynamic rendering
+
 export async function GET(req) {
   try {
     await connectToDatabase();

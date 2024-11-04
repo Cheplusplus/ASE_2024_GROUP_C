@@ -197,7 +197,7 @@ const FilterSortComponent = ({ categories = [],count1=null,search }) => {
         <Button variant="primary" onClick={applyFilters} className="mt-4 w-full">
           Apply Filters
         </Button>
-        <Button variant="outline" onClick={() => setIsOpen(false)} className="mt-2 bg-red-800 hover:bg-red-700 w-full text-white">
+        <Button variant="outline" onClick={() => setIsOpen(false)} className="mt-2 bg-red-400 hover:bg-red-700 w-full text-white">
           Close
         </Button>
       </div>
