@@ -30,7 +30,7 @@ const RecipeGrid = async ({ searchParams }) => {
       getCategories()
     ]);
     console.log('route 123')
-    const recipes = [];
+    const recipes = recipeData.recipes;
     const categories = categoriesData;
     return (
       <div className="max-w-7xl mx-auto px-1 sm:px-6 lg:px-8 py-8">

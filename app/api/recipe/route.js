@@ -81,7 +81,7 @@ export async function GET(req) {
       .skip(skip);
 
     const count = recipes.length;
-    console.log(recipes[0])
+    //console.log(recipes[0])
 
     return NextResponse.json({ success: true, recipes, count }, {
       headers: {
