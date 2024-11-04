@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 export async function GET(req) {
   try {
     await connectToDatabase();
-    console.log("Route accessed");
+    console.log("Route accessed", req);
 
     const { query } = req;
     const search = query?.search;
