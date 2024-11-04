@@ -81,22 +81,20 @@ export async function GET(req) {
       .skip(skip);
 
     const count = recipes.length;
-    console.log(recipes[0]);
-
-    return NextResponse.json(
-      { success: true, recipes, count },
-      {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-      }
-    );
-  } catch (error) {
+    //console.log(recipes[0]);
+    const data = { success: true, recipes, count };
+    const response = new NextResponse(JSON.stringify(data), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+    });
+    return response;
+  }  catch (error) {
     console.error("Error searching recipes:", error);
-    return NextResponse.json(
-      { success: false, message: "Failed to search recipes." },
+    const errorResponse = new NextResponse(
+      JSON.stringify({ success: false, message: "Failed to search recipes." }),
       {
         status: 500,
         headers: {
@@ -105,5 +103,6 @@ export async function GET(req) {
         },
       }
     );
+    return errorResponse;
   }
 }
