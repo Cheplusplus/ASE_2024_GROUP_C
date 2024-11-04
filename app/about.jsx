@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 const AboutUs = () =>{
     return (
         <section className="py-24 bg-white">
