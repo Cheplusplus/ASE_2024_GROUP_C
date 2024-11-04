@@ -8,7 +8,7 @@ import { NextResponse } from "next/server";
  * @returns
  */
 
-// export const dynamic = 'force-dynamic';  // Add this line to handle dynamic rendering
+export const dynamic = 'force-dynamic';  // Add this line to handle dynamic rendering
 
 export async function GET(req) {
   try {
@@ -99,7 +99,7 @@ export async function GET(req) {
     ) {
       count = recipes.length;
     }
-     console.log(recipes)
+     console.log(recipes[0])
     return NextResponse.json({ success: true, recipes, count }, {
       headers: {
         'Content-Type': 'application/json',
