@@ -82,8 +82,9 @@ export async function GET(req) {
 
     const count = recipes.length;
     console.log(recipes[0])
+    const data = { success: true, recipes, count }
 
-    return NextResponse.json({ success: true, recipes, count }, {
+    return NextResponse.json(data, {
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
