@@ -83,7 +83,7 @@ export async function GET(req) {
     console.log(recipes[0]);
 
     // Create a response with custom headers using the Response constructor
-    return new Response(JSON.stringify({ success: true, recipes, count }), {
+    return new Response(JSON.stringify({  recipes }), {
       status: 200,
       headers: {
         "Content-Type": "application/json",

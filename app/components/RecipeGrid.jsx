@@ -15,7 +15,7 @@ const RecipeGrid = async ({ searchParams }) => {
   const skip = parseInt(searchParams.skip, 10) || 0;
   const search = searchParams.search || "";
 
-  // try {
+  try {
     // Fetch recipes and categories based on URL parameters
     const [recipeData,categoriesData] = await Promise.all([
       getRecipes({
@@ -57,16 +57,15 @@ const RecipeGrid = async ({ searchParams }) => {
         <Paginate skip={skip} />
       </div>
     );
-  
-  // } catch (error) {
-  //   return (
-  //     <div className="min-h-[400px] flex items-center justify-center">
-  //       <div className="text-red-500 bg-red-50 px-6 py-4 rounded-lg shadow-sm">
-  //         Error: {error.message}
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  } catch (error) {
+    return (
+      <div className="min-h-[400px] flex items-center justify-center">
+        <div className="text-red-500 bg-red-50 px-6 py-4 rounded-lg shadow-sm">
+          Error: {error.message}
+        </div>
+      </div>
+    );
+  }
 };
 
 export default RecipeGrid;
