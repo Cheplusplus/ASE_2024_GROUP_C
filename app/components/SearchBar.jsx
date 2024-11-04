@@ -32,20 +32,30 @@ const SearchBar = ({ isOpen, onClose }) => {
     }
   }, [ searchQuery ]);
 
-  useEffect(() => {
-    const debounceTimeout = setTimeout(debounceSearch, 500); // delay of 500ms after typing stops
+useEffect(() => {
+  const debounceTimeout = setTimeout(() => {
+    debounceSearch();
+  }, 500); 
+  
+  return () => clearTimeout(debounceTimeout);
+}, [searchQuery, debounceSearch]);
 
-    return () => clearTimeout(debounceTimeout); // cancel previous timer if typing resumes
-  }, [searchQuery, debounceSearch]);
-
-  // handle input changes and reset search status 
+ /**
+  * handles changes to the search input
+  * resets search status and updates query state
+  */
    const handleSearchChange = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
     setHasSearched(false);
   };
 
-  // highlight matched text within recipe titles
+   /**
+   * Highlights matching text within search results
+   * @param {string} text - The full text to search within
+   * @param {string} query - The search query to highlight
+   * @returns {JSX.Element} Text with highlighted matches
+   */
   const highlightMatch = (text, query) => {
     if (!query) return text;
     
@@ -63,7 +73,11 @@ const SearchBar = ({ isOpen, onClose }) => {
     );
   };
 
-  // fetch suggestions from the API
+    /**
+   * Fetches search suggestions from the API
+   * Handles loading states and error cases
+   * @param {string} query - The search query to send to the API
+   */
   const fetchSuggestions = async (query) => {
     try {
       setIsLoading(true);
@@ -92,11 +106,17 @@ const SearchBar = ({ isOpen, onClose }) => {
     }
   };
 
+  /**
+   * Handles clicking on a search suggestion
+   * Implements debounced navigation to prevent multiple rapid clicks
+   * @param {string} title - The recipe title to search for
+   */
   const handleSuggestionClick = (title) => {
+    const debounceTimeout = setTimeout(() => {
       router.push(`/?search=${encodeURIComponent(title)}`);
       onClose();
-    };
-  
+    })
+  };
 
   return (
     <div 
