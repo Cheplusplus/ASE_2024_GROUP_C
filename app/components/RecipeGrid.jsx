@@ -29,7 +29,7 @@ const RecipeGrid = async ({ searchParams }) => {
       }),
       getCategories()
     ]);
-
+    console.log('route 123')
     const recipes = recipeData.recipes;
     const categories = categoriesData;
     return (

@@ -2,23 +2,20 @@ import connectToDatabase from "@/app/lib/connectMongoose";
 import Recipe from "@/app/models/Recipe";
 import { NextResponse } from "next/server";
 
-export const dynamic = 'force-dynamic';
-
 export async function GET(req) {
   try {
     await connectToDatabase();
     console.log("Route accessed");
 
-    // Access query parameters with req.query, or fallback to URL parsing
     const { query } = req;
-    const search = query?.search || new URL(req.url).searchParams.get("search");
-    const skip = parseInt(query?.skip || new URL(req.url).searchParams.get("skip"), 10) || 0;
-    const limit = parseInt(query?.limit || new URL(req.url).searchParams.get("limit"), 10) || 50;
-    const category = query?.category || new URL(req.url).searchParams.get("category");
-    const sort = query?.sortOption || new URL(req.url).searchParams.get("sortOption");
-    const tags = query?.tags || new URL(req.url).searchParams.get("tags");
-    const ingredients = query?.ingredients || new URL(req.url).searchParams.get("ingredients");
-    const numSteps = parseInt(query?.numSteps || new URL(req.url).searchParams.get("numSteps"), 10);
+    const search = query?.search;
+    const skip = parseInt(query?.skip, 10) || 0;
+    const limit = parseInt(query?.limit, 10) || 50;
+    const category = query?.category;
+    const sort = query?.sortOption;
+    const tags = query?.tags;
+    const ingredients = query?.ingredients;
+    const numSteps = parseInt(query?.numSteps, 10);
 
     let queryFilter = {};
 
@@ -81,6 +78,7 @@ export async function GET(req) {
       .skip(skip);
 
     const count = recipes.length;
+    console.log(recipes)
 
     return NextResponse.json({ success: true, recipes, count }, {
       headers: {
