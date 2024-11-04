@@ -13,7 +13,7 @@ export async function getRecipes({ category, tags, numSteps, ingredients, sortOp
   export async function getCategories() {
     const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
     const res = await fetch(`${url}/api/categories`);
-    //console.log(res)
+    console.log(res)
     if (!res.ok) throw new Error('Failed to fetch categories');
     const data = await res.json();
     console.log(data)
