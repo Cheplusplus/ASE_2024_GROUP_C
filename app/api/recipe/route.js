@@ -1,6 +1,7 @@
 import connectToDatabase from "@/app/lib/connectMongoose";
 import Recipe from "@/app/models/Recipe";
 
+export const dynamic = 'force-dynamic'
 export async function GET(req) {
   try {
     console.log(req);

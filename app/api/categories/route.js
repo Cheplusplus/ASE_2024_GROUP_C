@@ -1,6 +1,7 @@
 import connectToDatabase from '@/app/lib/connectMongoose';
 import Categories from "@/app/models/categories";
 
+export const dynamic = 'force-dynamic'
 export async function GET(req) {
   console.log(req);
   await connectToDatabase();
