@@ -111,7 +111,7 @@ const FilterSortComponent = ({ categories = [],count1=null,search }) => {
           </Button>
         </div>
       </div>
-
+{/* 
       {filteredCount === 0 && (
         <Alert className="mb-6">
           <AlertDescription>
@@ -124,7 +124,7 @@ const FilterSortComponent = ({ categories = [],count1=null,search }) => {
             </button>.
           </AlertDescription>
         </Alert>
-      )}
+      )} */}
 
       {isOpen && (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
