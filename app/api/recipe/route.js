@@ -99,7 +99,7 @@ export async function GET(req) {
     ) {
       count = recipes.length;
     }
-
+     console.log(recipes)
     return NextResponse.json({ success: true, recipes, count }, {
       headers: {
         'Content-Type': 'application/json',
