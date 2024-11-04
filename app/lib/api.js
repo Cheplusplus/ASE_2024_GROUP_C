@@ -14,13 +14,13 @@
 // }
   
   export async function getCategories() {
-    const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-    const res = await fetch(`${url}/api/categories`);
-  //  console.log(res)
-    if (!res.statusText == 'OK') throw new Error('Failed to fetch categories');
-    const data = await res.json();
+  //   const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+  //   const res = await fetch(`${url}/api/categories`);
+  // //  console.log(res)
+  //   if (!res.statusText == 'OK') throw new Error('Failed to fetch categories');
+    const data = []
     console.log(data)
-    return  data.categories;
+    return  data;
   }
 
   
