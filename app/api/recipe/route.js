@@ -3,6 +3,7 @@ import Recipe from "@/app/models/Recipe";
 
 export async function GET(req) {
   try {
+    console.log(req);
     await connectToDatabase();
     console.log("Route accessed");
 
