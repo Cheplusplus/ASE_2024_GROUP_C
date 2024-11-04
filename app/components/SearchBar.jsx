@@ -55,6 +55,13 @@ const SearchBar = ({ isOpen, onClose }) => {
     );
   };
 
+  /**
+   * Fetches search suggestions from the server and updates the search results.
+   *
+   * @param {string} query - The search query to fetch suggestions for.
+   *
+   * @returns {Promise<void>} - Resolves when the search results have been fetched.
+   */
   const fetchSuggestions = async (query) => {
     try {
       setIsLoading(true);
@@ -83,6 +90,14 @@ const SearchBar = ({ isOpen, onClose }) => {
     }
   };
 
+  /**
+   * Handles a click on a search suggestion by pushing the search query to the browser
+   * and closing the search bar after a short delay.
+   *
+   * @param {string} title - The title of the recipe to search for.
+   *
+   * @returns {() => void} A function to clear the timeout.
+   */
   const handleSuggestionClick = (title) => {
     const debounceTimeout = setTimeout(() => {
       router.push(`/?search=${encodeURIComponent(title)}`);
