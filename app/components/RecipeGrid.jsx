@@ -18,29 +18,36 @@ const RecipeGrid = async ({ searchParams }) => {
   try {
     // Fetch recipes and categories based on URL parameters
 
-    const recipeData = await getRecipes({
-          category,
-          tags,
-          numSteps,
-          ingredients,
-          sortOption,
-          skip,
-          search,
-        });
-        console.log(recipeData[0],'slide 123')
-    const categoriesData = await getCategories()
-    const recipes = recipeData;
-    const categories = categoriesData;
+    // const recipeData = await getRecipes({
+    //       category,
+    //       tags,
+    //       numSteps,
+    //       ingredients,
+    //       sortOption,
+    //       skip,
+    //       search,
+    //     });
+    //     console.log(recipeData[0],'slide 123')
+    // const categoriesData = await getCategories()
+    const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    console.log(url)
+    const res = await fetch(`${url}/api/recipe?search=${search}&skip=${skip}&category=${category}&tags=${tags.join(',')}&numSteps=${numSteps}&ingredients=${ingredients}&sortOption=${sortOption}`,{cache:'no-store'},{
+    headers: { 'Content-Type': 'application/json' }
+  });
+    console.log(res)
+    if (!res.ok) throw new Error('Failed to fetch recipes');
+    const recipes = await res.json();
+    const categories = [];
     return (
       <div className="max-w-7xl mx-auto px-1 sm:px-6 lg:px-8 py-8">
         {/* Pass categories to FilterSortComponent */}
         <FilterSortComponent
           categories={categories.categories}
           search={search}
-          count1={recipeData.count}
+          count1={recipes.count}
         />
 
-        {recipes.length === 0 ? 
+        {recipes.recipes.length === 0 ? 
           <div className="min-h-[400px] flex items-center justify-center">
             <div className="text-gray-500 bg-gray-50 px-6 py-4 rounded-lg shadow-sm">
               No recipes found matching your criteria
@@ -48,7 +55,7 @@ const RecipeGrid = async ({ searchParams }) => {
           </div>
          : 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6">
-            {recipes.map((recipe) => (
+            {recipes.recipes.map((recipe) => (
               <RecipeCard key={recipe._id} recipe={recipe} />
             ))}
           </div>
