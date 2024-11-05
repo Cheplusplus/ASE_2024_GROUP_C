@@ -38,16 +38,14 @@ const RecipeGrid = async ({ searchParams }) => {
     if (!res.ok) throw new Error('Failed to fetch recipes');
     const recipes = await res.json();
     let categories;
-    try {
+    
       const response = await fetch(`${url}/api/categories`);
     
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     
        categories = await response.json();
       console.log(categories, 'categories');
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-    }
+   
      
     return (
       <div className="max-w-7xl mx-auto px-1 sm:px-6 lg:px-8 py-8">
