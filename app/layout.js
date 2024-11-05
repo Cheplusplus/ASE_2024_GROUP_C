@@ -2,6 +2,7 @@ import Navbar from "./components/Navbar";
 import ClientNavWrapper from "./components/ClientNavWrapper";
 import Footer from "./components/Footer";
 import "./globals.css";
+import SessionProvider from "./components/SessionProvider";
 // import searchProvider from "./contexts/SearchContext"
 
 // metadata for the RootLayout
@@ -40,11 +41,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className="bg-white">
-        <ClientNavWrapper>
-          <Navbar />
-        </ClientNavWrapper>
-        <main className="min-h-screen pt-16">{children}</main>
-        <Footer />
+       <SessionProvider>
+          <ClientNavWrapper>
+            <Navbar />
+          </ClientNavWrapper>
+          <main className="min-h-screen pt-16">{children}</main>
+          <Footer />
+        </SessionProvider>
       </body>
     </html>
   );
