@@ -34,16 +34,15 @@ const RecipeGrid = async ({ searchParams }) => {
     const res = await fetch(`${url}/api/recipe?search=${search}&skip=${skip}&category=${category}&tags=${tags.join(',')}&numSteps=${numSteps}&ingredients=${ingredients}&sortOption=${sortOption}`,{cache:'no-store'},{
     headers: { 'Content-Type': 'application/json' }
   });
-    console.log(res)
     if (!res.ok) throw new Error('Failed to fetch recipes');
     const recipes = await res.json();
     let categories;
 
-      // const response = await fetch(`${url}/api/categories`);
-      // console.log(response.ok,'status')
-      // if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      const response = await fetch(`${url}/api/categories`);
+      console.log(response.status,'status')
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     
-       categories = []
+       categories = await response.json();
       console.log(categories, 'categories');
    
      
