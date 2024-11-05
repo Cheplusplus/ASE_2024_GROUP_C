@@ -18,4 +18,18 @@ const SignIn = () => {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      await signInWithEmailAndPassword(email, password);
+      router.push('/');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+ 
