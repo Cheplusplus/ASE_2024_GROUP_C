@@ -4,7 +4,7 @@ import Link from 'next/link';
 // import { useRouter } from 'next/router';
 import { useSession, signIn, signOut } from "next-auth/react"
 
-const Component = () => {
+const SignIn = () => {
   const { data: session } = useSession()
   if(session) {
     return <>
@@ -69,7 +69,7 @@ const Component = () => {
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             New to Recipe Rush?{' '}
-            <Link href="/signup" className="font-medium text-indigo-600 hover:text-indigo-500">
+            <Link href="/sign-up" className="font-medium text-indigo-600 hover:text-indigo-500">
               Sign Up
             </Link>
           </p>
@@ -117,6 +117,7 @@ const Component = () => {
         </form>
         <div className="mt-6">
           <button
+            onClick={() => signIn()}
             className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
           >
             Sign In with Google
@@ -127,4 +128,4 @@ const Component = () => {
   );
 };
 
-export default Component;
+export default SignIn;
