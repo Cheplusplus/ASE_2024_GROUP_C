@@ -32,4 +32,23 @@ const SignUp = () => {
     }
   };
 
-/
+/**
+ * Handles Google sign-up authentication
+ * @async
+ * @function
+ * @returns {undefined}
+ */
+  const handleGoogleSignUp = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await signUpWithGoogle();
+      router.push('/');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  
