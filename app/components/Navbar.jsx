@@ -1,7 +1,7 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import SearchBar from './SearchBar';
 
 /**
@@ -12,9 +12,16 @@ const Navbar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openSublinks, setOpenSublinks] = useState({});
-  const pathname = usePathname(); // Initialize pathname
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login state
+  const pathname = usePathname();
+  const router = useRouter();
 
-  // Toggles sublink visibility
+  useEffect(() => {
+    // Check if user is logged in, for example, by checking a token in localStorage
+    const token = localStorage.getItem('authToken');
+    setIsLoggedIn(!!token);
+  }, []);
+
   const handleSublinkToggle = (linkName) => {
     setOpenSublinks((prev) => ({
       ...prev,
@@ -22,7 +29,13 @@ const Navbar = () => {
     }));
   };
 
-  // Navigation links
+  const handleLogout = () => {
+    // Clear the session (for example, removing the token)
+    localStorage.removeItem('authToken');
+    setIsLoggedIn(false);
+    router.push('/'); // Redirect to the homepage
+  };
+
   const navLinks = [
     { name: 'Home', href: '/' },
     { 
@@ -41,8 +54,8 @@ const Navbar = () => {
       name: 'Account',
       href: '/account',
       sublinks: [
-        { name: 'Sign Up', href: '/account/signup' },
-        { name: 'Sign In', href: '/account/signin' },
+        { name: 'Sign Up', href: '/sign-up' },
+        { name: 'Sign In', href: '/sign-in' },
       ]
     },
   ];
@@ -102,6 +115,14 @@ const Navbar = () => {
                     )}
                   </div>
                 ))}
+                {isLoggedIn && (
+                  <button
+                    onClick={handleLogout}
+                    className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded"
+                  >
+                    Logout
+                  </button>
+                )}
               </div>
             </div>
 
