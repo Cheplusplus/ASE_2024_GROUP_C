@@ -31,7 +31,7 @@ const RecipeGrid = async ({ searchParams }) => {
     // const categoriesData = await getCategories()
     const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
     console.log(url)
-    const res = await fetch(`${url}/api/recipe?search=${search}&skip=${skip}&category=${category}&tags=${tags.join(',')}&numSteps=${numSteps}&ingredients=${ingredients}&sortOption=${sortOption}`,{cache:'no-store'},{
+    const res = await fetch(`https://staging-ase-2024-group-c.vercel.app/api/recipe?search=${search}&skip=${skip}&category=${category}&tags=${tags.join(',')}&numSteps=${numSteps}&ingredients=${ingredients}&sortOption=${sortOption}`,{cache:'no-store'},{
     headers: { 'Content-Type': 'application/json' }
   });
     //console.log(res)
