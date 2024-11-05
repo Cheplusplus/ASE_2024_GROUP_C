@@ -32,4 +32,23 @@ const SignIn = () => {
     }
   };
 
- 
+  /**
+   * Handles Google sign-in authentication
+   * @async
+   * @function
+   * @returns {undefined}
+   */
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await signInWithGoogle();
+      router.push('/');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  
