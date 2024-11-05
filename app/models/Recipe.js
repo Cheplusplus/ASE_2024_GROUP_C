@@ -32,11 +32,16 @@ const RecipeSchema = new mongoose.Schema({
     sugar: String,
     protein: String,
   },
-}, {collection: 'recipes'});
+}, { collection: 'recipes' });
+
+// Define a compound text index on title, description, and tags for search optimization
+RecipeSchema.index({
+  title: 'text',
+  description: 'text',
+  tags: 'text'
+});
 
 // Use 'Recipe' as the model name
 const Recipe = mongoose.models.Recipe || mongoose.model('Recipe', RecipeSchema);
 
-
 export default Recipe;
-

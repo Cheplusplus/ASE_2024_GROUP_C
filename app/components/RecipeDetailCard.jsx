@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react";
+import Image from 'next/image';
 
 const formatTime = (minutes) => {
   const hours = Math.floor(minutes / 60);
@@ -18,23 +19,27 @@ const RecipeDetailCard = ({ recipe }) => {
     <div className="grid items-start grid-cols-1 md:grid-cols-2 gap-6">
       <div className="w-full lg:sticky top-0 flex flex-col gap-3">
         <div className="w-full">
-          <img
-            src={selectedImage}
-            alt={recipe.title}
-            className="w-[540px] h-[403px] rounded-lg object-cover"
-          />
+        <Image
+    src={selectedImage}
+    alt={recipe.title}
+    width={540} // Define the width directly in the component
+    height={403} // Define the height directly in the component
+    className="rounded-lg object-cover"
+/>
         </div>
         <div className="flex flex-wrap gap-2 mt-4">
           {recipe.images.map((image, index) => (
-            <img
-              key={index}
-              src={image}
-              alt={`Thumbnail ${index}`}
-              className={`w-16 h-16 rounded-md cursor-pointer object-cover ${
-                selectedImage === image ? "border-2 border-gray-800" : ""
-              }`}
-              onClick={() => setSelectedImage(image)}
-            />
+            <Image
+    key={index}
+    src={image}
+    alt={`Thumbnail ${index}`}
+    width={64} // Set width to 64px (16 * 4) for the thumbnail
+    height={64} // Set height to 64px
+    className={`rounded-md cursor-pointer object-cover ${
+        selectedImage === image ? "border-2 border-gray-800" : ""
+    }`}
+    onClick={() => setSelectedImage(image)}
+/>
           ))}
         </div>
       </div>
