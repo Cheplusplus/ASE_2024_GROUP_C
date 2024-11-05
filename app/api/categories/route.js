@@ -20,7 +20,7 @@ export async function GET() {
           },
         });
       }
-      //console.log(categoryDoc.categories)
+      console.log(categoryDoc.categories)
       // Send back the categories array
       return NextResponse.json({ categories: categoryDoc.categories }, {
         headers: {
