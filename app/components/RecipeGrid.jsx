@@ -38,9 +38,10 @@ const RecipeGrid = async ({ searchParams }) => {
     if (!res.ok) throw new Error('Failed to fetch recipes');
     const recipes = await res.json();
     const response = await fetch(`${url}/api/categories`);
-    //  console.log(res)
-      if (!response.statusText == 'OK') throw new Error('Failed to fetch categories');
+      console.log(response)
+      if (!response.ok) throw new Error('Failed to fetch categories');
       const categories = await response.json();
+      console.log(categories,'cate123')
     return (
       <div className="max-w-7xl mx-auto px-1 sm:px-6 lg:px-8 py-8">
         {/* Pass categories to FilterSortComponent */}
