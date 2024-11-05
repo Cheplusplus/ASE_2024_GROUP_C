@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { signUpWithEmailAndPassword, signUpWithGoogle } from '../utils/auth'; // Mock functions for signup
 
 /**
  * Handles sign-up authentication with email and password
@@ -18,38 +17,38 @@ const SignUp = () => {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    try {
-      await signUpWithEmailAndPassword(email, password);
-      router.push('/'); // Redirect to home on successful signup
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setLoading(true);
+//     setError(null);
+//     try {
+//       await signUpWithEmailAndPassword(email, password);
+//       router.push('/'); // Redirect to home on successful signup
+//     } catch (err) {
+//       setError(err.message);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
 
-/**
- * Handles Google sign-up authentication
- * @async
- * @function
- * @returns {undefined}
- */
-  const handleGoogleSignUp = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      await signUpWithGoogle();
-      router.push('/');
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+// /**
+//  * Handles Google sign-up authentication
+//  * @async
+//  * @function
+//  * @returns {undefined}
+//  */
+//   const handleGoogleSignUp = async () => {
+//     setLoading(true);
+//     setError(null);
+//     try {
+//       await signUpWithGoogle();
+//       router.push('/');
+//     } catch (err) {
+//       setError(err.message);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
