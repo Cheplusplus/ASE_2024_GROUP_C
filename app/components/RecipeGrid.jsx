@@ -2,9 +2,7 @@
 import React from "react";
 import RecipeCard from "./RecipeCard"; // Update this import
 import Paginate from "./Paginate";
-import SkeletonGrid from "./SkeletonMain";
 import FilterSortComponent from "./FilterSort";
-import { getCategories ,getRecipes } from "../lib/api";
 
 const RecipeGrid = async ({ searchParams }) => {
   const category = searchParams?.category || "";
@@ -16,19 +14,7 @@ const RecipeGrid = async ({ searchParams }) => {
   const search = searchParams.search || "";
 
   try {
-    // Fetch recipes and categories based on URL parameters
 
-    // const recipeData = await getRecipes({
-    //       category,
-    //       tags,
-    //       numSteps,
-    //       ingredients,
-    //       sortOption,
-    //       skip,
-    //       search,
-    //     });
-    //     console.log(recipeData[0],'slide 123')
-    // const categoriesData = await getCategories()
     const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
     console.log(url)
     const res = await fetch(`${url}/api/recipe?search=${search}&skip=${skip}&category=${category}&tags=${tags.join(',')}&numSteps=${numSteps}&ingredients=${ingredients}&sortOption=${sortOption}`,{cache:'no-store'},{
