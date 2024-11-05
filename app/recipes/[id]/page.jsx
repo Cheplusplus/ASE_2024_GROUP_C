@@ -24,6 +24,13 @@ export default function RecipeDetail({ params }) {
         }
         const data = await response.json();
         setRecipe(data.recipe);
+
+        const res = await fetch('/api/categories')
+        if(!res.ok){
+          console.log(res.status,'failed')
+        }
+        let cate = await res.json();
+        console.log(cate)
       } catch (error) {
         console.error("Error fetching recipe:", error);
         setError("Failed to load recipe. Please try again later.");
