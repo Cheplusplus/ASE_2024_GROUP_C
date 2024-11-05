@@ -18,7 +18,7 @@ export default function RecipeDetail({ params }) {
     const fetchRecipe = async (id) => {
       const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
       try {
-        const response = await fetch(`${url}/api/recipe/${id}`);
+        const response = await fetch(`/api/recipe/${id}`);
         console.log(response)
         if (!response.ok) {
           throw new Error(`Failed to fetch recipe: ${response.statusText}`);
@@ -26,7 +26,7 @@ export default function RecipeDetail({ params }) {
         const data = await response.json();
         setRecipe(data.recipe);
 
-        const res = await fetch(`${url}/api/categories`)
+        const res = await fetch(`/api/categories`)
         if(!res.ok){
           console.log(res.status,'failed')
         }
