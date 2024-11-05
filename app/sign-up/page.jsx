@@ -2,16 +2,16 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { signInWithEmailAndPassword, signInWithGoogle } from '../utils/auth'; // Mock functions for signin
+import { signUpWithEmailAndPassword, signUpWithGoogle } from '../utils/auth'; // Mock functions for signup
 
 /**
- * Handles sign-in authentication with email and password
+ * Handles sign-up authentication with email and password
  * @async
  * @function
  * @param {React.FormEvent<HTMLFormElement>} e - The form event
  * @returns {undefined}
  */
-const SignIn = () => {
+const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -23,8 +23,8 @@ const SignIn = () => {
     setLoading(true);
     setError(null);
     try {
-      await signInWithEmailAndPassword(email, password);
-      router.push('/');
+      await signUpWithEmailAndPassword(email, password);
+      router.push('/'); // Redirect to home on successful signup
     } catch (err) {
       setError(err.message);
     } finally {
@@ -32,17 +32,17 @@ const SignIn = () => {
     }
   };
 
-  /**
-   * Handles Google sign-in authentication
-   * @async
-   * @function
-   * @returns {undefined}
-   */
-  const handleGoogleSignIn = async () => {
+/**
+ * Handles Google sign-up authentication
+ * @async
+ * @function
+ * @returns {undefined}
+ */
+  const handleGoogleSignUp = async () => {
     setLoading(true);
     setError(null);
     try {
-      await signInWithGoogle();
+      await signUpWithGoogle();
       router.push('/');
     } catch (err) {
       setError(err.message);
@@ -56,12 +56,12 @@ const SignIn = () => {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign In to Recipe Rush
+            Sign Up for Recipe Rush
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            New to Recipe Rush?{' '}
-            <Link href="/account/signup" className="font-medium text-indigo-600 hover:text-indigo-500">
-              Sign Up
+            Already have an account?{' '}
+            <Link href="/account/signin" className="font-medium text-indigo-600 hover:text-indigo-500">
+              Sign In
             </Link>
           </p>
         </div>
@@ -82,7 +82,7 @@ const SignIn = () => {
               />
             </div>
             <div>
-            <label htmlFor="password" className="sr-only">Password</label>
+              <label htmlFor="password" className="sr-only">Password</label>
               <input
                 id="password"
                 name="password"
@@ -104,16 +104,16 @@ const SignIn = () => {
               disabled={loading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? 'Signing up...' : 'Sign Up'}
             </button>
           </div>
         </form>
         <div className="mt-6">
           <button
-            onClick={handleGoogleSignIn}
+            onClick={handleGoogleSignUp}
             className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
           >
-            Sign In with Google
+            Sign Up with Google
           </button>
         </div>
       </div>
@@ -121,4 +121,5 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default SignUp;
+ 
