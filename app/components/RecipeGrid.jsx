@@ -40,8 +40,8 @@ const RecipeGrid = async ({ searchParams }) => {
     let categories;
 
       const response = await fetch(`${url}/api/categories`);
-    
-      if (response.ok != true) throw new Error(`HTTP error! Status: ${response.status}`);
+      console.log(response.statusText,'status')
+      if (response.statusText != 'OK') throw new Error(`HTTP error! Status: ${response.status}`);
     
        categories = await response.json();
       console.log(categories, 'categories');
