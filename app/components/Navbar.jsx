@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import SearchBar from './SearchBar';
+import { signOut } from 'next-auth/react';
 
 /**
  * The main navigation component for the app.
@@ -109,7 +110,9 @@ const Navbar = () => {
                             <Link key={sublink.name} href={sublink.href} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                               {sublink.name}
                             </Link>
+                            
                           ))}
+                          <button onClick={() => signOut()}>Sign Out</button>
                         </div>
                       </div>
                     )}

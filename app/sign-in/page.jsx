@@ -1,16 +1,15 @@
 'use client'
 import React, { useState } from 'react';
 import Link from 'next/link';
-// import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useSession, signIn, signOut } from "next-auth/react"
 
 const SignIn = () => {
+  const router = useRouter()
+
   const { data: session } = useSession()
   if(session) {
-    return <>
-      Signed in as {session.user.email} <br/>
-      <button onClick={() => signOut()}>Sign out</button>
-    </>
+    router.push('/')
   }
 
   return (
@@ -70,7 +69,7 @@ const SignIn = () => {
         </form>
         <div className="mt-6">
           <button
-            onClick={() => signIn()}
+            onClick={() => signIn("google")}
             className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
           >
             Sign In with Google
