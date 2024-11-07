@@ -13,11 +13,16 @@ export async function GET() {
       const categoryDoc = await Categories.findOne({});
       console.log('123concate2')
       if (!categoryDoc) {
-        return NextResponse.json({ message: "Categories not found" }, { status: 404 });
+        return NextResponse.json({ message: "Categories not found" }, { status: 404 },{
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+        });
       }
       console.log(categoryDoc.categories)
       // Send back the categories array
-      return NextResponse.json({ categories: categoryDoc.categories }, { status: 200 }, {
+      return NextResponse.json({ categories: categoryDoc.categories }, {
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
@@ -25,6 +30,11 @@ export async function GET() {
       });
     } catch (error) {
       console.error("Error fetching categories:", error);
-      return NextResponse.json({ message: "Internal server error" }, { status: 500 });
+      return NextResponse.json({ message: "Internal server error" }, { status: 500 },{
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
     }
   }
