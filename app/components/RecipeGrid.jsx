@@ -2,7 +2,6 @@
 import React from "react";
 import RecipeCard from "./RecipeCard"; // Update this import
 import Paginate from "./Paginate";
-import SkeletonGrid from "./SkeletonMain";
 import FilterSortComponent from "./FilterSort";
 import { getCategories ,getRecipes } from "../lib/api";
 
@@ -16,19 +15,6 @@ const RecipeGrid = async ({ searchParams }) => {
   const search = searchParams.search || "";
 
   try {
-    // Fetch recipes and categories based on URL parameters
-    // const [recipeData,categoriesData] = await Promise.all([
-    //   getRecipes({
-    //     category,
-    //     tags,
-    //     numSteps,
-    //     ingredients,
-    //     sortOption,
-    //     skip,
-    //     search,
-    //   }),
-    //   getCategories()
-    // ]);
 
     const recipeData = await getRecipes({
           category,
@@ -39,9 +25,9 @@ const RecipeGrid = async ({ searchParams }) => {
           skip,
           search,
         });
-        console.log(recipeData,'slide 123')
-    const categoriesData = await getCategories()
-    console.log('route 123')
+        console.log(recipeData,'slide 123');
+    const categoriesData = await getCategories();
+    console.log('route 123');
     const recipes = recipeData.recipes;
     const categories = categoriesData;
     return (
