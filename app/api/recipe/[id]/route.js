@@ -16,7 +16,7 @@ export async function GET(req, { params }) {
     console.log(id);
     // id = new mongoose.Types.ObjectId();
     console.log(id);
-    await connectToDatabase();
+    await connectToDatabase(); 
     const recipe = await Recipe.findOne({ _id: id });
 
     return NextResponse.json({ recipe }, { status: 200 });
