@@ -103,6 +103,17 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
               )}
             </div>
           )}
+            <button
+              onClick={(e) => {
+                e.preventDefault(); // Prevent link navigation
+                if (onAddToFavourites) {
+                  onAddToFavourites({ _id, title, images, prep, cook, servings, tags });
+                }
+              }}
+              className="mt-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Add to Favourites
+            </button>
         </div>
       </div>
     </Link>
