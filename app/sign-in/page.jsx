@@ -1,64 +1,16 @@
 'use client'
 import React, { useState } from 'react';
 import Link from 'next/link';
-// import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useSession, signIn, signOut } from "next-auth/react"
 
 const SignIn = () => {
+  const router = useRouter()
+
   const { data: session } = useSession()
   if(session) {
-    return <>
-      Signed in as {session.user.email} <br/>
-      <button onClick={() => signOut()}>Sign out</button>
-    </>
+    router.push('/')
   }
-
-/**
- * Handles sign-in authentication with email and password
- * @async
- * @function
- * @param {React.FormEvent<HTMLFormElement>} e - The form event
- * @returns {undefined}
- */
-// const SignIn = () => 
-//   const [email, setEmail] = useState('');
-//   const [password, setPassword] = useState('');
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState(null);
-  // const router = useRouter();
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   setError(null);
-  //   try {
-  //     await signInWithEmailAndPassword(email, password);
-  //     router.push('/');
-  //   } catch (err) {
-  //     setError(err.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // /**
-  //  * Handles Google sign-in authentication
-  //  * @async
-  //  * @function
-  //  * @returns {undefined}
-  //  */
-  // const handleGoogleSignIn = async () => {
-  //   setLoading(true);
-  //   setError(null);
-  //   try {
-  //     await signInWithGoogle();
-  //     router.push('/');
-  //   } catch (err) {
-  //     setError(err.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -117,7 +69,7 @@ const SignIn = () => {
         </form>
         <div className="mt-6">
           <button
-            onClick={() => signIn()}
+            onClick={() => signIn("google")}
             className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
           >
             Sign In with Google
