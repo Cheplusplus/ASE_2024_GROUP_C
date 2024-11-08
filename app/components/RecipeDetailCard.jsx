@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Star } from "lucide-react";
+import { Star, ChevronDown } from "lucide-react";
 
 const formatTime = (minutes) => {
   const hours = Math.floor(minutes / 60);
@@ -42,7 +42,6 @@ const getRandomName = () => {
 };
 
 const getRandomDate = () => {
-  // Generate dates from 6 months ago up to today
   const today = new Date();
   const sixMonthsAgo = new Date();
   sixMonthsAgo.setMonth(today.getMonth() - 6);
@@ -52,7 +51,6 @@ const getRandomDate = () => {
   );
 };
 
-// Sample review comments for when none are provided
 const sampleReviewComments = [
   "These cookies turned out perfectly! Just the right amount of sweetness.",
   "Great recipe but needed a few more minutes in the oven for my taste.",
@@ -70,6 +68,7 @@ const RecipeDetailCard = ({ recipe }) => {
   const [randomDates] = useState(() => 
     Array(50).fill(null).map(() => getRandomDate())
   );
+  const [sortBy, setSortBy] = useState("newest");
 
   const formatReviewerName = (reviewer, index) => {
     if (!reviewer) return randomNames[index % randomNames.length];
@@ -84,10 +83,25 @@ const RecipeDetailCard = ({ recipe }) => {
     date: randomDates[index % randomDates.length]
   }));
 
+  // Sort reviews based on selected criteria
+  const sortedReviews = enrichedReviews ? [...enrichedReviews].sort((a, b) => {
+    switch (sortBy) {
+      case "newest":
+        return new Date(b.date) - new Date(a.date);
+      case "oldest":
+        return new Date(a.date) - new Date(b.date);
+      case "highest":
+        return b.rating - a.rating;
+      case "lowest":
+        return a.rating - b.rating;
+      default:
+        return 0;
+    }
+  }) : [];
+
   return (
     <div className="grid items-start grid-cols-1 md:grid-cols-2 gap-6">
-      {/* Previous code remains the same until the reviews section */}
-      
+      {/* Image gallery section */}
       <div className="w-full lg:sticky top-0 flex flex-col gap-3">
         <div className="w-full">
           <img
@@ -224,10 +238,26 @@ const RecipeDetailCard = ({ recipe }) => {
             </div>
           ) : (
             <div className="recipe-reviews">
-              <h3 className="text-2xl font-semibold mb-4">User Reviews</h3>
-              {Array.isArray(enrichedReviews) && enrichedReviews.length > 0 ? (
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-2xl font-semibold">User Reviews</h3>
+                <div className="relative">
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                  >
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="highest">Highest Rated</option>
+                    <option value="lowest">Lowest Rated</option>
+                  </select>
+                  <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none" size={16} />
+                </div>
+              </div>
+              
+              {Array.isArray(sortedReviews) && sortedReviews.length > 0 ? (
                 <div className="space-y-6">
-                  {enrichedReviews.map((review, index) => (
+                  {sortedReviews.map((review, index) => (
                     <div 
                       key={index} 
                       className="bg-gray-50 rounded-lg p-4 shadow-sm"
