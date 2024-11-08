@@ -51,17 +51,59 @@ const getRandomDate = () => {
   );
 };
 
-const sampleReviewComments = [
-  "These cookies turned out perfectly! Just the right amount of sweetness.",
-  "Great recipe but needed a few more minutes in the oven for my taste.",
-  "My family loved these! Will definitely make them again.",
-  "Good basic recipe that's easy to customize.",
-  "Texture was perfect but I'd add more chocolate chips next time."
-];
+const generateReviewComment = (recipe) => {
+  if (!recipe) return "Great recipe!";
+
+  const positive = [
+    `These ${recipe.title.toLowerCase()} turned out perfectly!`,
+    `Great recipe! Will definitely make this again.`,
+    `My family loved this! Adding it to our regular rotation.`,
+    `The texture was perfect and it came out exactly as described.`,
+    `Followed the recipe exactly and it was amazing!`
+  ];
+
+  const constructive = [
+    `Good recipe, might adjust the seasoning next time.`,
+    `Needed a few more minutes of ${recipe.cook > recipe.prep ? 'cooking' : 'prep'} time for my taste.`,
+    `Solid basic recipe that's easy to customize with your favorite ingredients.`,
+    `Came out well but I'd recommend adjusting the seasonings to taste.`,
+    `Nice recipe overall. Would love to see more variations.`
+  ];
+
+  const specific = [
+    `The instructions were clear and easy to follow.`,
+    `Great combination of flavors in this recipe.`,
+    `${recipe.prep > 30 ? 'Prep time was worth it' : 'Quick and easy to prepare'} - the end result was delicious.`,
+    `The ${recipe.category} flavors really came through beautifully.`,
+    `Perfect portion for ${recipe.servings} people.`
+  ];
+
+  // Add ingredient-specific comments if available
+  if (recipe.ingredients && Object.keys(recipe.ingredients).length > 0) {
+    const mainIngredient = Object.keys(recipe.ingredients)[0];
+    specific.push(`Love how the ${mainIngredient.toLowerCase()} adds to the overall taste.`);
+  }
+
+  // Add tag-specific comments if available
+  if (recipe.tags && recipe.tags.length > 0) {
+    specific.push(`Great ${recipe.tags[0].toLowerCase()} recipe!`);
+  }
+
+  const allComments = [...positive, ...constructive, ...specific];
+  return allComments[Math.floor(Math.random() * allComments.length)];
+};
 
 const RecipeDetailCard = ({ recipe }) => {
+  if (!recipe) {
+    return (
+      <div className="p-4 text-center">
+        <p className="text-gray-500">Recipe not found</p>
+      </div>
+    );
+  }
+
   const [activeTab, setActiveTab] = useState("ingredients");
-  const [selectedImage, setSelectedImage] = useState(recipe.images[0]);
+  const [selectedImage, setSelectedImage] = useState(recipe.images?.[0]);
   const [randomNames] = useState(() => 
     Array(50).fill(null).map(() => getRandomName())
   );
@@ -76,15 +118,13 @@ const RecipeDetailCard = ({ recipe }) => {
            randomNames[index % randomNames.length];
   };
 
-  // Ensure each review has a comment and a random date
-  const enrichedReviews = recipe.reviews?.map((review, index) => ({
+  const enrichedReviews = (recipe.reviews || []).map((review, index) => ({
     ...review,
-    comment: review.comment || sampleReviewComments[index % sampleReviewComments.length],
-    date: randomDates[index % randomDates.length]
+    comment: review.comment || generateReviewComment(recipe),
+    date: review.date || randomDates[index % randomDates.length]
   }));
 
-  // Sort reviews based on selected criteria
-  const sortedReviews = enrichedReviews ? [...enrichedReviews].sort((a, b) => {
+  const sortedReviews = [...enrichedReviews].sort((a, b) => {
     switch (sortBy) {
       case "newest":
         return new Date(b.date) - new Date(a.date);
@@ -97,40 +137,48 @@ const RecipeDetailCard = ({ recipe }) => {
       default:
         return 0;
     }
-  }) : [];
+  });
 
   return (
     <div className="grid items-start grid-cols-1 md:grid-cols-2 gap-6">
       {/* Image gallery section */}
       <div className="w-full lg:sticky top-0 flex flex-col gap-3">
         <div className="w-full">
-          <img
-            src={selectedImage}
-            alt={recipe.title}
-            className="w-[540px] h-[403px] rounded-lg object-cover"
-          />
-        </div>
-        <div className="flex flex-wrap gap-2 mt-4">
-          {recipe.images.map((image, index) => (
+          {recipe.images && recipe.images.length > 0 ? (
             <img
-              key={index}
-              src={image}
-              alt={`Thumbnail ${index}`}
-              className={`w-16 h-16 rounded-md cursor-pointer object-cover ${
-                selectedImage === image ? "border-2 border-gray-800" : ""
-              }`}
-              onClick={() => setSelectedImage(image)}
+              src={selectedImage || recipe.images[0]}
+              alt={recipe.title}
+              className="w-[540px] h-[403px] rounded-lg object-cover"
             />
-          ))}
+          ) : (
+            <div className="w-[540px] h-[403px] rounded-lg bg-gray-200 flex items-center justify-center">
+              <p className="text-gray-500">No image available</p>
+            </div>
+          )}
         </div>
+        {recipe.images && recipe.images.length > 1 && (
+          <div className="flex flex-wrap gap-2 mt-4">
+            {recipe.images.map((image, index) => (
+              <img
+                key={index}
+                src={image}
+                alt={`Thumbnail ${index}`}
+                className={`w-16 h-16 rounded-md cursor-pointer object-cover ${
+                  selectedImage === image ? "border-2 border-gray-800" : ""
+                }`}
+                onClick={() => setSelectedImage(image)}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       <div>
         <h1 className="text-3xl font-bold mb-2 text-gray-800">{recipe.title}</h1>
 
-        <div className="flex flex-wrap gap-2 my-4">
-          {recipe.tags &&
-            recipe.tags.map((tag, index) => (
+        {recipe.tags && recipe.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 my-4">
+            {recipe.tags.map((tag, index) => (
               <span
                 key={index}
                 className="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full"
@@ -138,7 +186,8 @@ const RecipeDetailCard = ({ recipe }) => {
                 {tag}
               </span>
             ))}
-        </div>
+          </div>
+        )}
 
         <p className="text-lg italic text-gray-600 mb-6">
           Discover how to make this delicious {recipe.title}.{" "}
@@ -147,16 +196,16 @@ const RecipeDetailCard = ({ recipe }) => {
 
         <div className="text-lg text-gray-800 space-y-2">
           <p>
-            <strong>Prep Time:</strong> {formatTime(recipe.prep)}
+            <strong>Prep Time:</strong> {formatTime(recipe.prep || 0)}
           </p>
           <p>
-            <strong>Cook Time:</strong> {formatTime(recipe.cook)}
+            <strong>Cook Time:</strong> {formatTime(recipe.cook || 0)}
           </p>
           <p>
-            <strong>Category:</strong> {recipe.category}
+            <strong>Category:</strong> {recipe.category || "Uncategorized"}
           </p>
           <p>
-            <strong>Servings:</strong> {recipe.servings} servings
+            <strong>Servings:</strong> {recipe.servings || 1} servings
           </p>
           <p>
             <strong>Published:</strong>{" "}
@@ -203,38 +252,50 @@ const RecipeDetailCard = ({ recipe }) => {
           {activeTab === "ingredients" ? (
             <div>
               <h2 className="text-2xl font-semibold mb-4">Ingredients</h2>
-              <ul className="list-disc pl-6 text-gray-700">
-                {Object.entries(recipe.ingredients).map(
-                  ([ingredient, quantity], index) => (
-                    <li key={index}>
-                      {ingredient}: {quantity}
-                    </li>
-                  )
-                )}
-              </ul>
+              {recipe.ingredients && Object.keys(recipe.ingredients).length > 0 ? (
+                <ul className="list-disc pl-6 text-gray-700">
+                  {Object.entries(recipe.ingredients).map(
+                    ([ingredient, quantity], index) => (
+                      <li key={index}>
+                        {ingredient}: {quantity}
+                      </li>
+                    )
+                  )}
+                </ul>
+              ) : (
+                <p className="text-gray-500">No ingredients listed</p>
+              )}
             </div>
           ) : activeTab === "instructions" ? (
             <div>
               <h2 className="text-2xl font-semibold mb-4">Instructions</h2>
-              <ol className="list-decimal pl-6 text-gray-700 space-y-4">
-                {recipe.instructions.map((instruction, index) => (
-                  <li key={index} className="pl-2">{instruction}</li>
-                ))}
-              </ol>
+              {recipe.instructions && recipe.instructions.length > 0 ? (
+                <ol className="list-decimal pl-6 text-gray-700 space-y-4">
+                  {recipe.instructions.map((instruction, index) => (
+                    <li key={index} className="pl-2">{instruction}</li>
+                  ))}
+                </ol>
+              ) : (
+                <p className="text-gray-500">No instructions available</p>
+              )}
             </div>
           ) : activeTab === "nutrition" ? (
             <div className="recipe-nutrition">
               <h3 className="text-2xl font-semibold mb-4">Nutrition Information</h3>
-              <ul className="list-disc pl-6 text-gray-700">
-                <li>Calories: {recipe.nutrition.calories}</li>
-                <li>Fat: {recipe.nutrition.fat}g</li>
-                <li>Saturated Fat: {recipe.nutrition.saturated}g</li>
-                <li>Sodium: {recipe.nutrition.sodium}mg</li>
-                <li>Carbohydrates: {recipe.nutrition.carbohydrates}g</li>
-                <li>Fiber: {recipe.nutrition.fiber}g</li>
-                <li>Sugar: {recipe.nutrition.sugar}g</li>
-                <li>Protein: {recipe.nutrition.protein}g</li>
-              </ul>
+              {recipe.nutrition ? (
+                <ul className="list-disc pl-6 text-gray-700">
+                  <li>Calories: {recipe.nutrition.calories || 0}</li>
+                  <li>Fat: {recipe.nutrition.fat || 0}g</li>
+                  <li>Saturated Fat: {recipe.nutrition.saturated || 0}g</li>
+                  <li>Sodium: {recipe.nutrition.sodium || 0}mg</li>
+                  <li>Carbohydrates: {recipe.nutrition.carbohydrates || 0}g</li>
+                  <li>Fiber: {recipe.nutrition.fiber || 0}g</li>
+                  <li>Sugar: {recipe.nutrition.sugar || 0}g</li>
+                  <li>Protein: {recipe.nutrition.protein || 0}g</li>
+                </ul>
+              ) : (
+                <p className="text-gray-500">Nutrition information not available</p>
+              )}
             </div>
           ) : (
             <div className="recipe-reviews">
@@ -255,7 +316,7 @@ const RecipeDetailCard = ({ recipe }) => {
                 </div>
               </div>
               
-              {Array.isArray(sortedReviews) && sortedReviews.length > 0 ? (
+              {sortedReviews.length > 0 ? (
                 <div className="space-y-6">
                   {sortedReviews.map((review, index) => (
                     <div 
