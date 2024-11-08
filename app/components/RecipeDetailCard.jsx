@@ -12,7 +12,7 @@ const formatTime = (minutes) => {
 const RecipeDetailCard = ({ recipe }) => {
   const [activeTab, setActiveTab] = useState("ingredients");
   const [selectedImage, setSelectedImage] = useState(recipe.images[0]);
-  const [openTextArea,setOpenTextArea] = useState(false)
+  const [openTextArea,setOpenTextArea] = useState(true)
 
   const totalTime = recipe.prepTimeMinutes + recipe.cookTimeMinutes;
 
@@ -63,8 +63,14 @@ const RecipeDetailCard = ({ recipe }) => {
         <p className="text-lg italic text-gray-600 mb-6">
           Discover how to make this delicious {recipe.title}.{" "}
           {recipe.description || "any occasion"}.
+          <hr/>
           <br/>
-         {openTextArea? <textarea></textarea> :<button className='w-12 bg-blue-400 rounded hover:bg-blue-500 text-black font-bold'>Edit</button>}
+         {openTextArea?
+            <div className="flex-1">
+              <textarea className="block p-2.5 w-[300px] text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Type here..."/>
+              <button className='w-20 bg-green-400 rounded hover:bg-green-500 text-black font-bold m-2'>Submit</button>
+            </div>
+          :<button className='w-12 bg-blue-400 rounded hover:bg-blue-500 text-black font-bold'>Edit</button>}
         </p>
 
         <div className="text-lg text-gray-800 space-y-2">
