@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import SearchBar from './SearchBar';
 import { signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 
 /**
  * The main navigation component for the app.
@@ -15,7 +16,9 @@ const Navbar = () => {
   const [openSublinks, setOpenSublinks] = useState({});
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login state
   const pathname = usePathname();
-  const router = useRouter();
+  const router = useRouter(); 
+  const [favouritesCount, setFavouritesCount] = useState(0);
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     // Check if user is logged in, for example, by checking a token in localStorage
@@ -48,7 +51,7 @@ const Navbar = () => {
         { name: 'Dinner', href: '/recipes/dinner' },
       ]
     },
-    { name: 'Favourites', href: '/favourites' },
+    { name: 'Favourites', href: '/favourites', badge: status === 'authenticated' ? favouritesCount : null},
     { name: 'About', href: '/about' },
     { name: 'Contact', href: '/contact' },
     {
@@ -102,6 +105,11 @@ const Navbar = () => {
                       className="text-gray-800 hover:text-gray-600 px-3 py-2 rounded-md text-sm font-medium focus:outline-none"
                     >
                       {link.name}
+                      {link.badge !== null && (
+                        <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                          {link.badge}
+                        </span>
+                      )}
                     </button>
                     {link.sublinks && openSublinks[link.name] && (
                       <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
