@@ -83,8 +83,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import RecipeCard from '@/components/RecipeCard';
-
+import RecipeCard from '../components/RecipeCard';
 const FavouritesPage = () => {
   const [favourites, setFavourites] = useState([]);
   const [loading, setLoading] = useState(true);
