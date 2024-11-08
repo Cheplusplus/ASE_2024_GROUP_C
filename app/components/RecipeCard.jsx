@@ -22,7 +22,7 @@ const PeopleIcon = (
   </svg>
 );
 
-const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags = [] } }) => {
+const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags = [] },  onAddToFavourites, onRemoveFromFavourites, isFavourited = false}) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [intervalId, setIntervalId] = useState(null);
   const remainingTags = tags.length - MAX_VISIBLE_TAGS;
@@ -38,6 +38,27 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
     clearInterval(intervalId);
     setIntervalId(null);
     setCurrentImageIndex(0); // Reset to the first image
+  };
+
+  const handleFavouriteClick = async (e) => {
+    e.preventDefault(); // Prevent link navigation
+    try {
+      const response = await fetch('/api/favourites', {
+        method: isFavourited ? 'DELETE' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ recipeId: recipe._id })
+      });
+
+      if (!response.ok) throw new Error('Failed to update favourites');
+      
+      if (isFavourited) {
+        onRemoveFromFavourites && onRemoveFromFavourites();
+      } else {
+        onAddToFavourites && onAddToFavourites();
+      }
+    } catch (error) {
+      console.error('Error updating favourites:', error);
+    }
   };
 
   return (
@@ -104,15 +125,14 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
             </div>
           )}
             <button
-              onClick={(e) => {
-                e.preventDefault(); // Prevent link navigation
-                if (onAddToFavourites) {
-                  onAddToFavourites({ _id, title, images, prep, cook, servings, tags });
-                }
-              }}
-              className="mt-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+              onClick={handleFavouriteClick}
+              className={`mt-2 px-3 py-1 rounded ${
+                isFavourited 
+                  ? 'bg-red-500 hover:bg-red-600' 
+                  : 'bg-blue-500 hover:bg-blue-600'
+              } text-white`}
             >
-              Add to Favourites
+              {isFavourited ? 'Remove from Favourites' : 'Add to Favourites'}
             </button>
         </div>
       </div>
