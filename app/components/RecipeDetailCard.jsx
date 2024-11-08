@@ -41,6 +41,17 @@ const getRandomName = () => {
   return `${randomFirst} ${randomLast}`;
 };
 
+const getRandomDate = () => {
+  // Generate dates from 6 months ago up to today
+  const today = new Date();
+  const sixMonthsAgo = new Date();
+  sixMonthsAgo.setMonth(today.getMonth() - 6);
+  
+  return new Date(
+    sixMonthsAgo.getTime() + Math.random() * (today.getTime() - sixMonthsAgo.getTime())
+  );
+};
+
 // Sample review comments for when none are provided
 const sampleReviewComments = [
   "These cookies turned out perfectly! Just the right amount of sweetness.",
@@ -56,6 +67,9 @@ const RecipeDetailCard = ({ recipe }) => {
   const [randomNames] = useState(() => 
     Array(50).fill(null).map(() => getRandomName())
   );
+  const [randomDates] = useState(() => 
+    Array(50).fill(null).map(() => getRandomDate())
+  );
 
   const formatReviewerName = (reviewer, index) => {
     if (!reviewer) return randomNames[index % randomNames.length];
@@ -63,10 +77,11 @@ const RecipeDetailCard = ({ recipe }) => {
            randomNames[index % randomNames.length];
   };
 
-  // Ensure each review has a comment
+  // Ensure each review has a comment and a random date
   const enrichedReviews = recipe.reviews?.map((review, index) => ({
     ...review,
-    comment: review.comment || sampleReviewComments[index % sampleReviewComments.length]
+    comment: review.comment || sampleReviewComments[index % sampleReviewComments.length],
+    date: randomDates[index % randomDates.length]
   }));
 
   return (
