@@ -16,7 +16,6 @@ export default function RecipeDetail({ params }) {
 
   useEffect(() => {
     const fetchRecipe = async (id) => {
-      const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
       try {
         const response = await fetch(`/api/recipe/${id}`);
         console.log(response)
@@ -110,3 +109,5 @@ export default function RecipeDetail({ params }) {
     </>
   );
 }
+
+

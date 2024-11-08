@@ -12,6 +12,7 @@ const formatTime = (minutes) => {
 const RecipeDetailCard = ({ recipe }) => {
   const [activeTab, setActiveTab] = useState("ingredients");
   const [selectedImage, setSelectedImage] = useState(recipe.images[0]);
+  const [openTextArea,setOpenTextArea] = useState(false)
 
   const totalTime = recipe.prepTimeMinutes + recipe.cookTimeMinutes;
 
@@ -62,6 +63,8 @@ const RecipeDetailCard = ({ recipe }) => {
         <p className="text-lg italic text-gray-600 mb-6">
           Discover how to make this delicious {recipe.title}.{" "}
           {recipe.description || "any occasion"}.
+          <br/>
+         {openTextArea? <textarea></textarea> :<button className='w-12 bg-blue-400 rounded hover:bg-blue-500 text-black font-bold'>Edit</button>}
         </p>
 
         <div className="text-lg text-gray-800 space-y-2">

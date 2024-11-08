@@ -9,7 +9,7 @@ const SignIn = () => {
 
   const { data: session } = useSession()
   if(session) {
-    router.push('/')
+    router.back()
   }
 
   return (
@@ -81,3 +81,4 @@ const SignIn = () => {
 };
 
 export default SignIn;
+
