@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { Star } from "lucide-react";
 
@@ -43,6 +41,15 @@ const getRandomName = () => {
   return `${randomFirst} ${randomLast}`;
 };
 
+// Sample review comments for when none are provided
+const sampleReviewComments = [
+  "These cookies turned out perfectly! Just the right amount of sweetness.",
+  "Great recipe but needed a few more minutes in the oven for my taste.",
+  "My family loved these! Will definitely make them again.",
+  "Good basic recipe that's easy to customize.",
+  "Texture was perfect but I'd add more chocolate chips next time."
+];
+
 const RecipeDetailCard = ({ recipe }) => {
   const [activeTab, setActiveTab] = useState("ingredients");
   const [selectedImage, setSelectedImage] = useState(recipe.images[0]);
@@ -56,8 +63,16 @@ const RecipeDetailCard = ({ recipe }) => {
            randomNames[index % randomNames.length];
   };
 
+  // Ensure each review has a comment
+  const enrichedReviews = recipe.reviews?.map((review, index) => ({
+    ...review,
+    comment: review.comment || sampleReviewComments[index % sampleReviewComments.length]
+  }));
+
   return (
     <div className="grid items-start grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Previous code remains the same until the reviews section */}
+      
       <div className="w-full lg:sticky top-0 flex flex-col gap-3">
         <div className="w-full">
           <img
@@ -98,7 +113,7 @@ const RecipeDetailCard = ({ recipe }) => {
 
         <p className="text-lg italic text-gray-600 mb-6">
           Discover how to make this delicious {recipe.title}.{" "}
-          {recipe.description || "any occasion"}.
+          {recipe.description || "Perfect for any occasion"}.
         </p>
 
         <div className="text-lg text-gray-800 space-y-2">
@@ -172,11 +187,11 @@ const RecipeDetailCard = ({ recipe }) => {
           ) : activeTab === "instructions" ? (
             <div>
               <h2 className="text-2xl font-semibold mb-4">Instructions</h2>
-              <ul className="list-disc pl-6 text-gray-700">
+              <ol className="list-decimal pl-6 text-gray-700 space-y-4">
                 {recipe.instructions.map((instruction, index) => (
-                  <li key={index}>{instruction}</li>
+                  <li key={index} className="pl-2">{instruction}</li>
                 ))}
-              </ul>
+              </ol>
             </div>
           ) : activeTab === "nutrition" ? (
             <div className="recipe-nutrition">
@@ -195,9 +210,9 @@ const RecipeDetailCard = ({ recipe }) => {
           ) : (
             <div className="recipe-reviews">
               <h3 className="text-2xl font-semibold mb-4">User Reviews</h3>
-              {Array.isArray(recipe.reviews) && recipe.reviews.length > 0 ? (
+              {Array.isArray(enrichedReviews) && enrichedReviews.length > 0 ? (
                 <div className="space-y-6">
-                  {recipe.reviews.map((review, index) => (
+                  {enrichedReviews.map((review, index) => (
                     <div 
                       key={index} 
                       className="bg-gray-50 rounded-lg p-4 shadow-sm"
@@ -217,7 +232,9 @@ const RecipeDetailCard = ({ recipe }) => {
                         </div>
                         <StarRating rating={review.rating} />
                       </div>
-                      <p className="mt-3 text-gray-700">{review.comment}</p>
+                      <p className="mt-3 text-gray-700 leading-relaxed">
+                        {review.comment}
+                      </p>
                     </div>
                   ))}
                 </div>
