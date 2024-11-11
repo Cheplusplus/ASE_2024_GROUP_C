@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import SearchBar from './SearchBar';
 import { signOut } from 'next-auth/react';
+import { ThemeToggle } from './ThemeToggle';
 
 /**
  * The main navigation component for the app.
@@ -13,12 +14,11 @@ const Navbar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openSublinks, setOpenSublinks] = useState({});
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login state
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
-    // Check if user is logged in, for example, by checking a token in localStorage
     const token = localStorage.getItem('authToken');
     setIsLoggedIn(!!token);
   }, []);
@@ -31,10 +31,9 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    // Clear the session (for example, removing the token)
     localStorage.removeItem('authToken');
     setIsLoggedIn(false);
-    router.push('/'); // Redirect to the homepage
+    router.push('/');
   };
 
   const navLinks = [
@@ -63,14 +62,14 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/30 shadow-lg">
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/30 dark:bg-gray-900/30 shadow-lg transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
               <div className="md:hidden">
                 <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="p-2 rounded-md text-gray-800 hover:text-gray-600 focus:outline-none"
+                  className="p-2 rounded-md text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none"
                   aria-label="Toggle menu"
                 >
                   <div className="w-6 h-6 flex flex-col justify-between">
@@ -81,7 +80,7 @@ const Navbar = () => {
                 </button>
               </div>
               
-              <Link href="/" className="text-2xl font-bold text-gray-800">
+              <Link href="/" className="text-2xl font-bold text-gray-800 dark:text-gray-200">
                 Recipe Rush
               </Link>
             </div>
@@ -99,20 +98,28 @@ const Navbar = () => {
                           handleSublinkToggle(link.name);
                         }
                       }}
-                      className="text-gray-800 hover:text-gray-600 px-3 py-2 rounded-md text-sm font-medium focus:outline-none"
+                      className="text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 px-3 py-2 rounded-md text-sm font-medium focus:outline-none"
                     >
                       {link.name}
                     </button>
                     {link.sublinks && openSublinks[link.name] && (
-                      <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                      <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 transition-colors duration-200">
                         <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                           {link.sublinks.map((sublink) => (
-                            <Link key={sublink.name} href={sublink.href} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <Link 
+                              key={sublink.name} 
+                              href={sublink.href} 
+                              className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+                            >
                               {sublink.name}
                             </Link>
-                            
                           ))}
-                          <button onClick={() => signOut()}>Sign Out</button>
+                          <button 
+                            onClick={() => signOut()}
+                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+                          >
+                            Sign Out
+                          </button>
                         </div>
                       </div>
                     )}
@@ -121,7 +128,7 @@ const Navbar = () => {
                 {isLoggedIn && (
                   <button
                     onClick={handleLogout}
-                    className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded"
+                    className="bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 text-white py-2 px-4 rounded transition-colors duration-200"
                   >
                     Logout
                   </button>
@@ -129,11 +136,12 @@ const Navbar = () => {
               </div>
             </div>
 
-            {/* Search Button */}
-            <div className="flex items-center">
+            {/* Theme Toggle and Search */}
+            <div className="flex items-center space-x-2">
+              <ThemeToggle />
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className={`p-2 rounded-md text-gray-800 hover:text-gray-600 focus:outline-none ${isSearchOpen ? 'bg-gray-100' : ''}`}
+                className={`p-2 rounded-md text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none ${isSearchOpen ? 'bg-gray-100 dark:bg-gray-700' : ''} transition-colors duration-200`}
                 aria-label="Toggle search"
               >
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -145,7 +153,7 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Menu */}
-        <div className={`md:hidden transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'max-h-screen' : 'max-h-0'} overflow-hidden`}>
+        <div className={`md:hidden transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'max-h-screen' : 'max-h-0'} overflow-hidden bg-white dark:bg-gray-900 transition-colors duration-200`}>
           <div className="px-2 pt-2 pb-3 space-y-1">
             {navLinks.map((link) => (
               <div key={link.name}>
@@ -157,14 +165,18 @@ const Navbar = () => {
                       handleSublinkToggle(link.name);
                     }
                   }}
-                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-800 hover:text-gray-600 hover:bg-gray-50 focus:outline-none"
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 focus:outline-none transition-colors duration-200"
                 >
                   {link.name}
                 </button>
                 {link.sublinks && openSublinks[link.name] && (
                   <div className="pl-4 space-y-1">
                     {link.sublinks.map((sublink) => (
-                      <Link key={sublink.name} href={sublink.href} className="block px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50">
+                      <Link 
+                        key={sublink.name} 
+                        href={sublink.href} 
+                        className="block px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
+                      >
                         {sublink.name}
                       </Link>
                     ))}
