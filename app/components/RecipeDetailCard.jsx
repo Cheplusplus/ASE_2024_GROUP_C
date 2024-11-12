@@ -41,6 +41,7 @@ const RecipeDetailCard = ({ recipe, updateRecipeReviews = () => {} }) => {
   });
   const [reviews, setReviews] = useState(recipe.reviews || []);
   const [errorMessage, setErrorMessage] = useState("");
+  const [editingReviewIndex, setEditingReviewIndex] = useState(null); // Track the index of the review being edited
 
   const handleReviewSubmit = () => {
     if (!newReview.reviewer.firstName || !newReview.reviewer.lastName || !newReview.comment) {
@@ -53,7 +54,16 @@ const RecipeDetailCard = ({ recipe, updateRecipeReviews = () => {} }) => {
       date: new Date().toISOString(),
     };
 
-    const updatedReviews = [reviewToAdd, ...reviews];
+    let updatedReviews = [...reviews];
+    if (editingReviewIndex !== null) {
+      // If we are editing an existing review, replace the review at that index
+      updatedReviews[editingReviewIndex] = reviewToAdd;
+      setEditingReviewIndex(null); // Clear the editing state
+    } else {
+      // If it's a new review, add it
+      updatedReviews = [reviewToAdd, ...reviews];
+    }
+
     setReviews(updatedReviews); // Update local state for immediate render
     updateRecipeReviews(updatedReviews); // Callback to save changes outside if needed
 
@@ -67,6 +77,16 @@ const RecipeDetailCard = ({ recipe, updateRecipeReviews = () => {} }) => {
       }
     });
     setErrorMessage(""); // Clear error message if successful
+  };
+
+  const handleEditReview = (index) => {
+    const reviewToEdit = reviews[index];
+    setNewReview({
+      rating: reviewToEdit.rating,
+      comment: reviewToEdit.comment,
+      reviewer: reviewToEdit.reviewer || { firstName: "", lastName: "" },
+    });
+    setEditingReviewIndex(index); // Set the index to track the review being edited
   };
 
   return (
@@ -180,7 +200,7 @@ const RecipeDetailCard = ({ recipe, updateRecipeReviews = () => {} }) => {
 
               {/* Review Form */}
               <div className="mb-8">
-                <h4 className="text-xl font-semibold mb-2">Write a review</h4>
+                <h4 className="text-xl font-semibold mb-2">{editingReviewIndex === null ? "Write a review" : "Edit your review"}</h4>
                 <StarRating
                   rating={newReview.rating}
                   onChange={(rating) => setNewReview({ ...newReview, rating })}
@@ -229,7 +249,7 @@ const RecipeDetailCard = ({ recipe, updateRecipeReviews = () => {} }) => {
                   onClick={handleReviewSubmit}
                   className="bg-blue-500 text-white py-2 px-4 rounded-md mt-4"
                 >
-                  Submit Review
+                  {editingReviewIndex === null ? "Submit Review" : "Update Review"}
                 </button>
               </div>
 
@@ -239,18 +259,23 @@ const RecipeDetailCard = ({ recipe, updateRecipeReviews = () => {} }) => {
               ) : (
                 <div>
                   {reviews.map((review, index) => (
-                      <div key={index} className="border-b border-gray-300 py-4">
-                        <div className="flex items-center gap-2">
-                          <StarRating rating={review.rating} readOnly />
-                          <p className="text-sm text-gray-600">{review.date}</p>
-                        </div>
-                        <p className="text-gray-700">{review.comment}</p>
-                        <p className="font-semibold text-gray-800">
-                          {/* Using optional chaining to prevent errors if reviewer is undefined */}
-                          {review.reviewer?.firstName || "Anonymous"} {review.reviewer?.lastName || ""}
-                        </p>
+                    <div key={index} className="border-b border-gray-300 py-4">
+                      <div className="flex items-center gap-2">
+                        <StarRating rating={review.rating} readOnly />
+                        <p className="text-sm text-gray-600">{review.date}</p>
                       </div>
-                    ))}
+                      <p className="text-gray-700">{review.comment}</p>
+                      <p className="font-semibold text-gray-800">
+                        {review.reviewer?.firstName || "Anonymous"} {review.reviewer?.lastName || ""}
+                      </p>
+                      <button
+                        onClick={() => handleEditReview(index)}
+                        className="text-blue-500 text-sm mt-2"
+                      >
+                        Edit Review
+                      </button>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
