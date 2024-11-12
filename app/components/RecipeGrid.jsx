@@ -28,7 +28,6 @@ const RecipeGrid = async ({ searchParams }) => {
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     
        categories = await response.json();
-      console.log(categories, 'categories');
    
      
     return (
