@@ -1,184 +1,87 @@
 import { useState } from "react";
-import { Star, ChevronDown } from "lucide-react";
+import { Star } from "lucide-react";
 
+// Helper functions
 const formatTime = (minutes) => {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
   return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
 };
 
-const StarRating = ({ rating }) => {
+const formatTotalTime = (recipe) => {
+  const totalMinutes = (recipe.prepTime || 0) + (recipe.cookTime || 0);
+  return formatTime(totalMinutes);
+};
+
+const StarRating = ({ rating, onChange, readOnly = false }) => {
   return (
     <div className="flex items-center gap-1">
       {[...Array(5)].map((_, index) => (
         <Star
           key={index}
-          size={16}
-          className={`${
-            index < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
-          }`}
+          size={20}
+          className={`cursor-pointer ${index < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
+          onClick={() => !readOnly && onChange(index + 1)}
         />
       ))}
     </div>
   );
 };
 
-const getRandomName = () => {
-  const firstNames = [
-    "Emma", "Liam", "Olivia", "Noah", "Ava", "Lucas", "Sophia", "Mason",
-    "Isabella", "William", "Mia", "James", "Charlotte", "Oliver", "Amelia",
-    "Benjamin", "Harper", "Elijah", "Evelyn", "Alexander"
-  ];
-  const lastNames = [
-    "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller",
-    "Davis", "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez",
-    "Wilson", "Anderson", "Thomas", "Taylor", "Moore", "Jackson", "Martin"
-  ];
-  
-  const randomFirst = firstNames[Math.floor(Math.random() * firstNames.length)];
-  const randomLast = lastNames[Math.floor(Math.random() * lastNames.length)];
-  
-  return `${randomFirst} ${randomLast}`;
-};
-
-const getRandomDate = () => {
-  const today = new Date();
-  const sixMonthsAgo = new Date();
-  sixMonthsAgo.setMonth(today.getMonth() - 6);
-  
-  return new Date(
-    sixMonthsAgo.getTime() + Math.random() * (today.getTime() - sixMonthsAgo.getTime())
-  );
-};
-
-const generateReviewComment = (recipe) => {
-  // Comments about cooking time
-  const timeBasedComments = [
-    `Perfect ${recipe.cook > 60 ? 'slow-cooked' : 'quick'} recipe - took exactly ${formatTime(recipe.cook + recipe.prep)} from start to finish.`,
-    `Great ${recipe.prep < 30 ? 'weeknight' : 'weekend'} recipe! The prep time of ${formatTime(recipe.prep)} was ${recipe.prep < 30 ? 'manageable' : 'worth it'}.`,
-    `Love that this only takes ${formatTime(recipe.cook)} to cook - perfect for ${recipe.cook < 45 ? 'busy evenings' : 'lazy weekends'}.`
-  ];
-
-  // Comments about ingredients and category
-  const ingredientComments = [
-    `The combination of ${Object.keys(recipe.ingredients).slice(0, 2).join(' and ')} really makes this ${recipe.category.toLowerCase()} special.`,
-    `I had all the ingredients on hand - great pantry-friendly ${recipe.category.toLowerCase()}.`,
-    `The ${Object.keys(recipe.ingredients)[0]} really shines in this recipe!`
-  ];
-
-  // Comments about serving size
-  const servingComments = [
-    `Perfect portion for ${recipe.servings} ${recipe.servings === 1 ? 'person' : 'people'}. Nothing went to waste.`,
-    `Made this for a family of ${recipe.servings}, and the portions were spot-on.`,
-    `Great recipe to ${recipe.servings > 4 ? 'feed a crowd' : 'serve for a small gathering'}.`
-  ];
-
-  // Specific comments about the recipe category
-  const categoryComments = {
-    'Dessert': [
-      `The perfect amount of sweetness!`,
-      `Great dessert that isn't too heavy.`,
-      `My go-to sweet treat now.`
-    ],
-    'Main Course': [
-      `Filling and satisfying main dish.`,
-      `Restaurant-quality main course at home.`,
-      `Perfect centerpiece for dinner.`
-    ],
-    'Appetizer': [
-      `Perfect starter for any meal.`,
-      `Great party appetizer!`,
-      `Just the right size for a starter.`
-    ],
-    'Breakfast': [
-      `Perfect way to start the day.`,
-      `Great breakfast that keeps me full until lunch.`,
-      `My new favorite morning recipe.`
-    ],
-    'Soup': [
-      `So warming and comforting.`,
-      `Perfect consistency for a soup.`,
-      `Just what I want on a cold day.`
-    ],
-    'Salad': [
-      `Fresh and crisp - perfect balance of ingredients.`,
-      `Light and refreshing.`,
-      `Great healthy option that doesn't sacrifice flavor.`
-    ]
-  };
-
-  const nutritionComments = [
-    `Love that it's only ${recipe.nutrition.calories} calories per serving!`,
-    `Great protein content (${recipe.nutrition.protein}g) for a ${recipe.category.toLowerCase()}.`,
-    `Nice low-carb option with only ${recipe.nutrition.carbohydrates}g of carbs.`
-  ];
-
-  // Combine all possible comments
-  const allComments = [
-    ...timeBasedComments,
-    ...ingredientComments,
-    ...servingComments,
-    ...(categoryComments[recipe.category] || []),
-    ...nutritionComments
-  ];
-
-  // Return a random comment
-  return allComments[Math.floor(Math.random() * allComments.length)];
-};
-
-const RecipeDetailCard = ({ recipe }) => {
+const RecipeDetailCard = ({ recipe, updateRecipeReviews = () => {} }) => {
   const [activeTab, setActiveTab] = useState("ingredients");
-  const [selectedImage, setSelectedImage] = useState(recipe.images[0]);
-  const [randomNames] = useState(() => 
-    Array(50).fill(null).map(() => getRandomName())
-  );
-  const [randomDates] = useState(() => 
-    Array(50).fill(null).map(() => getRandomDate())
-  );
-  const [sortBy, setSortBy] = useState("newest");
-
-  const formatReviewerName = (reviewer, index) => {
-    if (!reviewer) return randomNames[index % randomNames.length];
-    return `${reviewer.firstName || ''} ${reviewer.lastName || ''}`.trim() || 
-           randomNames[index % randomNames.length];
-  };
-
-  // Generate recipe-specific review comments
-  const enrichedReviews = recipe.reviews?.map((review, index) => ({
-    ...review,
-    comment: review.comment || generateReviewComment(recipe),
-    date: randomDates[index % randomDates.length]
-  }));
-
-  // Sort reviews based on selected criteria
-  const sortedReviews = enrichedReviews ? [...enrichedReviews].sort((a, b) => {
-    switch (sortBy) {
-      case "newest":
-        return new Date(b.date) - new Date(a.date);
-      case "oldest":
-        return new Date(a.date) - new Date(b.date);
-      case "highest":
-        return b.rating - a.rating;
-      case "lowest":
-        return a.rating - b.rating;
-      default:
-        return 0;
+  const [selectedImage, setSelectedImage] = useState(recipe.images?.[0] || "");
+  const [newReview, setNewReview] = useState({
+    rating: 5,
+    comment: "",
+    reviewer: {
+      firstName: "",
+      lastName: ""
     }
-  }) : [];
+  });
+  const [reviews, setReviews] = useState(recipe.reviews || []);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleReviewSubmit = () => {
+    if (!newReview.reviewer.firstName || !newReview.reviewer.lastName || !newReview.comment) {
+      setErrorMessage("Please fill in all fields before submitting.");
+      return;
+    }
+
+    const reviewToAdd = {
+      ...newReview,
+      date: new Date().toISOString(),
+    };
+
+    const updatedReviews = [reviewToAdd, ...reviews];
+    setReviews(updatedReviews); // Update local state for immediate render
+    updateRecipeReviews(updatedReviews); // Callback to save changes outside if needed
+
+    // Clear form after submission
+    setNewReview({
+      rating: 5,
+      comment: "",
+      reviewer: {
+        firstName: "",
+        lastName: ""
+      }
+    });
+    setErrorMessage(""); // Clear error message if successful
+  };
 
   return (
-    <div className="grid items-start grid-cols-1 md:grid-cols-2 gap-6">
-      {/* Image gallery section */}
-      <div className="w-full lg:sticky top-0 flex flex-col gap-3">
-        <div className="w-full">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Left Section: Image and Thumbnails */}
+      <div className="flex flex-col gap-4">
+        <div className="w-full lg:sticky top-0">
           <img
             src={selectedImage}
             alt={recipe.title}
-            className="w-[540px] h-[403px] rounded-lg object-cover"
+            className="w-full h-[400px] rounded-lg object-cover"
           />
         </div>
-        <div className="flex flex-wrap gap-2 mt-4">
-          {recipe.images.map((image, index) => (
+        <div className="flex gap-2 mt-4 overflow-x-auto">
+          {recipe.images?.map((image, index) => (
             <img
               key={index}
               src={image}
@@ -192,95 +95,64 @@ const RecipeDetailCard = ({ recipe }) => {
         </div>
       </div>
 
+      {/* Right Section: Recipe Details */}
       <div>
-        <h1 className="text-3xl font-bold mb-2 text-gray-800">{recipe.title}</h1>
-
+        <h1 className="text-3xl font-bold text-gray-800 mb-3">{recipe.title}</h1>
         <div className="flex flex-wrap gap-2 my-4">
-          {recipe.tags &&
-            recipe.tags.map((tag, index) => (
-              <span
-                key={index}
-                className="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full"
-              >
-                {tag}
-              </span>
-            ))}
+          {recipe.tags?.map((tag, index) => (
+            <span
+              key={index}
+              className="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full"
+            >
+              {tag}
+            </span>
+          ))}
         </div>
 
         <p className="text-lg italic text-gray-600 mb-6">
-          Discover how to make this delicious {recipe.title}.{" "}
-          {recipe.description || "Perfect for any occasion"}.
+          {recipe.description || "Perfect for any occasion"}
         </p>
 
+        {/* Recipe Info */}
         <div className="text-lg text-gray-800 space-y-2">
-          <p>
-            <strong>Prep Time:</strong> {formatTime(recipe.prep)}
-          </p>
-          <p>
-            <strong>Cook Time:</strong> {formatTime(recipe.cook)}
-          </p>
-          <p>
-            <strong>Category:</strong> {recipe.category}
-          </p>
-          <p>
-            <strong>Servings:</strong> {recipe.servings} servings
-          </p>
-          <p>
-            <strong>Published:</strong>{" "}
-            {new Date(recipe.published).toLocaleDateString()}
-          </p>
+          <p><strong>Prep Time:</strong> {formatTime(recipe.prepTime || 0)}</p>
+          <p><strong>Cook Time:</strong> {formatTime(recipe.cookTime || 0)}</p>
+          <p><strong>Total Time:</strong> {formatTotalTime(recipe)}</p>
+          <p><strong>Category:</strong> {recipe.category || "N/A"}</p>
+          <p><strong>Servings:</strong> {recipe.servings || "N/A"} servings</p>
+          <p><strong>Published:</strong> {recipe.published ? new Date(recipe.published).toLocaleDateString() : "N/A"}</p>
         </div>
 
-        <ul className="grid grid-cols-4 mt-10 border-b-2">
-          <li
-            className={`text-gray-800 font-semibold text-base text-center py-3 cursor-pointer ${
-              activeTab === "ingredients" ? "border-b-2 border-gray-800" : ""
-            }`}
-            onClick={() => setActiveTab("ingredients")}
-          >
-            Ingredients
-          </li>
-          <li
-            className={`text-gray-800 font-semibold text-base text-center py-3 cursor-pointer ${
-              activeTab === "instructions" ? "border-b-2 border-gray-800" : ""
-            }`}
-            onClick={() => setActiveTab("instructions")}
-          >
-            Instructions
-          </li>
-          <li
-            className={`text-gray-800 font-semibold text-base text-center py-3 cursor-pointer ${
-              activeTab === "nutrition" ? "border-b-2 border-gray-800" : ""
-            }`}
-            onClick={() => setActiveTab("nutrition")}
-          >
-            Nutrition
-          </li>
-          <li
-            className={`text-gray-800 font-semibold text-base text-center py-3 cursor-pointer ${
-              activeTab === "reviews" ? "border-b-2 border-gray-800" : ""
-            }`}
-            onClick={() => setActiveTab("reviews")}
-          >
-            Reviews
-          </li>
+        {/* Tabs */}
+        <ul className="flex justify-between my-6 border-b-2">
+          {["ingredients", "instructions", "nutrition", "reviews"].map((tab) => (
+            <li
+              key={tab}
+              className={`text-gray-800 font-semibold text-base text-center py-3 cursor-pointer ${
+                activeTab === tab ? "border-b-2 border-gray-800" : ""
+              }`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </li>
+          ))}
         </ul>
 
+        {/* Tabs Content */}
         <div className="mt-6">
-          {activeTab === "ingredients" ? (
+          {activeTab === "ingredients" && recipe.ingredients && (
             <div>
               <h2 className="text-2xl font-semibold mb-4">Ingredients</h2>
               <ul className="list-disc pl-6 text-gray-700">
-                {Object.entries(recipe.ingredients).map(
-                  ([ingredient, quantity], index) => (
-                    <li key={index}>
-                      {ingredient}: {quantity}
-                    </li>
-                  )
-                )}
+                {Object.entries(recipe.ingredients).map(([ingredient, quantity], index) => (
+                  <li key={index}>
+                    {ingredient}: {quantity}
+                  </li>
+                ))}
               </ul>
             </div>
-          ) : activeTab === "instructions" ? (
+          )}
+          {activeTab === "instructions" && recipe.instructions && (
             <div>
               <h2 className="text-2xl font-semibold mb-4">Instructions</h2>
               <ol className="list-decimal pl-6 text-gray-700 space-y-4">
@@ -289,70 +161,96 @@ const RecipeDetailCard = ({ recipe }) => {
                 ))}
               </ol>
             </div>
-          ) : activeTab === "nutrition" ? (
-            <div className="recipe-nutrition">
+          )}
+          {activeTab === "nutrition" && recipe.nutrition && (
+            <div>
               <h3 className="text-2xl font-semibold mb-4">Nutrition Information</h3>
               <ul className="list-disc pl-6 text-gray-700">
-                <li>Calories: {recipe.nutrition.calories}</li>
-                <li>Fat: {recipe.nutrition.fat}g</li>
-                <li>Saturated Fat: {recipe.nutrition.saturated}g</li>
-                <li>Sodium: {recipe.nutrition.sodium}mg</li>
-                <li>Carbohydrates: {recipe.nutrition.carbohydrates}g</li>
-                <li>Fiber: {recipe.nutrition.fiber}g</li>
-                <li>Sugar: {recipe.nutrition.sugar}g</li>
-                <li>Protein: {recipe.nutrition.protein}g</li>
+                {Object.entries(recipe.nutrition).map(([key, value], index) => (
+                  <li key={index}>
+                    {key.charAt(0).toUpperCase() + key.slice(1)}: {value}
+                  </li>
+                ))}
               </ul>
             </div>
-          ) : (
-            <div className="recipe-reviews">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-2xl font-semibold">User Reviews</h3>
-                <div className="relative">
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                  >
-                    <option value="newest">Newest First</option>
-                    <option value="oldest">Oldest First</option>
-                    <option value="highest">Highest Rated</option>
-                    <option value="lowest">Lowest Rated</option>
-                  </select>
-                  <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none" size={16} />
+          )}
+          {activeTab === "reviews" && (
+            <div>
+              <h3 className="text-2xl font-semibold mb-4">Reviews</h3>
+
+              {/* Review Form */}
+              <div className="mb-8">
+                <h4 className="text-xl font-semibold mb-2">Write a review</h4>
+                <StarRating
+                  rating={newReview.rating}
+                  onChange={(rating) => setNewReview({ ...newReview, rating })}
+                />
+                <div className="mb-4">
+                  <input
+                    type="text"
+                    placeholder="First Name"
+                    value={newReview.reviewer.firstName}
+                    onChange={(e) =>
+                      setNewReview({
+                        ...newReview,
+                        reviewer: { ...newReview.reviewer, firstName: e.target.value },
+                      })
+                    }
+                    className="block w-full p-2 border rounded-md"
+                  />
                 </div>
+                <div className="mb-4">
+                  <input
+                    type="text"
+                    placeholder="Last Name"
+                    value={newReview.reviewer.lastName}
+                    onChange={(e) =>
+                      setNewReview({
+                        ...newReview,
+                        reviewer: { ...newReview.reviewer, lastName: e.target.value },
+                      })
+                    }
+                    className="block w-full p-2 border rounded-md"
+                  />
+                </div>
+                <div className="mb-4">
+                  <textarea
+                    placeholder="Your comment here..."
+                    value={newReview.comment}
+                    onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                    rows="4"
+                    className="block w-full p-2 border rounded-md"
+                  />
+                </div>
+
+                {errorMessage && <p className="text-red-600 text-sm">{errorMessage}</p>}
+
+                <button
+                  onClick={handleReviewSubmit}
+                  className="bg-blue-500 text-white py-2 px-4 rounded-md mt-4"
+                >
+                  Submit Review
+                </button>
               </div>
-              
-              {Array.isArray(sortedReviews) && sortedReviews.length > 0 ? (
-                <div className="space-y-6">
-                  {sortedReviews.map((review, index) => (
-                    <div 
-                      key={index} 
-                      className="bg-gray-50 rounded-lg p-4 shadow-sm"
-                    >
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="font-semibold text-gray-900">
-                            {formatReviewerName(review.reviewer, index)}
-                          </h4>
-                          <p className="text-sm text-gray-500">
-                            {new Date(review.date).toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric'
-                            })}
-                          </p>
-                        </div>
-                        <StarRating rating={review.rating} />
-                      </div>
-                      <p className="mt-3 text-gray-700 leading-relaxed">
-                        {review.comment}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+
+              {/* Display Reviews */}
+              {reviews.length === 0 ? (
+                <p>No reviews yet.</p>
               ) : (
-                <div className="text-center py-8 bg-gray-50 rounded-lg">
-                  <p className="text-gray-500">No reviews yet. Be the first to review this recipe!</p>
+                <div>
+                  {reviews.map((review, index) => (
+                      <div key={index} className="border-b border-gray-300 py-4">
+                        <div className="flex items-center gap-2">
+                          <StarRating rating={review.rating} readOnly />
+                          <p className="text-sm text-gray-600">{review.date}</p>
+                        </div>
+                        <p className="text-gray-700">{review.comment}</p>
+                        <p className="font-semibold text-gray-800">
+                          {/* Using optional chaining to prevent errors if reviewer is undefined */}
+                          {review.reviewer?.firstName || "Anonymous"} {review.reviewer?.lastName || ""}
+                        </p>
+                      </div>
+                    ))}
                 </div>
               )}
             </div>
