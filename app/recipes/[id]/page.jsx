@@ -104,10 +104,11 @@ export default function RecipeDetail({ params }) {
         </button>
 
         {/* RecipeDetailCard should ensure alt text is included for images */}
-        <RecipeDetailCard recipe={recipe} />
+        <RecipeDetailCard recipe={recipe}  id={id}/>
       </div>
     </>
   );
 }
+
 
 
