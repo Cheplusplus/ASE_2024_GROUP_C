@@ -1,3 +1,4 @@
+'use client'
 import { useState, useEffect } from "react";
 import EditProfileForm from "./EditProfileForm";
 import { getUserProfile } from "@/lib/api";

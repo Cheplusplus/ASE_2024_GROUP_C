@@ -1,52 +1,63 @@
-import connectToDatabase from "@/lib/connectMongoose";
+import connectToDatabase from "@/app/lib/connectMongoose";
 import User from "@/app/models/User";
 import { getSession } from "next-auth/react";
+import { NextResponse } from "next/server";
 
-// Fetch and update user profile
-export default async function handler(req, res) {
+// Fetch user profile
+export async function GET(req, { params }) {
   await connectToDatabase();
 
-  const { id } = req.query;
+  const url = new URL(req.url);
+  const {id} = params;
+  console.log('slide123',id)
   const session = await getSession({ req });
 
   // If no session, return unauthorized
   if (!session) {
-    return res.status(401).json({ message: "Unauthorized" });
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  // Ensure users can only update their own profile
-  if (req.method === "GET") {
-    try {
-      const user = await User.findById(id);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-      res.status(200).json(user);
-    } catch (error) {
-      res.status(500).json({ message: "Error fetching user data" });
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
-  } else if (req.method === "PUT") {
-    // Check if the logged-in user is trying to update their own profile
-    if (session.user.id !== id) {
-      return res.status(403).json({ message: "Forbidden: Cannot update another user's profile" });
+    return NextResponse.json(user, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ message: "Error fetching user data" }, { status: 500 });
+  }
+}
+
+// Update user profile
+export async function POST(req, { params }) {
+  await connectToDatabase();
+
+  const { name, email, username } = await req.json();
+  const url = new URL(req.url);
+  const id = url.searchParams.get("id");
+  const session = await getSession({ req });
+
+  // Ensure the user is updating their own profile
+  if (!session || session.user.id !== id) {
+    return NextResponse.json(
+      { message: "Forbidden: Cannot update another user's profile" },
+      { status: 403 }
+    );
+  }
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      id,
+      { name, email, username },
+      { new: true }
+    );
+
+    if (!user) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
-    try {
-      const { name, email, username } = req.body;
-      const user = await User.findByIdAndUpdate(
-        id,
-        { name, email, username },
-        { new: true }
-      );
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-      res.status(200).json(user);
-    } catch (error) {
-      res.status(500).json({ message: "Error updating user data" });
-    }
-  } else {
-    res.setHeader("Allow", ["GET", "PUT"]);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+    return NextResponse.json(user, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ message: "Error updating user data" }, { status: 500 });
   }
 }

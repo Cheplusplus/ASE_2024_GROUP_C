@@ -57,6 +57,7 @@ const Navbar = () => {
       sublinks: [
         { name: 'Sign Up', href: '/sign-up' },
         { name: 'Sign In', href: '/sign-in' },
+        { name: 'Profile', href: '/profile' }
       ]
     },
   ];
