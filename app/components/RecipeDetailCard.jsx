@@ -42,32 +42,77 @@ const RecipeDetailCard = ({ recipe, updateRecipeReviews = () => {} }) => {
   const [reviews, setReviews] = useState(recipe.reviews || []);
   const [errorMessage, setErrorMessage] = useState("");
   const [editingReviewIndex, setEditingReviewIndex] = useState(null); // Track the index of the review being edited
+  const [activeSort, setActiveSort] = useState("dateAsc"); // Sorting state (by dateAsc, dateDesc, timeAsc, timeDesc)
+
+  // Helper function to validate and fix invalid names
+  const validateNames = (firstName, lastName) => {
+    return {
+      firstName: firstName.trim() || "Anonymous", // Use default if empty
+      lastName: lastName.trim() || "User", // Use default if empty
+    };
+  };
+
+  // Helper function to validate and fix invalid date
+  const validateDate = (date) => {
+    return date && !isNaN(new Date(date).getTime()) ? new Date(date) : new Date(); // Fallback to current date if invalid
+  };
+
+  // Sorting reviews logic
+  const sortedReviews = [...reviews].sort((a, b) => {
+    if (activeSort === "rating") {
+      return b.rating - a.rating; // Sort by rating (highest first)
+    }
+    if (activeSort === "dateAsc") {
+      return validateDate(a.date) - validateDate(b.date); // Sort by date (ascending)
+    }
+    if (activeSort === "dateDesc") {
+      return validateDate(b.date) - validateDate(a.date); // Sort by date (descending)
+    }
+    if (activeSort === "timeAsc") {
+      const timeA = (new Date(a.date).getMinutes() + new Date(a.date).getHours() * 60); // Convert to total minutes
+      const timeB = (new Date(b.date).getMinutes() + new Date(b.date).getHours() * 60); // Convert to total minutes
+      return timeA - timeB; // Sort by time (ascending)
+    }
+    if (activeSort === "timeDesc") {
+      const timeA = (new Date(a.date).getMinutes() + new Date(a.date).getHours() * 60);
+      const timeB = (new Date(b.date).getMinutes() + new Date(b.date).getHours() * 60);
+      return timeB - timeA; // Sort by time (descending)
+    }
+    return 0; // Default (no sorting)
+  });
 
   const handleReviewSubmit = () => {
-    if (!newReview.reviewer.firstName || !newReview.reviewer.lastName || !newReview.comment) {
+    const { firstName, lastName } = newReview.reviewer;
+
+    // Validate and fix names
+    const { firstName: validFirstName, lastName: validLastName } = validateNames(firstName, lastName);
+
+    // Validate the comment field (ensure it's not empty)
+    if (!newReview.comment.trim()) {
       setErrorMessage("Please fill in all fields before submitting.");
       return;
     }
 
     const reviewToAdd = {
       ...newReview,
+      reviewer: {
+        firstName: validFirstName,
+        lastName: validLastName,
+      },
       date: new Date().toISOString(),
     };
 
     let updatedReviews = [...reviews];
     if (editingReviewIndex !== null) {
-      // If we are editing an existing review, replace the review at that index
       updatedReviews[editingReviewIndex] = reviewToAdd;
-      setEditingReviewIndex(null); // Clear the editing state
+      setEditingReviewIndex(null);
     } else {
-      // If it's a new review, add it
       updatedReviews = [reviewToAdd, ...reviews];
     }
 
-    setReviews(updatedReviews); // Update local state for immediate render
-    updateRecipeReviews(updatedReviews); // Callback to save changes outside if needed
+    setReviews(updatedReviews);
+    updateRecipeReviews(updatedReviews);
 
-    // Clear form after submission
     setNewReview({
       rating: 5,
       comment: "",
@@ -76,7 +121,7 @@ const RecipeDetailCard = ({ recipe, updateRecipeReviews = () => {} }) => {
         lastName: ""
       }
     });
-    setErrorMessage(""); // Clear error message if successful
+    setErrorMessage("");
   };
 
   const handleEditReview = (index) => {
@@ -86,7 +131,7 @@ const RecipeDetailCard = ({ recipe, updateRecipeReviews = () => {} }) => {
       comment: reviewToEdit.comment,
       reviewer: reviewToEdit.reviewer || { firstName: "", lastName: "" },
     });
-    setEditingReviewIndex(index); // Set the index to track the review being edited
+    setEditingReviewIndex(index);
   };
 
   return (
@@ -166,7 +211,7 @@ const RecipeDetailCard = ({ recipe, updateRecipeReviews = () => {} }) => {
               <ul className="list-disc pl-6 text-gray-700">
                 {Object.entries(recipe.ingredients).map(([ingredient, quantity], index) => (
                   <li key={index}>
-                    {ingredient}: {quantity}
+                    <strong>{ingredient}:</strong> {quantity}
                   </li>
                 ))}
               </ul>
@@ -175,20 +220,20 @@ const RecipeDetailCard = ({ recipe, updateRecipeReviews = () => {} }) => {
           {activeTab === "instructions" && recipe.instructions && (
             <div>
               <h2 className="text-2xl font-semibold mb-4">Instructions</h2>
-              <ol className="list-decimal pl-6 text-gray-700 space-y-4">
-                {recipe.instructions.map((instruction, index) => (
-                  <li key={index} className="pl-2">{instruction}</li>
+              <ol className="list-decimal pl-6 text-gray-700">
+                {recipe.instructions.map((step, index) => (
+                  <li key={index}>{step}</li>
                 ))}
               </ol>
             </div>
           )}
           {activeTab === "nutrition" && recipe.nutrition && (
             <div>
-              <h3 className="text-2xl font-semibold mb-4">Nutrition Information</h3>
-              <ul className="list-disc pl-6 text-gray-700">
+              <h2 className="text-2xl font-semibold mb-4">Nutrition Information</h2>
+              <ul className="text-gray-700">
                 {Object.entries(recipe.nutrition).map(([key, value], index) => (
                   <li key={index}>
-                    {key.charAt(0).toUpperCase() + key.slice(1)}: {value}
+                    {key}: {value}
                   </li>
                 ))}
               </ul>
@@ -196,73 +241,83 @@ const RecipeDetailCard = ({ recipe, updateRecipeReviews = () => {} }) => {
           )}
           {activeTab === "reviews" && (
             <div>
-              <h3 className="text-2xl font-semibold mb-4">Reviews</h3>
-
-              {/* Review Form */}
-              <div className="mb-8">
-                <h4 className="text-xl font-semibold mb-2">{editingReviewIndex === null ? "Write a review" : "Edit your review"}</h4>
-                <StarRating
-                  rating={newReview.rating}
-                  onChange={(rating) => setNewReview({ ...newReview, rating })}
-                />
-                <div className="mb-4">
-                  <input
-                    type="text"
-                    placeholder="First Name"
-                    value={newReview.reviewer.firstName}
-                    onChange={(e) =>
-                      setNewReview({
-                        ...newReview,
-                        reviewer: { ...newReview.reviewer, firstName: e.target.value },
-                      })
-                    }
-                    className="block w-full p-2 border rounded-md"
-                  />
-                </div>
-                <div className="mb-4">
-                  <input
-                    type="text"
-                    placeholder="Last Name"
-                    value={newReview.reviewer.lastName}
-                    onChange={(e) =>
-                      setNewReview({
-                        ...newReview,
-                        reviewer: { ...newReview.reviewer, lastName: e.target.value },
-                      })
-                    }
-                    className="block w-full p-2 border rounded-md"
-                  />
-                </div>
-                <div className="mb-4">
-                  <textarea
-                    placeholder="Your comment here..."
-                    value={newReview.comment}
-                    onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
-                    rows="4"
-                    className="block w-full p-2 border rounded-md"
-                  />
-                </div>
-
-                {errorMessage && <p className="text-red-600 text-sm">{errorMessage}</p>}
-
-                <button
-                  onClick={handleReviewSubmit}
-                  className="bg-blue-500 text-white py-2 px-4 rounded-md mt-4"
+              {/* Review Sort Control */}
+              <div className="mb-4 flex items-center gap-3">
+                <label htmlFor="sortReviews" className="text-sm font-medium">Sort by:</label>
+                <select
+                  id="sortReviews"
+                  className="p-2 border rounded-md"
+                  value={activeSort}
+                  onChange={(e) => setActiveSort(e.target.value)}
                 >
-                  {editingReviewIndex === null ? "Submit Review" : "Update Review"}
-                </button>
+                  <option value="dateAsc">Date (Oldest First)</option>
+                  <option value="dateDesc">Date (Newest First)</option>
+                  <option value="timeAsc">Time (Shortest First)</option>
+                  <option value="timeDesc">Time (Longest First)</option>
+                  <option value="rating">Rating (Highest First)</option>
+                </select>
               </div>
 
+              {/* Add/Edit Review Form */}
+              <h4 className="text-xl font-semibold mb-2">{editingReviewIndex === null ? "Write a review" : "Edit your review"}</h4>
+              <StarRating
+                rating={newReview.rating}
+                onChange={(rating) => setNewReview({ ...newReview, rating })}
+              />
+              <div className="mb-4">
+                <input
+                  type="text"
+                  placeholder="First Name"
+                  value={newReview.reviewer.firstName}
+                  onChange={(e) =>
+                    setNewReview({
+                      ...newReview,
+                      reviewer: { ...newReview.reviewer, firstName: e.target.value },
+                    })
+                  }
+                  className="block w-full p-2 border rounded-md"
+                />
+              </div>
+              <div className="mb-4">
+                <input
+                  type="text"
+                  placeholder="Last Name"
+                  value={newReview.reviewer.lastName}
+                  onChange={(e) =>
+                    setNewReview({
+                      ...newReview,
+                      reviewer: { ...newReview.reviewer, lastName: e.target.value },
+                    })
+                  }
+                  className="block w-full p-2 border rounded-md"
+                />
+              </div>
+              <div className="mb-4">
+                <textarea
+                  placeholder="Write your review..."
+                  value={newReview.comment}
+                  onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                  className="block w-full p-2 border rounded-md"
+                />
+              </div>
+              {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+              <button
+                onClick={handleReviewSubmit}
+                className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-md"
+              >
+                {editingReviewIndex === null ? "Submit Review" : "Update Review"}
+              </button>
+
               {/* Display Reviews */}
-              {reviews.length === 0 ? (
+              {sortedReviews.length === 0 ? (
                 <p>No reviews yet.</p>
               ) : (
                 <div>
-                  {reviews.map((review, index) => (
+                  {sortedReviews.map((review, index) => (
                     <div key={index} className="border-b border-gray-300 py-4">
                       <div className="flex items-center gap-2">
                         <StarRating rating={review.rating} readOnly />
-                        <p className="text-sm text-gray-600">{review.date}</p>
+                        <p className="text-sm text-gray-600">{new Date(review.date).toLocaleDateString()}</p>
                       </div>
                       <p className="text-gray-700">{review.comment}</p>
                       <p className="font-semibold text-gray-800">
