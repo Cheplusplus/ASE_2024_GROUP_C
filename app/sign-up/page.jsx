@@ -2,7 +2,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { signIn } from 'next-auth/react';
+import { signIn ,useSession} from 'next-auth/react';
+
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
@@ -11,29 +12,51 @@ const SignUp = () => {
   const [error, setError] = useState(null);
   const router = useRouter();
 
+  const {data: session} = useSession()
+
+  if(session) {
+    router.push('/')
+  }
+
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      // Register the user
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
-      if (!response.ok) throw new Error("Failed to sign up");
+      const data = await res.json();
+      console.log(data)
 
-      router.push("/sign-in");
-    } catch (error) {
-      setError(error.message);
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to register');
+      }
+
+      // Sign in the user
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result.error) {
+        throw new Error(result.error);
+      }
+
+      router.push('/sign-in'); // Or wherever you want to redirect after signup
+    } catch (err) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
-
-  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -49,7 +72,7 @@ const SignUp = () => {
             </Link>
           </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit} >
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <label htmlFor="email" className="sr-only">Email</label>

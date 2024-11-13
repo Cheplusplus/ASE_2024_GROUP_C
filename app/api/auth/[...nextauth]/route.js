@@ -1,55 +1,79 @@
 import { clientPromise } from "@/app/lib/connectMongoose";
+import connectToDatabase from "@/app/lib/connectMongoose";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import EmailProvider from "next-auth/providers/email";
-import credentialsProvider from "next-auth/providers/credentials";
+import CredentialsProvider from "next-auth/providers/credentials";
+import nodemailer from 'nodemailer';
+import User from "@/app/models/users";
+import bcrypt from 'bcryptjs';
 
-
-
-async function fetchUserByEmail(email) {
-    const client = await connectToDatabase();
-    const db = client.db();
-    const user = await db.collection("users").findOne({ email });
-    return user;
-  }
-  
-  function validatePassword(user, inputPassword) {
-    return bcrypt.compareSync(inputPassword, user.password);
-  }
+// const transporter = nodemailer.createTransport({
+//   service: 'gmail',
+//   auth: {
+//     user: process.env.EMAIL_SERVER_USER,
+//     pass: process.env.EMAIL_SERVER_PASSWORD,
+//   },
+// });
 
 const authOptions = {
-    adapter: MongoDBAdapter(clientPromise),
-    providers: [
-      GoogleProvider({
-        clientId: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      }),
-      credentialsProvider({
-        name: 'Credentials',
-        credentials: {
-            email: {label: 'Email', type: 'email'},
-            password: {label: 'Password', type: 'password'}
-        },
-        async authorize(credentials) {
-            const { email, password } = credentials;
-    
-            // Fetch user from your MongoDB database
-            const user = await fetchUserByEmail(email);
-    
-            if (user && validatePassword(user, password)) {
-              // Return user object if credentials are valid
-              return user;
-            } else {
-              // If no user or invalid password, return null
-              return null;
-            }
-          }
-      }),
-      
-    ],
-    secret: process.env.NEXTAUTH_SECRET,
-  };
+  adapter: MongoDBAdapter(clientPromise),
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
+    CredentialsProvider({
+      name: 'Credentials',
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials) {
+        await connectToDatabase();
+        
+        const user = await User.findOne({ email: credentials.email });
+        
+        if (!user) {
+          throw new Error('No user found with this email');
+        }
+
+        const isValid = await bcrypt.compare(credentials.password, user.password);
+        
+        if (!isValid) {
+          throw new Error('Invalid password');
+        }
+
+        return {
+          id: user._id,
+          email: user.email,
+          emailVerified: user.emailVerified,
+        };
+      }
+    }),
+  ],
+  callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider === 'credentials') {
+        return true;
+      }
+      return true;
+    },
+    async session({ session, user }) {
+      if (user) {
+        session.user.id = user.id;
+      }
+      return session;
+    },
+  },
+  pages: {
+    signIn: '/sign-in',
+    signUp: '/sign-up',
+    error: '/auth/error',
+  },
+  secret: process.env.NEXTAUTH_SECRET,
+};
 
 export const POST = NextAuth(authOptions);
 export const GET = NextAuth(authOptions);
