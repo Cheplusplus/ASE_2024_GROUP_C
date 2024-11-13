@@ -2,61 +2,39 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { signIn ,useSession} from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [ name, setName] = useState('')
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const {data: session} = useSession()
+ const handleSubmit =async (e) => {
+  e.preventDefault();
+  try {
+    console.log(email,password,name)
+    const response = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password, name }),
+    });
 
-  if(session) {
-    router.push('/')
-  }
-
-  
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Register the user
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await res.json();
-      console.log(data)
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Failed to register');
-      }
-
-      // Sign in the user
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      });
-
-      if (result.error) {
-        throw new Error(result.error);
-      }
-
-      router.push('/sign-in'); // Or wherever you want to redirect after signup
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.error || "Failed to register");
     }
-  };
+
+    alert("Registration successful");
+   
+    router.push('/sign-in')
+  } catch (err) {
+    setError(err.message);
+  }
+};
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -72,8 +50,22 @@ const SignUp = () => {
             </Link>
           </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit} >
+         <form onSubmit={handleSubmit} className="mt-8 space-y-6" > {/*onSubmit={handleSubmit} */}
           <div className="rounded-md shadow-sm -space-y-px">
+          <div>
+              <label htmlFor="name" className="sr-only">Name</label>
+              <input
+                id="name"
+                name="name"
+                type="name"
+                autoComplete="name"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
             <div>
               <label htmlFor="email" className="sr-only">Email</label>
               <input
@@ -105,7 +97,6 @@ const SignUp = () => {
           </div>
 
           <div>
-            {error && <p className="mt-2 text-center text-sm text-red-600">{error}</p>}
             <button
               type="submit"
               disabled={loading}
@@ -123,6 +114,7 @@ const SignUp = () => {
             Sign Up with Google
           </button>
         </div>
+        {error && <p className="mt-2 text-center text-sm text-red-600">{error}</p>}
       </div>
     </div>
   );

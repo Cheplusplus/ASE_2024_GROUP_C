@@ -1,50 +1,39 @@
-import { NextResponse } from 'next/server';
-import User from '@/app/models/users';
-import connectToDatabase from '@/app/lib/connectMongoose';
+// pages/api/auth/register.js
+import bcrypt from "bcrypt";
+import User from "@/app/models/user"; // Assuming your User model is here
+import connectToDatabase from "@/app/lib/connectMongoose";
+import { NextResponse } from "next/server";
 
 export async function POST(req) {
-  try {
-    const { email, password } = await req.json();
-    
-    await connectToDatabase();
-    
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return NextResponse.json(
-        { error: 'User already exists' },
-        { status: 400 }
-      );
-    }
+  await connectToDatabase();
 
-    // Create new user
-    const user = await User.create({
-      email,
-      password,
-    });
+  // Log to confirm request received
+  console.log("signup123");
 
-    // Send verification email
-    const verificationLink = `${process.env.NEXTAUTH_URL}/verify-email?email=${email}`;
-    await transporter.sendMail({
-      from: process.env.EMAIL_SERVER_USER,
-      to: email,
-      subject: 'Verify your email',
-      html: `
-        <h1>Welcome to Recipe Rush!</h1>
-        <p>Please verify your email by clicking the link below:</p>
-        <a href="${verificationLink}">Verify Email</a>
-      `,
-    });
+  // Parse JSON from the request body
+  const { email, password, name } = await req.json();
+  console.log(email, password, name);
 
-    return NextResponse.json(
-      { message: 'User created successfully' },
-      { status: 201 }
-    );
-  } catch (error) {
-    console.error('Registration error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create user' },
-      { status: 500 }
-    );
+  // Check if the email is already in use
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    console.log(existingUser)
+    return NextResponse.json({ error: "Email already in use" }, { status: 400 });
   }
+ console.log(existingUser)
+  // Hash the password
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+  // Create and save the new user
+  const newUser = new User({
+    email,
+    password: hashedPassword,
+    name,
+  });
+
+  await newUser.save();
+
+  // Return success response
+  return NextResponse.json({ message: "User registered successfully" }, { status: 201 });
 }

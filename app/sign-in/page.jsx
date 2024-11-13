@@ -2,19 +2,36 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useSession, signIn, signOut } from "next-auth/react"
+import { useSession, signIn } from "next-auth/react"
 
 const SignIn = () => {
-  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const router = useRouter();
+  const [loading,setLoading] = useState(false);
+  const [error,setError] = useState('');
 
-  const { data: session } = useSession();
+  // const { data: session } = useSession()
+  // if(session) {
+  //   console.log('password123')
+  //   router.back()
+  // }
 
-  // Redirect to the home page if the user is already signed in
-  if (session) {
-    router.push('/');
+  const login = async(e)=>{
+    e.preventDefault();
+    console.log('slidelogin123')
+    const result = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
+    console.log(result)
+    if (result.error) {
+      setError(result.error);
+    } else {
+      console.log('home')
+      router.push('/') // Redirect to homepage after successful login
+    }
   }
 
   const handleSignIn = async (e) => {
@@ -56,7 +73,7 @@ const SignIn = () => {
             </Link>
           </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSignIn}>
+        <form onSubmit={login} className="mt-8 space-y-6" >
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <label htmlFor="email" className="sr-only">Email</label>
@@ -100,15 +117,17 @@ const SignIn = () => {
         </form>
         <div className="mt-6">
           <button
-            onClick={() => signIn("google")}
+            onClick={() => {signIn("google");router.back()}}
             className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
           >
             Sign In with Google
           </button>
         </div>
       </div>
+      {error && <p>{error}</p>}
     </div>
   );
 };
 
 export default SignIn;
+
