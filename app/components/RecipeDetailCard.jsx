@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from 'next/image';
 
 const formatTime = (minutes) => {
@@ -9,12 +9,17 @@ const formatTime = (minutes) => {
   return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
 };
 
-const RecipeDetailCard = ({ recipe,id }) => {
-  const [description,setDescription] = useState(recipe.description)
+const RecipeDetailCard = ({ recipe, id }) => {
+  const [description, setDescription] = useState(recipe.description);
   const [activeTab, setActiveTab] = useState("ingredients");
   const [selectedImage, setSelectedImage] = useState(recipe.images[0]);
-  const [openTextArea,setOpenTextArea] = useState(false);
+  const [openTextArea, setOpenTextArea] = useState(false);
   const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    // Update the document title when the component mounts or recipe changes
+    document.title = `${recipe.title} | Recipe Details`;
+  }, [recipe.title]);
 
   const totalTime = recipe.prepTimeMinutes + recipe.cookTimeMinutes;
 
@@ -50,26 +55,26 @@ const RecipeDetailCard = ({ recipe,id }) => {
       <div className="w-full lg:sticky top-0 flex flex-col gap-3">
         <div className="w-full">
         <Image
-    src={selectedImage}
-    alt={recipe.title}
-    width={540} // Define the width directly in the component
-    height={403} // Define the height directly in the component
-    className="rounded-lg object-cover"
-/>
+          src={selectedImage}
+          alt={recipe.title}
+          width={540}
+          height={403}
+          className="rounded-lg object-cover"
+        />
         </div>
         <div className="flex flex-wrap gap-2 mt-4">
           {recipe.images.map((image, index) => (
             <Image
-    key={index}
-    src={image}
-    alt={`Thumbnail ${index}`}
-    width={64} // Set width to 64px (16 * 4) for the thumbnail
-    height={64} // Set height to 64px
-    className={`rounded-md cursor-pointer object-cover ${
-        selectedImage === image ? "border-2 border-gray-800" : ""
-    }`}
-    onClick={() => setSelectedImage(image)}
-/>
+              key={index}
+              src={image}
+              alt={`Thumbnail ${index}`}
+              width={64}
+              height={64}
+              className={`rounded-md cursor-pointer object-cover ${
+                selectedImage === image ? "border-2 border-gray-800" : ""
+              }`}
+              onClick={() => setSelectedImage(image)}
+            />
           ))}
         </div>
       </div>
@@ -95,12 +100,31 @@ const RecipeDetailCard = ({ recipe,id }) => {
           {console.log(openTextArea,'false')}
          {openTextArea?
             <div className="flex-1">
-              <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="block p-2.5 w-[300px] text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Type here..."/>
-              <button onClick={()=>{handleUpdate();setOpenTextArea(false)}} className='w-20 bg-green-400 rounded hover:bg-green-500 text-black font-bold m-2'>Submit</button>
-              <button onClick={()=>{setOpenTextArea(false)}} className='w-20 bg-red-400 rounded hover:bg-red-500 text-black font-bold m-2'>Close</button>
+              <textarea 
+                value={description} 
+                onChange={(e) => setDescription(e.target.value)} 
+                className="block p-2.5 w-[300px] text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                placeholder="Type here..."
+              />
+              <button 
+                onClick={()=>{handleUpdate();setOpenTextArea(false)}} 
+                className='w-20 bg-green-400 rounded hover:bg-green-500 text-black font-bold m-2'
+              >
+                Submit
+              </button>
+              <button 
+                onClick={()=>{setOpenTextArea(false)}} 
+                className='w-20 bg-red-400 rounded hover:bg-red-500 text-black font-bold m-2'
+              >
+                Close
+              </button>
             </div>
-          :<button onClick={()=>setOpenTextArea(true)} className='w-12 mb-4 bg-blue-400 rounded hover:bg-blue-500 text-black font-bold'>Edit</button>}
-          
+          :<button 
+            onClick={()=>setOpenTextArea(true)} 
+            className='w-12 mb-4 bg-blue-400 rounded hover:bg-blue-500 text-black font-bold'
+          >
+            Edit
+          </button>}
         </span>
 
         <div className="text-lg text-gray-800 space-y-2">
