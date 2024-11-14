@@ -43,7 +43,7 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
   return (
     <Link href={`/recipes/${_id}`} className="block">
       <div
-        className="group relative bg-white rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg"
+        className="group relative bg-card text-card-foreground rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
@@ -65,7 +65,7 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
         {/* Content Container */}
         <div className="p-6">
           {/* Title */}
-          <h2 className="text-xl font-semibold text-gray-900 mb-3 line-clamp-2">
+          <h2 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2">
             {title}
           </h2>
           

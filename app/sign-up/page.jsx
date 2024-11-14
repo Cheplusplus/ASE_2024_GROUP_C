@@ -4,13 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 
-/**
- * Handles sign-up authentication with email and password
- * @async
- * @function
- * @param {React.FormEvent<HTMLFormElement>} e - The form event
- * @returns {undefined}
- */
+
 const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -96,7 +90,7 @@ const SignUp = () => {
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Password"
-                // value={password}
+                value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
@@ -114,8 +108,7 @@ const SignUp = () => {
         </form>
         <div className="mt-6">
           <button
-          onClick={() => signIn("google")}
-            // onClick={handleGoogleSignUp}
+            onClick={() => signIn("google")}
             className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
           >
             Sign Up with Google
@@ -128,4 +121,3 @@ const SignUp = () => {
 };
 
 export default SignUp;
- 
