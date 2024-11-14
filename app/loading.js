@@ -6,7 +6,7 @@ const SkeletonGrid = () => {
       {/* Text Skeleton */}
       <div className="space-y-2"></div>
       <div className="p-8 pb-20 gap-16 sm:p-20 ">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
           {/* Creating 8 skeletons to mimic the recipe cards */}
           {Array(30)
             .fill("")

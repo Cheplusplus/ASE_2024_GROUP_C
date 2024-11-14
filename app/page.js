@@ -9,7 +9,7 @@ export default function Home({searchParams}) {
 
  return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
-      <div className="relative h-64 lg:min-h-72 overflow-hidden">
+      <div className="relative h-64 lg:min-h-96 overflow-hidden">
         <Image
               priority = {true}
               src={'/wallpaper1.jpg'}
@@ -20,6 +20,10 @@ export default function Home({searchParams}) {
               className=""
               // sizes="(max-width: 768px) 100vw , (max-width:1200px)  50vw ,33vw"
             />
+      </div>
+      <div className="">
+        <h1>Recipes You Might Like ...</h1>
+
       </div>
       <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         {/* Decorative elements */}
