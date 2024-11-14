@@ -32,6 +32,31 @@ const SignIn = () => {
     }
   }
 
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      // Sign in the user using the credentials provider
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result.error) {
+        throw new Error(result.error);
+      }
+
+      // Redirect the user to the home page
+      router.push('/');
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className={`flex items-center justify-center min-h-screen ${
       theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
@@ -82,14 +107,16 @@ const SignIn = () => {
                   ${theme === 'dark' ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400' : 'border-gray-300 placeholder-gray-500 text-gray-900'}
                   rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
                 placeholder="Password"
+                value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
           </div>
 
           <div>
-            {error && <p className="mt-2 text-center text-sm text-red-600 dark:text-red-400">{error}</p>}
             <button
+              type="submit"
+              disabled={loading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               {loading ? 'Signing in...' : 'Sign In'}

@@ -19,7 +19,8 @@ const Navbar = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
+    // Check if user is logged in, for example, by checking a token in localStorage
+    const token = localStorage.getItem("authToken");
     setIsLoggedIn(!!token);
   }, []);
 
@@ -31,34 +32,34 @@ const Navbar = () => {
   };
 
   const handleLogout = (e) => {
-     e.preventDefault();
+    e.preventDefault();
     // Clear the session (for example, removing the token)
-    localStorage.removeItem('authToken');
+    localStorage.removeItem("authToken");
     setIsLoggedIn(false);
-    router.push('/');
+    router.push("/"); // Redirect to the homepage
   };
 
   const navLinks = [
-    { name: 'Home', href: '/' },
-    { 
-      name: 'Recipes', 
-      href: '/recipes',
-      sublinks: [
-        { name: 'Breakfast', href: '/recipes/breakfast' },
-        { name: 'Lunch', href: '/recipes/lunch' },
-        { name: 'Dinner', href: '/recipes/dinner' },
-      ]
-    },
-    { name: 'Favorites', href: '/favorites' },
-    { name: 'About', href: '/about' },
-    { name: 'Contact', href: '/contact' },
+    { name: "Home", href: "/" },
     {
-      name: 'Account',
-      href: '/account',
+      name: "Recipes",
+      href: "/recipes",
       sublinks: [
-        { name: 'Sign Up', href: '/sign-up' },
-        { name: 'Sign In', href: '/sign-in' },
-      ]
+        { name: "Breakfast", href: "/recipes/breakfast" },
+        { name: "Lunch", href: "/recipes/lunch" },
+        { name: "Dinner", href: "/recipes/dinner" },
+      ],
+    },
+    { name: "Favorites", href: "/favorites" },
+    { name: "About", href: "/about" },
+    { name: "Contact", href: "/contact" },
+    {
+      name: "Account",
+      href: "/account",
+      sublinks: [
+        { name: "Sign Up", href: "/sign-up" },
+        { name: "Sign In", href: "/sign-in" },
+      ],
     },
   ];
 
@@ -67,7 +68,9 @@ const Navbar = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/30 dark:bg-gray-900/30 shadow-lg transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
+            {/* Mobile and Logo */}
+
+            <div className="flex items-center space-x-4 w-full md:w-auto justify-between md:justify-start">
               <div className="md:hidden">
                 <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -75,9 +78,21 @@ const Navbar = () => {
                   aria-label="Toggle menu"
                 >
                   <div className="w-6 h-6 flex flex-col justify-between">
-                    <span className={`block w-full h-0.5 bg-current transform transition duration-300 ease-in-out ${isMobileMenuOpen ? 'rotate-45 translate-y-2.5' : ''}`} />
-                    <span className={`block w-full h-0.5 bg-current transition duration-300 ease-in-out ${isMobileMenuOpen ? 'opacity-0' : ''}`} />
-                    <span className={`block w-full h-0.5 bg-current transform transition duration-300 ease-in-out ${isMobileMenuOpen ? '-rotate-45 -translate-y-2.5' : ''}`} />
+                    <span
+                      className={`block w-full h-0.5 bg-current transform transition duration-300 ease-in-out ${
+                        isMobileMenuOpen ? "rotate-45 translate-y-2.5" : ""
+                      }`}
+                    />
+                    <span
+                      className={`block w-full h-0.5 bg-current transition duration-300 ease-in-out ${
+                        isMobileMenuOpen ? "opacity-0" : ""
+                      }`}
+                    />
+                    <span
+                      className={`block w-full h-0.5 bg-current transform transition duration-300 ease-in-out ${
+                        isMobileMenuOpen ? "-rotate-45 -translate-y-2.5" : ""
+                      }`}
+                    />
                   </div>
                 </button>
               </div>
@@ -92,10 +107,10 @@ const Navbar = () => {
               <div className="ml-10 flex items-baseline space-x-4">
                 {navLinks.map((link) => (
                   <div key={link.name} className="relative">
-                    <button 
+                    <button
                       onClick={() => {
-                        if (link.name === 'Home' && pathname !== '/') {
-                          window.location.href = '/';
+                        if (link.name === "Home" && pathname !== "/") {
+                          window.location.href = "/";
                         } else {
                           handleSublinkToggle(link.name);
                         }
@@ -129,7 +144,7 @@ const Navbar = () => {
                 ))}
                 {isLoggedIn && (
                   <button
-                    onClick={(e)=>handleLogout(e)}
+                    onClick={(e) => handleLogout(e)}
                     className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded"
                   >
                     Logout
@@ -146,8 +161,18 @@ const Navbar = () => {
                 className={`p-2 rounded-md text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none ${isSearchOpen ? 'bg-gray-100 dark:bg-gray-700' : ''} transition-colors duration-200`}
                 aria-label="Toggle search"
               >
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
                 </svg>
               </button>
             </div>
@@ -159,10 +184,10 @@ const Navbar = () => {
           <div className="px-2 pt-2 pb-3 space-y-1">
             {navLinks.map((link) => (
               <div key={link.name}>
-                <button 
+                <button
                   onClick={() => {
-                    if (link.name === 'Home' && pathname !== '/') {
-                      window.location.href = '/';
+                    if (link.name === "Home" && pathname !== "/") {
+                      window.location.href = "/";
                     } else {
                       handleSublinkToggle(link.name);
                     }
@@ -191,10 +216,7 @@ const Navbar = () => {
       </nav>
 
       {/* SearchBar Component */}
-      <SearchBar 
-        isOpen={isSearchOpen}
-        onClose={() => setIsSearchOpen(false)}
-      />
+      <SearchBar isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>
   );
 };
