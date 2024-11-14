@@ -30,7 +30,8 @@ const Navbar = () => {
     }));
   };
 
-  const handleLogout = () => {
+  const handleLogout = (e) => {
+     e.preventDefault();
     // Clear the session (for example, removing the token)
     localStorage.removeItem('authToken');
     setIsLoggedIn(false);
@@ -121,7 +122,7 @@ const Navbar = () => {
                 ))}
                 {isLoggedIn && (
                   <button
-                    onClick={handleLogout}
+                    onClick={(e)=>handleLogout(e)}
                     className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded"
                   >
                     Logout
