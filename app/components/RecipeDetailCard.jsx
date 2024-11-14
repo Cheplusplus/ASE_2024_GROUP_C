@@ -29,6 +29,12 @@ const RecipeDetailCard = ({ recipe, id }) => {
     setSavedReviews(reviews);
   }, []);
 
+  // Set document title
+  useEffect(() => {
+    document.title = `${recipe.title} | Recipe Details`;
+  }, [recipe.title]);
+
+
   // Save a new review
   const handleSaveReview = () => {
     if (!reviewerName || !userReview || !starRating) return; // Ensure all fields are filled
