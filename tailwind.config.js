@@ -9,38 +9,74 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        border: {
+          light: "hsl(var(--background))",
+          dark: "hsl(var(--border-dark))",
+        },
+        input: {
+          light: "hsl(var(--foreground))",
+          dark: "hsl(var(--foreground-dark))",
+        },
+        ring: {
+          light: "hsl(var(--ring))",
+          dark: "hsl(var(--ring-dark))",
+        },
+        background: {
+          light: "hsl(var(--background))",
+          dark: "hsl(var(--background-dark))",
+        },
+        foreground: {
+          light: "hsl(var(--foreground))",
+          dark: "hsl(var(--foreground-dark))",
+        },
         primary: {
           DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          foreground: {
+            light: "hsl(var(--primary-foreground))",
+            dark: "hsl(var(--primary-foreground-dark))",
+          },
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          foreground: {
+            light: "hsl(var(--secondary-foreground))",
+            dark: "hsl(var(--secondary-foreground-dark))",
+          },
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          foreground: {
+            light: "hsl(var(--destructive-foreground))",
+            dark: "hsl(var(--destructive-foreground-dark))",
+          },
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          foreground: {
+            light: "hsl(var(--muted-foreground))",
+            dark: "hsl(var(--muted-foreground-dark))",
+          },
         },
         accent: {
           DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          foreground: {
+            light: "hsl(var(--accent-foreground))",
+            dark: "hsl(var(--accent-foreground-dark))",
+          },
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
+          foreground: {
+            light: "hsl(var(--popover-foreground))",
+            dark: "hsl(var(--popover-foreground-dark))",
+          },
         },
         card: {
           DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          foreground: {
+            light: "hsl(var(--card-foreground))",
+            dark: "hsl(var(--card-foreground-dark))",
+          },
         },
       },
       borderRadius: {

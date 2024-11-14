@@ -83,25 +83,25 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
             value={sortOption}
             onValueChange={(value) => { setSortOption(value); applyFilters(value) }}
           >
-            <SelectTrigger className="w-[200px] bg-white dark:bg-card dark:text-foreground">
+            <SelectTrigger className="w-[200px] bg-white dark:bg-card dark:text-foreground-dark">
               <SelectValue placeholder="Sort By" />
             </SelectTrigger>
             <SelectContent className="max-h-[300px] overflow-y-auto bg-white dark:bg-card">
-              <SelectItem className="dark:text-foreground" value="default">Default</SelectItem>
-              <SelectItem className="dark:text-foreground" value="prep_asc">⏱️ Prep Time: Low to High</SelectItem>
-              <SelectItem className="dark:text-foreground" value="prep_desc">⏱️ Prep Time: High to Low</SelectItem>
-              <SelectItem className="dark:text-foreground" value="cook_asc">🍳 Cook Time: Low to High</SelectItem>
-              <SelectItem className="dark:text-foreground" value="cook_desc">🍳 Cook Time: High to Low</SelectItem>
-              <SelectItem className="dark:text-foreground" value="steps_asc">📝 Steps: Least to Most</SelectItem>
-              <SelectItem className="dark:text-foreground" value="steps_desc">📝 Steps: Most to Least</SelectItem>
-              <SelectItem className="dark:text-foreground" value="newest">🆕 Newest Recipes</SelectItem>
-              <SelectItem className="dark:text-foreground" value="oldest">📅 Oldest Recipes</SelectItem>
+            <SelectItem className="dark:text-foreground-dark hover:bg-gray-100 dark:hover:bg-gray-800" value="default">Default</SelectItem>
+              <SelectItem className="dark:text-foreground-dark hover:bg-gray-100 dark:hover:bg-gray-800" value="prep_asc">⏱️ Prep Time: Low to High</SelectItem>
+              <SelectItem className="dark:text-foreground-dark hover:bg-gray-100 dark:hover:bg-gray-800" value="prep_desc">⏱️ Prep Time: High to Low</SelectItem>
+              <SelectItem className="dark:text-foreground-dark hover:bg-gray-100 dark:hover:bg-gray-800" value="cook_asc">🍳 Cook Time: Low to High</SelectItem>
+              <SelectItem className="dark:text-foreground-dark hover:bg-gray-100 dark:hover:bg-gray-800" value="cook_desc">🍳 Cook Time: High to Low</SelectItem>
+              <SelectItem className="dark:text-foreground-dark hover:bg-gray-100 dark:hover:bg-gray-800" value="steps_asc">📝 Steps: Least to Most</SelectItem>
+              <SelectItem className="dark:text-foreground-dark hover:bg-gray-100 dark:hover:bg-gray-800" value="steps_desc">📝 Steps: Most to Least</SelectItem>
+              <SelectItem className="dark:text-foreground-dark hover:bg-gray-100 dark:hover:bg-gray-800" value="newest">🆕 Newest Recipes</SelectItem>
+              <SelectItem className="dark:text-foreground-dark hover:bg-gray-100 dark:hover:bg-gray-800" value="oldest">📅 Oldest Recipes</SelectItem>
             </SelectContent>
           </Select>
           <Button 
             variant="outline" 
             onClick={() => setIsOpen(true)} 
-            className="bg-white dark:bg-card dark:text-foreground dark:hover:bg-muted"
+            className="bg-white dark:bg-card dark:text-foreground-dark dark:hover:bg-muted "
           >
             <Filter className="h-4 w-4 mr-2" />
             Filters
@@ -113,7 +113,7 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white dark:bg-card rounded-lg shadow-lg w-full max-w-sm p-6 sm:max-w-[375px]">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold dark:text-foreground">Filter Options</h2>
+              <h2 className="text-lg font-semibold dark:text-foreground-dark">Filter Options</h2>
               <Button variant="destructive" size="sm" onClick={clearFilters}>
                 Clear Filters
               </Button>
