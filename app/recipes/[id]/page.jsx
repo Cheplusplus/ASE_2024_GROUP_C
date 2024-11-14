@@ -16,7 +16,6 @@ export default function RecipeDetail({ params }) {
 
   useEffect(() => {
     const fetchRecipe = async (id) => {
-      const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
       try {
         const response = await fetch(`/api/recipe/${id}`);
         console.log(response)
@@ -105,8 +104,11 @@ export default function RecipeDetail({ params }) {
         </button>
 
         {/* RecipeDetailCard should ensure alt text is included for images */}
-        <RecipeDetailCard recipe={recipe} />
+        <RecipeDetailCard recipe={recipe}  id={id}/>
       </div>
     </>
   );
 }
+
+
+
