@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useSession, signIn } from "next-auth/react"
+import { useSession, signIn,signOut } from "next-auth/react"
 
 const SignIn = () => {
   const router = useRouter();
@@ -21,14 +21,17 @@ const SignIn = () => {
     e.preventDefault();
     console.log('slidelogin123')
     const result = await signIn("credentials", {
-      redirect: false,
+      redirect: true,
       email,
       password,
     });
     console.log(result)
     if (result.error) {
       setError(result.error);
-    } else {
+      if (result.error === 'OAuthAccountNotLinked') {
+        setError('Please log in using the same method you registered with.');
+      }
+     } else {
       console.log('home')
       router.push('/') // Redirect to homepage after successful login
     }
@@ -91,7 +94,7 @@ const SignIn = () => {
         </form>
         <div className="mt-6">
           <button
-            onClick={() => {signIn("google");router.back()}}
+            onClick={() => { signIn("google")}}
             className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
           >
             Sign In with Google

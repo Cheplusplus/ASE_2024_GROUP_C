@@ -30,12 +30,22 @@ const Navbar = () => {
     }));
   };
 
-  const handleLogout = (e) => {
-     e.preventDefault();
-    // Clear the session (for example, removing the token)
-    localStorage.removeItem('authToken');
-    setIsLoggedIn(false);
-    router.push('/'); // Redirect to the homepage
+  // const handleLogout = (e) => {
+  //    e.preventDefault();
+  //   // Clear the session (for example, removing the token)
+  //   localStorage.removeItem('authToken');
+  //   setIsLoggedIn(false);
+  //   router.push('/'); // Redirect to the homepage
+  // };
+
+  const handleSignOut = async (e) => {
+    e.preventDefault();
+    await signOut({ callbackUrl: "/" });
+    // Clear cookies manually to ensure no stale sessions
+    document.cookie = "next-auth.session-token=; Max-Age=0; path=/";
+    document.cookie = "next-auth.callback-url=; Max-Age=0; path=/";
+    document.cookie = "next-auth.csrf-token=; Max-Age=0; path=/";
+    router.push("/"); // Redirect to sign-in page
   };
 
   const navLinks = [
@@ -122,7 +132,7 @@ const Navbar = () => {
                 ))}
                 {isLoggedIn && (
                   <button
-                    onClick={(e)=>handleLogout(e)}
+                    onClick={(e)=>handleSignOut(e)}
                     className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded"
                   >
                     Logout
