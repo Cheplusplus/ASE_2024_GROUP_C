@@ -28,7 +28,7 @@ const SearchBar = ({ isOpen, onClose }) => {
         // Auto-submit search after 500ms of no typing
         router.push(`/?search=${encodeURIComponent(searchQuery)}`);
         setHasSearched(true);
-      }, 500);
+      }, 300);
       return () => clearTimeout(debounceTimeout);
     } else {
       setSearchResults([]);
@@ -96,7 +96,7 @@ const SearchBar = ({ isOpen, onClose }) => {
     const debounceTimeout = setTimeout(()=> {
       router.push(`/?search=${encodeURIComponent(title)}`);
       onClose();
-    }, 300)
+    }, 500)
     return ()=> clearTimeout(debounceTimeout)
   };
 
