@@ -27,40 +27,41 @@ if (process.env.NODE_ENV === "development") {
 export { clientPromise };
 // Export a module-scoped MongoClient. By doing this in a
 // separate module, the client can be shared across functions.
-
-
 const MONGODB_URI = process.env.MONGODB_URI;
+console.log(MONGODB_URI); // Make sure this prints the correct URI
+
 if (!MONGODB_URI) {
-  throw new Error("Please define the MONGODB_URI environment variable inside .env.local");
+  throw new Error(
+    "Please define the MONGODB_URI environment variable inside .env.local"
+  );
 }
 
-// Store separate cached connections for each database
-let cachedConnections = {};
+let cached = global.mongoose;
 
-async function connectToDatabase(dbName = "devdb") {
-  // Check if we already have a cached connection for the specified dbName
-  if (cachedConnections[dbName]) {
-    console.log(`Using cached MongoDB connection for database: ${dbName}`);
-    return cachedConnections[dbName];
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
+async function connectToDatabase() {
+  if (cached.conn) {
+    return cached.conn;
   }
 
-  // Create a new connection for the specified dbName if not cached
-  const newConnection = await mongoose
-    .createConnection(MONGODB_URI, { dbName })
-    .asPromise()
-    .then((connection) => {
-      console.log(`Connected to MongoDB database: ${dbName}`);
-      return connection;
-    })
-    .catch((error) => {
-      console.error("MongoDB connection error:", error);
-      throw error;
-    });
+  if (!cached.promise) {
+    cached.promise = mongoose
+      .connect(MONGODB_URI, { dbName: "devdb" })
+      .then((mongoose) => {
+        console.log("Connected to MongoDB");
+        return mongoose;
+      })
+      .catch((error) => {
+        console.error("MongoDB connection error:", error);
+        throw error;
+      });
+  }
 
-  // Cache the new connection and return it
-  cachedConnections[dbName] = newConnection;
-  return newConnection;
+  cached.conn = await cached.promise;
+  return cached.conn;
 }
 
 export default connectToDatabase;
-

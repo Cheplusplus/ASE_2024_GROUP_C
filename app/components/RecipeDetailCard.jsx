@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from 'next/image';
 import { FaStar } from 'react-icons/fa';  // Importing the star icon from Font Awesome
+import { useRouter } from 'next/navigation';
 
 const formatTime = (minutes) => {
   const hours = Math.floor(minutes / 60);
@@ -19,6 +20,9 @@ const RecipeDetailCard = ({ recipe, id }) => {
   const [starRating, setStarRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);  // For star hover effect
   const [savedReviews, setSavedReviews] = useState([]);
+  const [openTextArea,setOpenTextArea] = useState(false);
+  const [message, setMessage] = useState("");
+  const router = useRouter();
 
   const totalTime = (recipe.prep || 0) + (recipe.cook || 0);
 
@@ -53,6 +57,35 @@ const RecipeDetailCard = ({ recipe, id }) => {
 
     // Save updated reviews in localStorage
     localStorage.setItem("reviews", JSON.stringify(updatedReviews));
+  };
+
+
+  const handleUpdate = async () => {
+    const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    console.log('123');
+    
+    try {
+      const response = await fetch(`${url}/api/recipe/${id}/update`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ description }),
+      });
+
+      if (response.ok) {
+        setMessage("Recipe updated successfully!");
+      } else {
+        setMessage("Failed to update recipe.");
+      }
+
+      setOpenTextArea(false);
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+      setMessage("An error occurred while updating.");
+      setOpenTextArea(false)
+    }
   };
 
   return (
@@ -102,6 +135,19 @@ const RecipeDetailCard = ({ recipe, id }) => {
           Discover how to make this delicious {recipe.title}.{" "}
           {recipe.description || "for any occasion"}.
         </p>
+        <span className="text-lg italic text-gray-600 mb-6">
+          {description || "any occasion"}
+          <br/>
+          {console.log(openTextArea,'false')}
+         {openTextArea?
+            <div className="flex-1">
+              <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="block p-2.5 w-[300px] text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Type here..."/>
+              <button onClick={()=>{handleUpdate();setOpenTextArea(false)}} className='w-20 bg-green-400 rounded hover:bg-green-500 text-black font-bold m-2'>Submit</button>
+              <button onClick={()=>{setOpenTextArea(false)}} className='w-20 bg-red-400 rounded hover:bg-red-500 text-black font-bold m-2'>Close</button>
+            </div>
+          :<button onClick={()=>setOpenTextArea(true)} className='w-12 mb-4 bg-blue-400 rounded hover:bg-blue-500 text-black font-bold'>Edit</button>}
+          
+        </span>
 
         <div className="text-lg text-gray-800 space-y-2">
           <p><strong>Prep Time:</strong> {formatTime(recipe.prep || 0)}</p>

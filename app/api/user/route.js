@@ -24,7 +24,7 @@ export async function GET(req) {
 
   // Determine which database to connect to
   const databaseName = db === "test" ? "test" : "devdb";
-  const connection = await connectToDatabase(databaseName);
+  const connection = await connectToDatabase();
 
   // Define or retrieve the User model for the specified database
   const User =

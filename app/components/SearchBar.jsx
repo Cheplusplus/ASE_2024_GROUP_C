@@ -18,7 +18,7 @@ const SearchBar = ({ isOpen, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
-  const router = useRouter()
+  const router = useRouter();
 
   // Clear search when closing search overlay
   useEffect(() => {
