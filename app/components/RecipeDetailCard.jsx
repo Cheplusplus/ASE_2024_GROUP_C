@@ -10,8 +10,8 @@ const formatTime = (minutes) => {
   return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
 };
 
-const RecipeDetailCard = ({ recipe,id }) => {
-  const [description,setDescription] = useState(recipe.description)
+const RecipeDetailCard = ({ recipe, id }) => {
+  const [description, setDescription] = useState(recipe.description);
   const [activeTab, setActiveTab] = useState("ingredients");
   const [selectedImage, setSelectedImage] = useState(recipe.images?.[0]);
   const [userReview, setUserReview] = useState("");
@@ -25,6 +25,7 @@ const RecipeDetailCard = ({ recipe,id }) => {
   // Load saved reviews from localStorage when the component mounts
   useEffect(() => {
     const reviews = JSON.parse(localStorage.getItem("reviews")) || [];
+    
     setSavedReviews(reviews);
   }, []);
 
