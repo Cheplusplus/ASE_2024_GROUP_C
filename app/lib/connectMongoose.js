@@ -28,7 +28,6 @@ export { clientPromise };
 // Export a module-scoped MongoClient. By doing this in a
 // separate module, the client can be shared across functions.
 const MONGODB_URI = process.env.MONGODB_URI;
-console.log(MONGODB_URI); // Make sure this prints the correct URI
 
 if (!MONGODB_URI) {
   throw new Error(

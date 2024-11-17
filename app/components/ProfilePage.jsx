@@ -7,12 +7,13 @@ export default function ProfilePage({ userId,db }) {
   const [user, setUser] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [message, setMessage] = useState({ type: "", content: "" });
+ 
 
   useEffect(() => {
     async function fetchData() {
       try {
         const data = await getUserProfile(userId,db);
-        console.log(data)
+        console.log(data.email,'123')
         setUser(data);
       } catch (error) {
         setMessage({ type: "error", content: "Failed to load profile." });
@@ -27,14 +28,14 @@ export default function ProfilePage({ userId,db }) {
     setMessage({ type: "success", content: "Profile updated successfully!" });
     setTimeout(() => {
       setMessage({ type: "", content: "" });
-    }, 3000); // Reset message after 3 seconds
+    }, 2000); // Reset message after 3 seconds
   };
 
   const handleUpdateError = () => {
     setMessage({ type: "error", content: "Failed to update profile." });
     setTimeout(() => {
       setMessage({ type: "", content: "" });
-    }, 3000); // Reset message after 3 seconds
+    }, 2000); // Reset message after 3 seconds
   };
 
   if (!user) return <p>Loading...</p>;
