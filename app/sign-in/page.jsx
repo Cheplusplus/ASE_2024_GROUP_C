@@ -25,7 +25,7 @@ const SignIn = () => {
       if (result.error) {
         setError(result.error);
       } else {
-        router.push('/');
+        router.back();
       }
     } finally {
       setLoading(false);
