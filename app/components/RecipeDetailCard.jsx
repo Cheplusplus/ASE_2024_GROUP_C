@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from "react";
 import Image from 'next/image';
+import AddReview from "./Addreview";
 import { FaStar } from 'react-icons/fa';  // Importing the star icon from Font Awesome
 import { useRouter } from 'next/navigation';
+import RecipeReviews from "./Reviews";
 
 const formatTime = (minutes) => {
   const hours = Math.floor(minutes / 60);
@@ -19,19 +21,13 @@ const RecipeDetailCard = ({ recipe, id }) => {
   const [reviewerName, setReviewerName] = useState("");
   const [starRating, setStarRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);  // For star hover effect
-  const [savedReviews, setSavedReviews] = useState([]);
   const [openTextArea,setOpenTextArea] = useState(false);
   const [message, setMessage] = useState("");
   const router = useRouter();
 
   const totalTime = (recipe.prep || 0) + (recipe.cook || 0);
+  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
-  // Load saved reviews from localStorage when the component mounts
-  useEffect(() => {
-    const reviews = JSON.parse(localStorage.getItem("reviews")) || [];
-    
-    setSavedReviews(reviews);
-  }, []);
 
   // Set document title
   useEffect(() => {
@@ -40,28 +36,28 @@ const RecipeDetailCard = ({ recipe, id }) => {
 
 
   // Save a new review
-  const handleSaveReview = () => {
-    if (!reviewerName || !userReview || !starRating) return; // Ensure all fields are filled
+  // const handleSaveReview = () => {
+  //   if (!reviewerName || !userReview || !starRating) return; // Ensure all fields are filled
 
-    const newReview = {
-      name: reviewerName,
-      rating: starRating,
-      text: userReview,
-      date: new Date().toLocaleDateString(),
-    };
-    const updatedReviews = [...savedReviews, newReview];
-    setSavedReviews(updatedReviews);
-    setReviewerName("");
-    setUserReview("");
-    setStarRating(0);
+  //   const newReview = {
+  //     name: reviewerName,
+  //     rating: starRating,
+  //     text: userReview,
+  //     date: new Date().toLocaleDateString(),
+  //   };
+  //   const updatedReviews = [...savedReviews, newReview];
+  //   setSavedReviews(updatedReviews);
+  //   setReviewerName("");
+  //   setUserReview("");
+  //   setStarRating(0);
 
-    // Save updated reviews in localStorage
-    localStorage.setItem("reviews", JSON.stringify(updatedReviews));
-  };
+  //   // Save updated reviews in localStorage
+  //  // localStorage.setItem("reviews", JSON.stringify(updatedReviews));
+  // };
 
 
   const handleUpdate = async () => {
-    const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+   
     console.log('123');
     
     try {
@@ -215,55 +211,9 @@ const RecipeDetailCard = ({ recipe, id }) => {
 
         {/* Review Section */}
         <div className="mt-8">
-          <h3 className="text-2xl font-semibold mb-4">User Reviews</h3>
-          <ul className="space-y-4 mb-4">
-            {savedReviews.map((review, index) => (
-              <li key={index} className="mb-2">
-                <div className="flex items-center space-x-2">
-                  <strong>{review.name}</strong>
-                  <div className="flex space-x-1">
-                    {Array.from({ length: 5 }, (_, i) => (
-                      <FaStar key={i} color={i < review.rating ? "#ffc107" : "#e4e5e9"} />
-                    ))}
-                  </div>
-                </div>
-                <p>{review.text}</p>
-                <span className="text-sm text-gray-500">({review.date})</span>
-              </li>
-            ))}
-          </ul>
+         <RecipeReviews/>
 
-          <input
-            type="text"
-            value={reviewerName}
-            onChange={(e) => setReviewerName(e.target.value)}
-            placeholder="Your name"
-            className="w-full p-2 border border-gray-300 rounded-md mb-2"
-          />
-          <div className="flex space-x-1 mb-2">
-            {Array.from({ length: 5 }, (_, i) => (
-              <FaStar
-                key={i}
-                color={i < (hoverRating || starRating) ? "#ffc107" : "#e4e5e9"}
-                onMouseEnter={() => setHoverRating(i + 1)}
-                onMouseLeave={() => setHoverRating(0)}
-                onClick={() => setStarRating(i + 1)}
-                className="cursor-pointer"
-              />
-            ))}
-          </div>
-          <textarea
-            value={userReview}
-            onChange={(e) => setUserReview(e.target.value)}
-            placeholder="Write your review"
-            className="w-full p-2 border border-gray-300 rounded-md mb-2"
-          ></textarea>
-          <button
-            onClick={handleSaveReview}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md"
-          >
-            Submit Review
-          </button>
+        <AddReview/>
         </div>
       </div>
     </div>
