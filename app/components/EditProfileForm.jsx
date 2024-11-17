@@ -11,6 +11,12 @@ export default function EditProfileForm({ user, onComplete, onError }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const provider = session.user.provider;
+
+    if(provider == 'google'){
+      alert('Updates to Google account not allowed');
+      return
+    }
     try {
       const updatedUser = await updateUserProfile(user, formData);
       session.user.email = updatedUser.email
