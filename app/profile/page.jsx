@@ -15,7 +15,9 @@ export default function ProfilePageRoute() {
   }
   // Redirect to the login page if no session exists
   if (!session) {
-    return <p>Please sign in to view your profile.</p>;
+    return <p className="text-center text-gray-600 text-lg mt-6">
+    Please sign in to view your profile.
+  </p>;
   }
 
   const provider = session.user.provider;

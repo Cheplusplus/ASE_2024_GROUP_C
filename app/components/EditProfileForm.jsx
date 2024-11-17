@@ -35,26 +35,50 @@ export default function EditProfileForm({ user, onComplete, onError }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label>Name:</label>
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-        />
-      </div>
-      <div>
-        <label>Email:</label>
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-        />
-      </div>
-      <button type="submit">Save Changes</button>
-    </form>
+
+<form
+  onSubmit={handleSubmit}
+  className="max-w-lg mx-auto bg-white shadow-md rounded-lg p-8 mt-8 space-y-6"
+>
+  {/* Name Input */}
+  <div className="flex flex-col space-y-2">
+    <label htmlFor="name" className="text-gray-700 font-medium">
+      Name:
+    </label>
+    <input
+      type="text"
+      name="name"
+      id="name"
+      value={formData.name}
+      onChange={handleChange}
+      placeholder="Enter your name"
+      className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    />
+  </div>
+
+  {/* Email Input */}
+  <div className="flex flex-col space-y-2">
+    <label htmlFor="email" className="text-gray-700 font-medium">
+      Email:
+    </label>
+    <input
+      type="email"
+      name="email"
+      id="email"
+      value={formData.email}
+      onChange={handleChange}
+      placeholder="Enter your email"
+      className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    />
+  </div>
+
+  {/* Submit Button */}
+  <button
+    type="submit"
+    className="w-full bg-indigo-600 text-white py-3 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+  >
+    Save Changes
+  </button>
+</form>
   );
 }
