@@ -1,16 +1,19 @@
 import { useState } from "react";
 import { updateUserProfile } from "@/lib/api";
+import { useSession } from "next-auth/react";
 
 export default function EditProfileForm({ user, onComplete, onError }) {
   const [formData, setFormData] = useState({
     name: user.name,
     email: user.email,
   });
+  const { data: session, status } = useSession();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const updatedUser = await updateUserProfile(user, formData);
+      session.user.email = updatedUser.email
       onComplete(updatedUser); // Trigger success message and close form
     } catch (error) {
       onError(); // Trigger error message
