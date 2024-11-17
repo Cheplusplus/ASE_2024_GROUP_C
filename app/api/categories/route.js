@@ -9,7 +9,7 @@ export async function GET() {
     try {
       // Fetch the categories document
       const categoryDoc = await Categories.findOne({});
-      console.log(categoryDoc.categories)
+   //   console.log(categoryDoc.categories)
       if (!categoryDoc) {
         return NextResponse.json({ message: "Categories not found" }, { status: 404 },{
           headers: {

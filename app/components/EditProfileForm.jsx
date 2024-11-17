@@ -5,13 +5,12 @@ export default function EditProfileForm({ user, onComplete, onError }) {
   const [formData, setFormData] = useState({
     name: user.name,
     email: user.email,
-    username: user.username,
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const updatedUser = await updateUserProfile(user._id, formData);
+      const updatedUser = await updateUserProfile(user, formData);
       onComplete(updatedUser); // Trigger success message and close form
     } catch (error) {
       onError(); // Trigger error message
@@ -43,15 +42,6 @@ export default function EditProfileForm({ user, onComplete, onError }) {
           type="email"
           name="email"
           value={formData.email}
-          onChange={handleChange}
-        />
-      </div>
-      <div>
-        <label>Username:</label>
-        <input
-          type="text"
-          name="username"
-          value={formData.username}
           onChange={handleChange}
         />
       </div>

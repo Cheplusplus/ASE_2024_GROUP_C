@@ -24,6 +24,7 @@ export async function POST(req) {
   // Hash the password
   const saltRounds = 10;
   const hashedPassword = await bcrypt.hash(password, saltRounds);
+  console.log(User.schema.paths);
 
   // Create and save the new user
   const newUser = new User({
@@ -32,8 +33,10 @@ export async function POST(req) {
     name,
   });
 
+  console.log("Before Save:", newUser);
+  await newUser.validate(); // Check validation errors
   await newUser.save();
-
+  console.log("After Save:", newUser);
   // Return success response
   return NextResponse.json({ message: "User registered successfully" }, { status: 201 });
 }

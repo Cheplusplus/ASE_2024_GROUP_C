@@ -25,10 +25,16 @@ export default function ProfilePage({ userId,db }) {
     setUser(updatedUser);
     setEditMode(false);
     setMessage({ type: "success", content: "Profile updated successfully!" });
+    setTimeout(() => {
+      setMessage({ type: "", content: "" });
+    }, 3000); // Reset message after 3 seconds
   };
 
   const handleUpdateError = () => {
     setMessage({ type: "error", content: "Failed to update profile." });
+    setTimeout(() => {
+      setMessage({ type: "", content: "" });
+    }, 3000); // Reset message after 3 seconds
   };
 
   if (!user) return <p>Loading...</p>;

@@ -2,29 +2,29 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
 import mongoose from "mongoose";
 
-
-if (!process.env.MONGODB_URI) {
-  throw new Error('Invalid/Missing environment variable: "MONGODB_URI"');
-}
-
 const uri = process.env.MONGODB_URI;
-const options = { serverApi: { version: "1" }, dbName: "devdb" }; // Specify dbName here
+if (!uri) {
+  throw new Error("Please define the MONGODB_URI environment variable in .env.local");
+}
 
 let client;
 let clientPromise;
 
 if (process.env.NODE_ENV === "development") {
+  // In development, use a global variable to preserve MongoDB client across hot reloads
   if (!global._mongoClientPromise) {
-    client = new MongoClient(uri, options);
+    client = new MongoClient(uri);
     global._mongoClientPromise = client.connect();
   }
   clientPromise = global._mongoClientPromise;
 } else {
-  client = new MongoClient(uri, options);
+  // In production, create a new MongoClient instance
+  client = new MongoClient(uri);
   clientPromise = client.connect();
 }
 
 export { clientPromise };
+
 // Export a module-scoped MongoClient. By doing this in a
 // separate module, the client can be shared across functions.
 const MONGODB_URI = process.env.MONGODB_URI;
