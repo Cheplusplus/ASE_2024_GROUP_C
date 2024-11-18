@@ -1,40 +1,33 @@
-
-import { MongoClient} from "mongodb";
-
-if (!process.env.MONGODB_URI) {
-  throw new Error('Invalid/Missing environment variable: "MONGODB_URI"');
-}
+// This approach is taken from https://github.com/vercel/next.js/tree/canary/examples/with-mongodb
+import { MongoClient, ServerApiVersion } from "mongodb";
+import mongoose from "mongoose";
 
 const uri = process.env.MONGODB_URI;
-const options = {};
+if (!uri) {
+  throw new Error("Please define the MONGODB_URI environment variable in .env.local");
+}
 
 let client;
-export let clientPromise;
+let clientPromise;
 
 if (process.env.NODE_ENV === "development") {
-  // In development mode, use a global variable so that the value
-  // is preserved across module reloads caused by HMR (Hot Module Replacement).
-    if (!global._mongoClientPromise) {
-        client = new MongoClient(uri, options)
-        global._mongoClientPromise = client.connect()
-    }
-    clientPromise = global._mongoClientPromise
- 
-}else {
-    client = new MongoClient(uri, options)
-    clientPromise = client.connect()
+  // In development, use a global variable to preserve MongoDB client across hot reloads
+  if (!global._mongoClientPromise) {
+    client = new MongoClient(uri);
+    global._mongoClientPromise = client.connect();
+  }
+  clientPromise = global._mongoClientPromise;
+} else {
+  // In production, create a new MongoClient instance
+  client = new MongoClient(uri);
+  clientPromise = client.connect();
 }
+
+export { clientPromise };
 
 // Export a module-scoped MongoClient. By doing this in a
 // separate module, the client can be shared across functions.
-
-
-
-
-import mongoose from "mongoose";
-
 const MONGODB_URI = process.env.MONGODB_URI;
-console.log(MONGODB_URI); // Make sure this prints the correct URI
 
 if (!MONGODB_URI) {
   throw new Error(
@@ -71,6 +64,3 @@ async function connectToDatabase() {
 }
 
 export default connectToDatabase;
-
-
-

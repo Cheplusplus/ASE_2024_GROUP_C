@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from "react";
 import Image from 'next/image';
+import AddReview from "./Addreview";
 import { FaStar } from 'react-icons/fa';  // Importing the star icon from Font Awesome
+import { useRouter } from 'next/navigation';
+import RecipeReviews from "./Reviews";
 
 const formatTime = (minutes) => {
   const hours = Math.floor(minutes / 60);
@@ -18,16 +21,13 @@ const RecipeDetailCard = ({ recipe, id }) => {
   const [reviewerName, setReviewerName] = useState("");
   const [starRating, setStarRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);  // For star hover effect
-  const [savedReviews, setSavedReviews] = useState([]);
+  const [openTextArea,setOpenTextArea] = useState(false);
+  const [message, setMessage] = useState("");
+  const router = useRouter();
 
   const totalTime = (recipe.prep || 0) + (recipe.cook || 0);
+  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
-  // Load saved reviews from localStorage when the component mounts
-  useEffect(() => {
-    const reviews = JSON.parse(localStorage.getItem("reviews")) || [];
-    
-    setSavedReviews(reviews);
-  }, []);
 
   // Set document title
   useEffect(() => {
@@ -35,24 +35,31 @@ const RecipeDetailCard = ({ recipe, id }) => {
   }, [recipe.title]);
 
 
-  // Save a new review
-  const handleSaveReview = () => {
-    if (!reviewerName || !userReview || !starRating) return; // Ensure all fields are filled
+  const handleUpdate = async () => {
+   
+    
+    try {
+      const response = await fetch(`${url}/api/recipe/${id}/update`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ description }),
+      });
 
-    const newReview = {
-      name: reviewerName,
-      rating: starRating,
-      text: userReview,
-      date: new Date().toLocaleDateString(),
-    };
-    const updatedReviews = [...savedReviews, newReview];
-    setSavedReviews(updatedReviews);
-    setReviewerName("");
-    setUserReview("");
-    setStarRating(0);
+      if (response.ok) {
+        setMessage("Recipe updated successfully!");
+      } else {
+        setMessage("Failed to update recipe.");
+      }
 
-    // Save updated reviews in localStorage
-    localStorage.setItem("reviews", JSON.stringify(updatedReviews));
+      setOpenTextArea(false);
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+      setMessage("An error occurred while updating.");
+      setOpenTextArea(false)
+    }
   };
 
   return (
@@ -102,6 +109,19 @@ const RecipeDetailCard = ({ recipe, id }) => {
           Discover how to make this delicious {recipe.title}.{" "}
           {recipe.description || "for any occasion"}.
         </p>
+        <span className="text-lg italic text-gray-600 mb-6">
+          {description || "any occasion"}
+          <br/>
+          {console.log(openTextArea,'false')}
+         {openTextArea?
+            <div className="flex-1">
+              <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="block p-2.5 w-[300px] text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Type here..."/>
+              <button onClick={()=>{handleUpdate();setOpenTextArea(false)}} className='w-20 bg-green-400 rounded hover:bg-green-500 text-black font-bold m-2'>Submit</button>
+              <button onClick={()=>{setOpenTextArea(false)}} className='w-20 bg-red-400 rounded hover:bg-red-500 text-black font-bold m-2'>Close</button>
+            </div>
+          :<button onClick={()=>setOpenTextArea(true)} className='w-12 mb-4 bg-blue-400 rounded hover:bg-blue-500 text-black font-bold'>Edit</button>}
+          
+        </span>
 
         <div className="text-lg text-gray-800 space-y-2">
           <p><strong>Prep Time:</strong> {formatTime(recipe.prep || 0)}</p>
@@ -169,55 +189,9 @@ const RecipeDetailCard = ({ recipe, id }) => {
 
         {/* Review Section */}
         <div className="mt-8">
-          <h3 className="text-2xl font-semibold mb-4">User Reviews</h3>
-          <ul className="space-y-4 mb-4">
-            {savedReviews.map((review, index) => (
-              <li key={index} className="mb-2">
-                <div className="flex items-center space-x-2">
-                  <strong>{review.name}</strong>
-                  <div className="flex space-x-1">
-                    {Array.from({ length: 5 }, (_, i) => (
-                      <FaStar key={i} color={i < review.rating ? "#ffc107" : "#e4e5e9"} />
-                    ))}
-                  </div>
-                </div>
-                <p>{review.text}</p>
-                <span className="text-sm text-gray-500">({review.date})</span>
-              </li>
-            ))}
-          </ul>
+         <RecipeReviews recipeId={id}/>
 
-          <input
-            type="text"
-            value={reviewerName}
-            onChange={(e) => setReviewerName(e.target.value)}
-            placeholder="Your name"
-            className="w-full p-2 border border-gray-300 rounded-md mb-2"
-          />
-          <div className="flex space-x-1 mb-2">
-            {Array.from({ length: 5 }, (_, i) => (
-              <FaStar
-                key={i}
-                color={i < (hoverRating || starRating) ? "#ffc107" : "#e4e5e9"}
-                onMouseEnter={() => setHoverRating(i + 1)}
-                onMouseLeave={() => setHoverRating(0)}
-                onClick={() => setStarRating(i + 1)}
-                className="cursor-pointer"
-              />
-            ))}
-          </div>
-          <textarea
-            value={userReview}
-            onChange={(e) => setUserReview(e.target.value)}
-            placeholder="Write your review"
-            className="w-full p-2 border border-gray-300 rounded-md mb-2"
-          ></textarea>
-          <button
-            onClick={handleSaveReview}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md"
-          >
-            Submit Review
-          </button>
+        <AddReview recipeId={id}/>
         </div>
       </div>
     </div>
@@ -225,3 +199,4 @@ const RecipeDetailCard = ({ recipe, id }) => {
 };
 
 export default RecipeDetailCard;
+
