@@ -54,7 +54,11 @@ const RecipeGrid = async ({ searchParams }) => {
             ))}
           </div>
         }
-        <Paginate skip={skip} />
+        <Paginate 
+          skip={skip} 
+          totalRecipes={totalRecipes} 
+          filteredCount={filteredResults?.length || null} 
+        />
       </div>
     );
   } catch (error) {
