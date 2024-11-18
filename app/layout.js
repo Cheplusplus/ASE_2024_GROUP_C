@@ -39,8 +39,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className="bg-background text-foreground">
+    <html lang="en" suppressHydrationWarning>
+      <body className="bg-background text-foreground transition-colors duration-300">
        <SessionProvider>
         <ThemeProvider >
           <ClientNavWrapper>
