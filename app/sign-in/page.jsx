@@ -25,7 +25,7 @@ const SignIn = () => {
       if (result.error) {
         setError(result.error);
       } else {
-        router.push('/');
+        router.back();
       }
     } finally {
       setLoading(false);
@@ -125,7 +125,7 @@ const SignIn = () => {
         </form>
         <div className="mt-6">
           <button
-            onClick={() => {signIn("google"); router.back()}}
+            onClick={() => { signIn("google")}}
             className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
           >
             Sign In with Google

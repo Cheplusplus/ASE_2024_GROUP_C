@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic';  // Add this line to handle dynamic rend
 
 export async function GET(req) {
   try {
-    await connectToDatabase();
+    await connectToDatabase('devdb');
     const { searchParams } = new URL(req.url);
     const search = searchParams.get("search");
     const skip = parseInt(searchParams.get("skip"), 10) || 0;
@@ -83,13 +83,13 @@ export async function GET(req) {
       default:
         break;
     }
+    console.log(Recipe.collection.name)
     // Fetch recipes with the built query and sort options, limited to 50 results
     const recipes = await Recipe.find(query)
       .sort(sortOptions)
       .limit(limit)
       .skip(skip)
 
-      //console.log(recipes)
    
    // Get the count of recipes matching the search or category filter
     let count;
