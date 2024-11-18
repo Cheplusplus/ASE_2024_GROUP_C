@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import SearchBar from './SearchBar';
 import { signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { ThemeToggle } from './ThemeToggle';
 
 /**
@@ -16,7 +17,9 @@ const Navbar = () => {
   const [openSublinks, setOpenSublinks] = useState({});
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const pathname = usePathname();
-  const router = useRouter();
+  const router = useRouter(); 
+  const [favouritesCount, setFavouritesCount] = useState(0);
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     // Check if user is logged in, for example, by checking a token in localStorage
@@ -50,9 +53,9 @@ const Navbar = () => {
         { name: "Dinner", href: "/recipes/dinner" },
       ],
     },
-    { name: "Favorites", href: "/favorites" },
-    { name: "About", href: "/about" },
-    { name: "Contact", href: "/contact" },
+    { name: 'Favourites', href: '/favourites', badge: status === 'authenticated' ? favouritesCount : null},
+    { name: 'About', href: '/about' },
+    { name: 'Contact', href: '/contact' },
     {
       name: "Account",
       href: "/account",
@@ -118,6 +121,11 @@ const Navbar = () => {
                       className="text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 px-3 py-2 rounded-md text-sm font-medium focus:outline-none"
                     >
                       {link.name}
+                      {link.badge !== null && (
+                        <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                          {link.badge}
+                        </span>
+                      )}
                     </button>
                     {link.sublinks && openSublinks[link.name] && (
                       <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 transition-colors duration-200">
