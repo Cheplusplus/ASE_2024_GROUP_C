@@ -98,7 +98,7 @@ const SearchBar = ({ isOpen, onClose }) => {
 
   const handleSuggestionClick = (title) => {
     const debounceTimeout = setTimeout(()=> {
-      router.push(`/?search=${encodeURIComponent(title)}`);
+      router.push(`/all?search=${encodeURIComponent(title)}`);
       onClose();
     }, 500)
     return ()=> clearTimeout(debounceTimeout)
