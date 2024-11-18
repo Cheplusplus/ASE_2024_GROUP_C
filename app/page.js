@@ -22,7 +22,7 @@ export default async function Home({ searchParams, theme }) {
         />
         
       </div>
-      <div className="absolute top-64 z-20 left-1/2 transform -translate-x-1/2 bg-white rounded-lg w-11/12 p-4 shadow-lg ">
+      <div className="absolute top-64 z-20 left-1/2 transform -translate-x-1/2 bg-white rounded-lg w-11/12 p-4 py-6 shadow-lg ">
           <Carousel heading={'Recipes You Might Like...'} />
         </div>
 
