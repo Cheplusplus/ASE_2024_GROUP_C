@@ -24,6 +24,7 @@ const RecipeDetailCard = ({ recipe, id }) => {
   const [openTextArea,setOpenTextArea] = useState(false);
   const [message, setMessage] = useState("");
   const router = useRouter();
+  const [reviewUpdateKey, setReviewUpdateKey] = useState(0);
 
   const totalTime = (recipe.prep || 0) + (recipe.cook || 0);
   const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
@@ -33,6 +34,13 @@ const RecipeDetailCard = ({ recipe, id }) => {
   useEffect(() => {
     document.title = `${recipe.title} | Recipe Details`;
   }, [recipe.title]);
+
+  const handleReviewAdded = () => {
+    console.log('rerender')
+    // Increment the key to force a re-render
+   
+    setReviewUpdateKey((prevKey) => prevKey + 1);
+  };
 
 
   const handleUpdate = async () => {
@@ -195,9 +203,9 @@ const RecipeDetailCard = ({ recipe, id }) => {
 
         {/* Review Section */}
         <div className="mt-8">
-         <RecipeReviews recipeId={id}/>
+         <RecipeReviews recipeId={id} reviewUpdateKey={reviewUpdateKey}/>
 
-        <AddReview recipeId={id}/>
+        <AddReview recipeId={id} onAdd={handleReviewAdded}/>
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 
-export default function AddReview({ recipeId }) {
+export default function AddReview({ recipeId,onAdd }) {
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0);
   const [error, setError] = useState("");
@@ -46,8 +46,13 @@ export default function AddReview({ recipeId }) {
       if (!response.ok) throw new Error("Failed to submit review");
 
       setSuccess("Review submitted successfully!");
+
       setComment("");
-      setRating(0);
+      setRating(1);
+      onAdd();
+      setTimeout(() => {
+        setSuccess("");
+      }, 2000); // Reset message after 3 seconds
     } catch (error) {
       console.error("Error submitting review:", error);
       setError("Failed to submit review. Please try again.");

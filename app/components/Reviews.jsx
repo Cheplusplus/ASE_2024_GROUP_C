@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 
-export default function RecipeReviews({ recipeId }) {
+export default function RecipeReviews({ recipeId,reviewUpdateKey}) {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingReviewId, setEditingReviewId] = useState(null);
@@ -23,7 +23,6 @@ export default function RecipeReviews({ recipeId }) {
       setLoading(false);
     }
   };
-
   // Delete a review (authenticated user)
   const deleteReview = async (id) => {
     try {
@@ -73,7 +72,7 @@ export default function RecipeReviews({ recipeId }) {
 
   useEffect(() => {
     fetchReviews();
-  }, [recipeId]);
+  }, [recipeId,reviewUpdateKey]);
 
   return (
     <div className="p-4 bg-gray-50 rounded-md shadow-md">
