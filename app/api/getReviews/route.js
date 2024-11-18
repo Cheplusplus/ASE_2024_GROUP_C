@@ -1,5 +1,5 @@
 import connectToDatabase from "@/app/lib/connectMongoose";
-import Review from "@/app/models/review";
+import Review from "@/app/models/reviews";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {

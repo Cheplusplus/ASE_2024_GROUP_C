@@ -9,7 +9,7 @@ export async function POST(req) {
     const { recipeId, comment, rating, reviewerName } = await req.json();
 
     // Validate request data
-    if (!recipeId || !comment || !rating || !reviewerName) {
+    if ( !comment || !rating ) {
       return NextResponse.json(
         { error: "All fields are required" },
         { status: 400 }

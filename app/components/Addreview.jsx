@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 
 export default function AddReview({ recipeId, onReviewAdded }) {
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const { data: session, status } = useSession();
+  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
   // Function to submit a review
   const submitReview = async () => {
@@ -16,7 +19,7 @@ export default function AddReview({ recipeId, onReviewAdded }) {
         return;
       }
 
-      const response = await fetch("/api/reviews", {
+      const response = await fetch(`${url}/api/addReview`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -25,7 +28,7 @@ export default function AddReview({ recipeId, onReviewAdded }) {
           recipeId,
           comment,
           rating,
-          reviewerName,
+          reviewerName: session.user.name
         }),
       });
 
@@ -35,7 +38,7 @@ export default function AddReview({ recipeId, onReviewAdded }) {
       setComment("");
       setRating(0);
       setReviewerName("");
-      onReviewAdded(); // Refresh the reviews list
+     // onReviewAdded(); // Refresh the reviews list
     } catch (error) {
       console.error("Error submitting review:", error);
       setError("Failed to submit review. Please try again.");

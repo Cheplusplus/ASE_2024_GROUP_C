@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const ReviewSchema = new mongoose.Schema({
   recipeId: {
-    type: mongoose.Schema.Types.ObjectId, // Reference to the recipe's _id
+    type: String, // Reference to the recipe's _id
     ref: "Recipe", // Optional: If you have a Recipe model
     required: true,
   },

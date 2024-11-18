@@ -35,27 +35,6 @@ const RecipeDetailCard = ({ recipe, id }) => {
   }, [recipe.title]);
 
 
-  // Save a new review
-  // const handleSaveReview = () => {
-  //   if (!reviewerName || !userReview || !starRating) return; // Ensure all fields are filled
-
-  //   const newReview = {
-  //     name: reviewerName,
-  //     rating: starRating,
-  //     text: userReview,
-  //     date: new Date().toLocaleDateString(),
-  //   };
-  //   const updatedReviews = [...savedReviews, newReview];
-  //   setSavedReviews(updatedReviews);
-  //   setReviewerName("");
-  //   setUserReview("");
-  //   setStarRating(0);
-
-  //   // Save updated reviews in localStorage
-  //  // localStorage.setItem("reviews", JSON.stringify(updatedReviews));
-  // };
-
-
   const handleUpdate = async () => {
    
     console.log('123');
@@ -211,9 +190,9 @@ const RecipeDetailCard = ({ recipe, id }) => {
 
         {/* Review Section */}
         <div className="mt-8">
-         <RecipeReviews/>
+         <RecipeReviews recipeId={id}/>
 
-        <AddReview/>
+        <AddReview recipeId={id}/>
         </div>
       </div>
     </div>
@@ -221,3 +200,4 @@ const RecipeDetailCard = ({ recipe, id }) => {
 };
 
 export default RecipeDetailCard;
+

@@ -3,11 +3,12 @@ import { useState, useEffect } from "react";
 export default function RecipeReviews({ recipeId }) {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
   // Function to fetch reviews
   const fetchReviews = async () => {
     try {
-      const response = await fetch(`/api/reviews?recipeId=${recipeId}`);
+      const response = await fetch(`${url}/api/getReviews?recipeId=${recipeId}`);
       if (!response.ok) throw new Error("Failed to fetch reviews");
       const data = await response.json();
       setReviews(data);
