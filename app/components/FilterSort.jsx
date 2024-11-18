@@ -35,7 +35,7 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
       if (search) params.set('search', search);
 
       setIsOpen(false);
-      router.push(`/?${params.toString()}`);
+      router.push(`/all?${params.toString()}`);
 
       if (count1) {
         setDisplayCount(true);
@@ -45,7 +45,7 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
       setCount(count1);
     } else {
       setIsOpen(false);
-      router.push('/');
+      router.push('/all');
     }
   };
 

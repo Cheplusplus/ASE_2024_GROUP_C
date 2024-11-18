@@ -2,7 +2,7 @@ import RecipeGrid from "./components/RecipeGrid";
 import Image from "next/image";
 import Carousel from "./components/Carousel";
 
-export default async function Home({ searchParams, theme }) {
+export default async function Home({theme }) {
   return (
     <div
      className="min-h-screen bg-background transition-colors duration-300"
