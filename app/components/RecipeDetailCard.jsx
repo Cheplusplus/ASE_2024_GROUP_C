@@ -51,6 +51,9 @@ const RecipeDetailCard = ({ recipe, id }) => {
         setMessage("Recipe updated successfully!");
       } else {
         setMessage("Failed to update recipe.");
+        setTimeout(() => {
+          setMessage("");
+        }, 2000); // Reset message after 3 seconds
       }
 
       setOpenTextArea(false);
@@ -58,7 +61,10 @@ const RecipeDetailCard = ({ recipe, id }) => {
     } catch (error) {
       console.error(error);
       setMessage("An error occurred while updating.");
-      setOpenTextArea(false)
+      setOpenTextArea(false);
+      setTimeout(() => {
+        setMessage("");
+      }, 2000); // Reset message after 3 seconds
     }
   };
 

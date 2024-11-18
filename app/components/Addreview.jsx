@@ -25,7 +25,7 @@ export default function AddReview({ recipeId }) {
       if (!comment || !rating) {
         setError("All fields are required.");
         setTimeout(() => {
-          setError("" );
+          setError("");
         }, 2000); // Reset message after 3 seconds
         return;
       }
@@ -52,7 +52,7 @@ export default function AddReview({ recipeId }) {
       console.error("Error submitting review:", error);
       setError("Failed to submit review. Please try again.");
       setTimeout(() => {
-        setError("" );
+        setError("");
       }, 2000); // Reset message after 3 seconds
     }
   };
