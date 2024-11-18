@@ -5,17 +5,11 @@ import Image from "next/image";
 export default async function Home({ searchParams, theme }) {
   return (
     <div
-      className={`min-h-screen ${
-        theme === "dark"
-          ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"
-          : "bg-gradient-to-br from-gray-50 via-white to-gray-50"
-      }`}
+     className="min-h-screen bg-background transition-colors duration-300"
     >
       <div className="relative h-64 lg:min-h-72 overflow-hidden">
         <div
-          className={`absolute inset-0 ${
-            theme === "dark" ? "bg-black/40" : "bg-white/10"
-          } z-10`}
+          className="absolute inset-0 bg-background/40 dark:bg-black/40 z-10"
         />
         <Image
           priority={true}
@@ -24,9 +18,7 @@ export default async function Home({ searchParams, theme }) {
           fill
           quality={100}
           style={{ objectFit: "cover" }}
-          className={`${
-            theme === "dark" ? "brightness-75" : "brightness-100"
-          } transition-all duration-300`}
+          className="dark:brightness-75 brightness-100 transition-all duration-300"
         />
       </div>
       <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
