@@ -24,6 +24,9 @@ const SignIn = () => {
       });
       if (result.error) {
         setError(result.error);
+        setTimeout(() => {
+          setError("" );
+        }, 2000); // Reset message after 3 seconds
       } else {
         router.back();
       }
@@ -31,31 +34,6 @@ const SignIn = () => {
       setLoading(false);
     }
   }
-
-  const handleSignIn = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      // Sign in the user using the credentials provider
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      });
-
-      if (result.error) {
-        throw new Error(result.error);
-      }
-
-      // Redirect the user to the home page
-      router.push('/');
-    } catch (err) {
-      alert(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className={`flex items-center justify-center min-h-screen ${
@@ -130,6 +108,7 @@ const SignIn = () => {
           >
             Sign In with Google
           </button>
+           {error && <p className="text-red-500">{error}</p>}
         </div>
       </div>
     </div>
