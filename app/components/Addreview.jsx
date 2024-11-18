@@ -37,7 +37,6 @@ export default function AddReview({ recipeId, onReviewAdded }) {
       setSuccess("Review submitted successfully!");
       setComment("");
       setRating(0);
-      setReviewerName("");
      // onReviewAdded(); // Refresh the reviews list
     } catch (error) {
       console.error("Error submitting review:", error);
