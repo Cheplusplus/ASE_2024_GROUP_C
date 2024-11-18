@@ -37,7 +37,6 @@ const RecipeDetailCard = ({ recipe, id }) => {
 
   const handleUpdate = async () => {
    
-    console.log('123');
     
     try {
       const response = await fetch(`${url}/api/recipe/${id}/update`, {
