@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import AddReview from "./Addreview";
+import AddReview from "./AddReview";
 import { FaStar } from "react-icons/fa"; // Importing the star icon from Font Awesome
 import { useRouter } from "next/navigation";
 import RecipeReviews from "./Reviews";
@@ -135,91 +135,50 @@ const RecipeDetailCard = ({ recipe, id }) => {
               <textarea 
                 value={description} 
                 onChange={(e) => setDescription(e.target.value)} 
-                className="block p-2.5 w-[300px] text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Type here..."
+                className="w-full p-2 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300" 
               />
-              <button onClick={()=>{handleUpdate();setOpenTextArea(false)}} className='w-20 bg-green-400 hover:bg-green-500 text-black dark:text-white font-bold m-2 rounded'>Submit</button>
-              <button onClick={()=>{setOpenTextArea(false)}} className='w-20 bg-red-400 hover:bg-red-500 text-black dark:text-white font-bold m-2 rounded'>Close</button>
+              <button onClick={handleUpdate} className="mt-3 px-4 py-2 bg-blue-500 text-white rounded-md">Save</button>
             </div>
           ) : (
-            <button onClick={()=>setOpenTextArea(true)} className='w-12 mb-4 bg-blue-400 hover:bg-blue-500 text-black dark:text-white font-bold rounded'>Edit</button>
-          )}
-        </span>
-
-        <div className="text-lg text-gray-800 dark:text-gray-200 space-y-2">
-          <p><strong>Prep Time:</strong> {formatTime(recipe.prep || 0)}</p>
-          <p><strong>Cook Time:</strong> {formatTime(recipe.cook || 0)}</p>
-          <p><strong>Category:</strong> {recipe.category || "Uncategorized"}</p>
-          <p><strong>Servings:</strong> {recipe.servings || "N/A"} servings</p>
-          <p><strong>Published:</strong> {recipe.published ? new Date(recipe.published).toLocaleDateString() : "N/A"}</p>
-        </div>
-
-        <ul className="grid grid-cols-3 mt-10 border-b-2 border-gray-200 dark:border-gray-700">
-          {["ingredients", "instructions", "nutrition"].map((tab) => (
-            <li
-              key={tab}
-              className={`text-gray-800 dark:text-gray-200 font-semibold text-base text-center py-3 cursor-pointer ${
-                activeTab === tab ? "border-b-2 border-gray-800 dark:border-gray-200" : ""
-              }`}
-              onClick={() => setActiveTab(tab)}
-            >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
-            </li>
-          ))}
-        </ul>
-
-        <div className="mt-6">
-          {activeTab === "ingredients" && (
-            <div>
-              <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Ingredients</h2>
-              <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300">
-                {Object.entries(recipe.ingredients || {}).map(
-                  ([ingredient, quantity], index) => (
-                    <li key={index}>
-                      {ingredient}: {quantity}
-                    </li>
-                  )
-                )}
-              </ul>
-            </div>
-          )}
-          {activeTab === "instructions" && (
-            <div>
-              <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Instructions</h2>
-              <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300">
-                {recipe.instructions?.map((instruction, index) => (
-                  <li key={index}>{instruction}</li>
-                ))}
-              </ul>
+            <div className="flex justify-between items-center">
+              <p>{description}</p>
               <button
-                onClick={readInstructions}
-                className="w-2fit p-2 bg-green-400 rounded hover:bg-green-500 text-black font-bold m-2"
+                onClick={() => setOpenTextArea(true)}
+                className="text-blue-500 underline"
               >
-                Read Instructions
+                Edit Description
               </button>
             </div>
           )}
-          {activeTab === "nutrition" && (
-            <div>
-              <h3 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Nutrition Information</h3>
-              <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300">
-                <li>Calories: {recipe.nutrition?.calories || "N/A"}</li>
-                <li>Fat: {recipe.nutrition?.fat || "N/A"}g</li>
-                <li>Saturated Fat: {recipe.nutrition?.saturated || "N/A"}g</li>
-                <li>Sodium: {recipe.nutrition?.sodium || "N/A"}mg</li>
-                <li>Carbohydrates: {recipe.nutrition?.carbohydrates || "N/A"}g</li>
-                <li>Fiber: {recipe.nutrition?.fiber || "N/A"}g</li>
-                <li>Sugar: {recipe.nutrition?.sugar || "N/A"}g</li>
-                <li>Protein: {recipe.nutrition?.protein || "N/A"}g</li>
-              </ul>
-            </div>
-          )}
-        </div>
+        </span>
 
-        <div className="mt-8">
-          <RecipeReviews recipeId={id} reviewUpdateKey={reviewUpdateKey} />
+        {message && <div className="bg-green-200 p-2 rounded-md">{message}</div>}
+        <div>
+          <div className="my-3">
+            <h2 className="font-medium text-xl mb-3">Ingredients</h2>
+            <ul className="list-disc pl-6">
+              {recipe.ingredients?.map((ingredient, index) => (
+                <li key={index}>{ingredient}</li>
+              ))}
+            </ul>
+          </div>
 
-          <AddReview recipeId={id} onAdd={handleReviewAdded} />
+          <div className="my-3">
+            <h2 className="font-medium text-xl mb-3">Instructions</h2>
+            <ol className="list-decimal pl-6">
+              {recipe.instructions?.map((instruction, index) => (
+                <li key={index}>{instruction}</li>
+              ))}
+            </ol>
+          </div>
+
+          <div className="my-6">
+            <h2 className="font-medium text-xl mb-3">Time</h2>
+            <p>{formatTime(totalTime)}</p>
+          </div>
+
+          <RecipeReviews recipeId={recipe.id} key={reviewUpdateKey} />
+          <AddReview recipeId={recipe.id} onReviewAdded={handleReviewAdded} />
         </div>
       </div>
     </div>
@@ -227,4 +186,3 @@ const RecipeDetailCard = ({ recipe, id }) => {
 };
 
 export default RecipeDetailCard;
-

@@ -41,13 +41,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="bg-background text-foreground transition-colors duration-300">
-       <SessionProvider>
-        <ThemeProvider >
-          <ClientNavWrapper>
-            <Navbar />
-          </ClientNavWrapper>
-          <main className="min-h-screen pt-16">{children}</main>
-          <Footer />
+        <SessionProvider>
+          <ThemeProvider>
+            <ClientNavWrapper>
+              <Navbar />
+            </ClientNavWrapper>
+            <main className="min-h-screen pt-16">{children}</main>
+            <Footer />
           </ThemeProvider>
         </SessionProvider>
       </body>
