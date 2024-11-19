@@ -94,8 +94,7 @@ export default function RecipeDetail({ params }) {
       </Head>
 
       <div className="p-6 max-w-6xl mx-auto font-sans">
-        {/* Main heading for SEO */}
-        <h1 className="text-3xl font-bold mb-2 text-gray-800 dark:text-gray-100">{recipe.title}</h1>
+        
         
         <button
           onClick={(e) => {e.preventDefault();router.back()}}
