@@ -78,9 +78,9 @@ const RecipeDetailCard = ({ recipe, id }) => {
       }, 2000);
     }
   };
-
   const readInstructions = () => {
     setVoiceCommandsEnabled(true);
+    
     if (!("speechSynthesis" in window)) {
       alert("Speech synthesis is not supported in this browser.");
       return;
@@ -93,61 +93,72 @@ const RecipeDetailCard = ({ recipe, id }) => {
     const instructionsText = recipe.instructions?.join(". ") || "No instructions available.";
     if (!instructionsText) {
       alert("No instructions to read.");
+      setVoiceCommandsEnabled(false);
       return;
     }
-    
+  
     const utterance = new SpeechSynthesisUtterance(instructionsText);
     utterance.lang = "en-US";
     utterance.rate = 1;
     utterance.pitch = 1;
   
     utterance.onstart = () => setSpeaking(true);
-    utterance.onend = () => setSpeaking(false);
+    utterance.onend = () => {
+      setSpeaking(false);
+      setVoiceCommandsEnabled(false); // Disable voice commands after reading
+      stopVoiceCommands(); // Stop recognition explicitly
+    };
   
     window.speechSynthesis.speak(utterance);
   };
+  
 
   
   // Voice Command Handling
-  const handleVoiceCommands = () => {
-    if (!speechRecognitionEnabled) return;
-  
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-  
-    recognition.continuous = true;
-    recognition.lang = "en-US";
-  
-    recognition.onresult = (event) => {
-      const command = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
-      console.log("Voice Command:", command);
-  
-      if (command.includes("pause")) {
-        console.log(paused,'1')
-        if (window.speechSynthesis.speaking && !paused) {
-          window.speechSynthesis.pause();
-          setSpeaking(false);
-          setPaused(true);
-        }
+ 
+const handleVoiceCommands = () => {
+  if (!speechRecognitionEnabled) return;
+
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new SpeechRecognition();
+
+  recognition.continuous = true;
+  recognition.lang = "en-US";
+
+  recognition.onresult = (event) => {
+    const command = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+    console.log("Voice Command:", command);
+
+    if (command.includes("pause")) {
+      if (window.speechSynthesis.speaking && !paused) {
+        window.speechSynthesis.pause();
+        setSpeaking(false);
+        setPaused(true);
       }
-  
-      if (command.includes("resume")) {
-        console.log(paused,'2')
-        if (paused) {
-          window.speechSynthesis.resume();
-          setSpeaking(true);
-          setPaused(false);
-        }
+    }
+
+    if (command.includes("resume")) {
+      if (paused) {
+        window.speechSynthesis.resume();
+        setSpeaking(true);
+        setPaused(false);
       }
-    };
-  
-    recognition.onerror = (event) => {
-      console.error("Speech recognition error:", event.error);
-    };
-  
-    recognition.start();
+    }
   };
+
+  recognition.onerror = (event) => {
+    console.error("Speech recognition error:", event.error);
+  };
+
+  recognition.start();
+
+  // Attach recognition stop to a helper function
+  stopVoiceCommands = () => {
+    recognition.stop(); // Stop recognition
+    console.log("Voice commands stopped");
+  };
+};
   
 
   useEffect(() => {
