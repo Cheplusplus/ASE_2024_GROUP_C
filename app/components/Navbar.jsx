@@ -50,11 +50,6 @@ const Navbar = () => {
     {
       name: "Recipes",
       href: "/recipes",
-      sublinks: [
-        { name: "Breakfast", href: "/recipes/breakfast" },
-        { name: "Lunch", href: "/recipes/lunch" },
-        { name: "Dinner", href: "/recipes/dinner" },
-      ],
     },
     { name: 'Favourites', href: '/favourites', badge: status === 'authenticated' ? favouritesCount : null},
     { name: 'About', href: '/about' },
