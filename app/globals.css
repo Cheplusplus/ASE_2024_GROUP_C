@@ -12,6 +12,12 @@
 }
 
 
+@layer components {
+  .theme-transition {
+    @apply transition-colors duration-300 ease-in-out;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

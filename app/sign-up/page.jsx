@@ -33,6 +33,9 @@ const SignUp = () => {
     router.push('/sign-in')
   } catch (err) {
     setError(err.message);
+    setTimeout(() => {
+      setError("" );
+    }, 2000); // Reset message after 3 seconds
   }
 };
 
@@ -106,14 +109,14 @@ const SignUp = () => {
             </button>
           </div>
         </form>
-        {/* <div className="mt-6">
+        <div className="mt-6">
           <button
             onClick={() => signIn("google")}
             className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
           >
             Sign Up with Google
           </button>
-        </div> */}
+        </div>
         {error && <p className="mt-2 text-center text-sm text-red-600">{error}</p>}
       </div>
     </div>
