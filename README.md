@@ -37,4 +37,20 @@ The **Recipe App** is a user-friendly web application built using **Next.js** th
 
 ---
 
-This app is ideal for anyone looking to simplify meal planning or expand their cooking repertoire with minimal effort.
+## Technologies Used
+
+This project leverages the following frameworks, tools, and libraries:
+
+- **[Next.js](https://nextjs.org/):** A React-based framework for server-side rendering and static site generation.
+- **React:** A JavaScript library for building user interfaces.
+- **Tailwind CSS:** A utility-first CSS framework for styling and responsiveness.
+- **Firebase:** Used for user authentication and storing recipe data.
+- **React Dropdown Select:** For dynamic tag and category selection in the filtering component.
+- **Radix UI Slider:** For interactive sliders to adjust values in the app.
+- **ESLint and Prettier:** For consistent code formatting and linting.
+- **Markdown:** For content-rich recipe descriptions.
+- **Git:** Version control to manage and track development progress.
+
+---
+
+This app is ideal for anyone looking to simplify meal planning or expand their cooking repertoire with minimal effort. Its intuitive design and advanced filtering options make it a must-have for food enthusiasts.
