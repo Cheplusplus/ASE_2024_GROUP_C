@@ -27,11 +27,11 @@ Number of steps or complexity
 
 ### 📊 Sorting Options
 
-- Sort recipes by:
+ Sort recipes by:
 
-Preparation time
-Cooking time
-Number of steps
+- Preparation time
+- Cooking time
+- Number of steps
 
 
 
