@@ -1,47 +1,28 @@
-"use client";
-import React, { useEffect, useState } from "react";
+// components/Carousel.js
 import Link from "next/link";
 import Image from "next/image";
-import ViewAll from "./ui/ViewAll";
-import SkeletonGrid from "./SkeletonMain";
 
+const Carousel = async ({ heading }) => {
+  const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
+  // Fetch data with revalidation set to 10 minutes (600 seconds)
+  const res = await fetch(`${url}/api/10Recipes`, {
+    next: { revalidate: 600 }, // Revalidate after 10 minutes
+  });
 
-const Carousel = ({heading}) => {
-  const [recipes, setRecipes] = useState([]);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchRecipes = async () => {
-      try {
-        const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-        const res = await fetch(`${url}/api/10Recipes`, {cache: "force-cache"});
-        if (!res.ok) {
-          throw new Error("Failed to fetch recipes");
-        }
-        const data = await res.json();
-        setRecipes(data.recipes); // Assuming the API response has a 'recipes' key
-      } catch (error) {
-        console.error("Failed to fetch data", error);
-        setError(error.message);
-      }
-    };
-
-    fetchRecipes();
-  }, []);
-
-  if (error) {
-    return <p className="text-center text-red-500">{error}</p>;
+  if (!res.ok) {
+    throw new Error("Failed to fetch recipes");
   }
 
-  if(recipes.length === 0) {
-    return (
-      <SkeletonGrid/>
-    )
+  const data = await res.json();
+  const recipes = data.recipes; // Assuming the API response has a 'recipes' key
+
+  if (!recipes || recipes.length === 0) {
+    return <p>No recipes available at the moment.</p>;
   }
 
   return (
-    <div >
+    <div>
       <h2 className="text-center text-lg font-semibold mb-3">
         {heading}
       </h2>
@@ -67,14 +48,10 @@ const Carousel = ({heading}) => {
                     : recipe.title}
                 </p>
               </Link>
-        
             </div>
-        
           ))}
         </div>
-        {/* <div className=""><ViewAll/></div> */}
       </div>
-      
     </div>
   );
 };
