@@ -2,7 +2,8 @@ import Navbar from "./components/Navbar";
 import ClientNavWrapper from "./components/ClientNavWrapper";
 import Footer from "./components/Footer";
 import "./globals.css";
-// import searchProvider from "./contexts/SearchContext"
+import SessionProvider from "./components/SessionProvider";
+import { ThemeProvider } from "./components/ThemeProvider";
 
 // metadata for the RootLayout
 export const metadata = {
@@ -38,13 +39,17 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className="bg-white">
-        <ClientNavWrapper>
-          <Navbar />
-        </ClientNavWrapper>
-        <main className="min-h-screen pt-16">{children}</main>
-        <Footer />
+    <html lang="en" suppressHydrationWarning>
+      <body className="bg-background text-foreground transition-colors duration-300">
+       <SessionProvider>
+        <ThemeProvider >
+          <ClientNavWrapper>
+            <Navbar />
+          </ClientNavWrapper>
+          <main className="min-h-screen pt-16">{children}</main>
+          <Footer />
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );
