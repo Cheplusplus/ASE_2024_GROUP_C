@@ -161,7 +161,7 @@ const FavouritesPage = () => {
           <div className="col-span-full text-center py-10">
             <p className="text-gray-500 text-lg">You have no favourite recipes yet.</p>
             <button
-              onClick={() => router.push('/recipes')}
+              onClick={() => router.push('/all')}
               className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
             >
               Browse Recipes
