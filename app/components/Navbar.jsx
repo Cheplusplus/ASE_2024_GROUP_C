@@ -31,13 +31,7 @@ const Navbar = () => {
     }));
   };
 
-  // const handleLogout = (e) => {
-  //    e.preventDefault();
-  //   // Clear the session (for example, removing the token)
-  //   localStorage.removeItem('authToken');
-  //   setIsLoggedIn(false);
-  //   router.push('/'); // Redirect to the homepage
-  // };
+
 
   const handleSignOut = async (e) => {
     e.preventDefault();
