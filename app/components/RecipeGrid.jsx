@@ -14,7 +14,6 @@ const RecipeGrid = async ({ searchParams }) => {
   const search = searchParams.search || "";
 
   try {
-     console.log('1234slide')
     const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
     const res = await fetch(`${url}/api/recipe?search=${search}&skip=${skip}&category=${category}&tags=${tags.join(',')}&numSteps=${numSteps}&ingredients=${ingredients}&sortOption=${sortOption}`,{cache:'no-store'},{
     headers: { 'Content-Type': 'application/json' }
