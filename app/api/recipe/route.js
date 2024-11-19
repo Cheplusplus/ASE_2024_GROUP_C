@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic';  // Add this line to handle dynamic rend
 
 export async function GET(req) {
   try {
-    await connectToDatabase('devdb');
+    await connectToDatabase();
     const { searchParams } = new URL(req.url);
     const search = searchParams.get("search");
     const skip = parseInt(searchParams.get("skip"), 10) || 0;

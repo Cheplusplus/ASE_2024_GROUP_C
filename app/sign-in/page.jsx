@@ -24,39 +24,23 @@ const SignIn = () => {
       });
       if (result.error) {
         setError(result.error);
+        setTimeout(() => {
+          setError("" );
+        }, 2000); // Reset message after 3 seconds
       } else {
-        router.back();
+        router.push('/');
       }
     } finally {
       setLoading(false);
+      
     }
   }
 
-  const handleSignIn = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      // Sign in the user using the credentials provider
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      });
-
-      if (result.error) {
-        throw new Error(result.error);
-      }
-
-      // Redirect the user to the home page
-      router.push('/');
-    } catch (err) {
-      alert(err.message);
-    } finally {
-      setLoading(false);
-    }
+  const handleSignIn = () => {
+    // Redirect to the current page after successful sign-in
+    const callbackUrl = router.asPath;
+    signIn("google", { callbackUrl : '/' });
   };
-
   return (
     <div className={`flex items-center justify-center min-h-screen ${
       theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
@@ -125,11 +109,12 @@ const SignIn = () => {
         </form>
         <div className="mt-6">
           <button
-            onClick={() => { signIn("google")}}
+            onClick={handleSignIn}
             className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
           >
             Sign In with Google
           </button>
+           {error && <p className="text-red-500">{error}</p>}
         </div>
       </div>
     </div>

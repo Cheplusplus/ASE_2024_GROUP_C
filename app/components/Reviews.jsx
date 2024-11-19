@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 
-export default function RecipeReviews({ recipeId }) {
+export default function RecipeReviews({ recipeId,reviewUpdateKey}) {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [editComment, setEditComment] = useState("");
   const [editRating, setEditRating] = useState(0);
+  const { data: session } = useSession();
   const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
   // Fetch reviews
@@ -21,8 +23,7 @@ export default function RecipeReviews({ recipeId }) {
       setLoading(false);
     }
   };
-
-  // Delete a review
+  // Delete a review (authenticated user)
   const deleteReview = async (id) => {
     try {
       const response = await fetch(`${url}/api/deleteReview`, {
@@ -44,7 +45,7 @@ export default function RecipeReviews({ recipeId }) {
     setEditRating(review.rating);
   };
 
-  // Submit edited review
+  // Submit edited review (authenticated user)
   const submitEditReview = async () => {
     try {
       const response = await fetch(`${url}/api/editReview`, {
@@ -71,7 +72,7 @@ export default function RecipeReviews({ recipeId }) {
 
   useEffect(() => {
     fetchReviews();
-  }, [recipeId]);
+  }, [recipeId,reviewUpdateKey]);
 
   return (
     <div className="p-4 bg-gray-50 rounded-md shadow-md">
@@ -127,20 +128,22 @@ export default function RecipeReviews({ recipeId }) {
                 <p className="font-semibold">{review.reviewerName}</p>
                 <p className="text-yellow-500">{`⭐️`.repeat(review.rating)}</p>
                 <p>{review.comment}</p>
-                <div className="flex space-x-4 mt-2">
-                  <button
-                    onClick={() => startEditReview(review)}
-                    className="text-blue-500"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => deleteReview(review._id)}
-                    className="text-red-500"
-                  >
-                    Delete
-                  </button>
-                </div>
+                {session?.user?.name === review.reviewerName && ( // Check ownership
+                  <div className="flex space-x-4 mt-2">
+                    <button
+                      onClick={() => startEditReview(review)}
+                      className="text-blue-500"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => deleteReview(review._id)}
+                      className="text-red-500"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
               </div>
             )
           )}

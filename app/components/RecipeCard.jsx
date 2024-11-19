@@ -43,12 +43,12 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
   return (
     <Link href={`/recipes/${_id}`} className="block">
       <div
-        className="group relative bg-card text-card-foreground rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg"
+        className="group relative bg-card text-card-foreground rounded-sm overflow-hidden transition-all duration-300 hover:shadow-lg"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
         {/* Main Image Container */}
-        <div className="relative h-64 overflow-hidden">
+        <div className="relative h-40 sm:h-40  overflow-hidden">
           <Image
             priority = 'true'
             src={images[currentImageIndex]}
@@ -63,14 +63,14 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
         </div>
         
         {/* Content Container */}
-        <div className="p-6">
+        <div className="p-1">
           {/* Title */}
           <h2 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2">
             {title}
           </h2>
           
           {/* Meta Information */}
-          <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
+          <div className="flex flex-wrap gap-2 text-sm text-gray-600  mb-2 md:mb-4">
             <div className="flex items-center gap-1">
               {ClockIcon}
               <span>Prep: {prep} mins</span>
