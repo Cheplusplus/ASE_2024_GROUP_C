@@ -6,12 +6,9 @@ import Categories from "@/app/models/categories";
 export async function GET() {
     // Connect to MongoDB
     await connectToDatabase();
-    console.log('123concatea')
     try {
-      console.log('123concate')
       // Fetch the categories document
       const categoryDoc = await Categories.findOne({});
-      console.log('123concate2')
       if (!categoryDoc) {
         return NextResponse.json({ message: "Categories not found" }, { status: 404 },{
           headers: {
@@ -20,7 +17,6 @@ export async function GET() {
           },
         });
       }
-      console.log(categoryDoc.categories)
       // Send back the categories array
       return NextResponse.json({ categories: categoryDoc.categories }, {
         headers: {

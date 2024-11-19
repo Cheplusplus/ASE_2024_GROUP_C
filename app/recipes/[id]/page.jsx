@@ -16,7 +16,6 @@ export default function RecipeDetail({ params }) {
 
   useEffect(() => {
     const fetchRecipe = async (id) => {
-      const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
       try {
         const response = await fetch(`/api/recipe/${id}`);
         console.log(response)
@@ -26,12 +25,6 @@ export default function RecipeDetail({ params }) {
         const data = await response.json();
         setRecipe(data.recipe);
 
-        const res = await fetch(`/api/categories`)
-        if(!res.ok){
-          console.log(res.status,'failed')
-        }
-        let cate = await res.json();
-        console.log(cate)
       } catch (error) {
         console.error("Error fetching recipe:", error);
         setError("Failed to load recipe. Please try again later.");
@@ -51,9 +44,9 @@ export default function RecipeDetail({ params }) {
 
   if (error) {
     return (
-      <div className="text-center text-red-500 relative mt-40">
-        <p>{error}</p>
-        <Link href="/" className="text-blue-500 hover:underline">
+      <div className="text-center my-10">
+        <p className="text-red-600">{error}</p>
+        <Link href="/" className="text-blue-500 underline">
           Go back to Home Page
         </Link>
       </div>
@@ -61,9 +54,16 @@ export default function RecipeDetail({ params }) {
   }
 
   if (!recipe) {
-    return <p>Recipe not found</p>;
+    return (
+      <div className="text-center my-10">
+        <p className="text-gray-600">Recipe not found</p>
+        <Link href="/" className="text-blue-500 underline">
+          Go back to Home Page
+        </Link>
+      </div>
+    );
   }
-
+  
   return (
     <>
       {/* Dynamic meta tags for SEO */}
@@ -94,19 +94,21 @@ export default function RecipeDetail({ params }) {
       </Head>
 
       <div className="p-6 max-w-6xl mx-auto font-sans">
-        {/* Main heading for SEO */}
-        <h1 className="text-3xl font-bold">{recipe.title}</h1>
+        
         
         <button
           onClick={(e) => {e.preventDefault();router.back()}}
-          className="text-gray-600 hover:text-gray-900 mb-4 flex items-center"
+          className="text-gray-200 hover:text-gray-500 mb-4 flex items-center"
         >
           ← Back
         </button>
 
         {/* RecipeDetailCard should ensure alt text is included for images */}
-        <RecipeDetailCard recipe={recipe} />
+        <RecipeDetailCard recipe={recipe}  id={id}/>
       </div>
     </>
   );
 }
+
+
+
