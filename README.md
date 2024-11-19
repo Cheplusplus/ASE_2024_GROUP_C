@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Recipe App
 
-## Getting Started
+## Project Overview
+The **Recipe App** is a user-friendly web application built using **Next.js** that helps users explore, search, and manage a variety of recipes. Designed for food enthusiasts, it offers powerful filtering and sorting options to simplify the process of finding recipes based on categories, tags, and cooking steps. Users can view detailed recipes with step-by-step instructions and manage their preferences with ease.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Main Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 🍳 **Recipe Browsing**
+- Discover a collection of recipes with detailed information, including:
+  - Ingredients
+  - Cooking steps
+  - Prep time
+  - Cook time
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### 🔍 **Search and Filtering**
+- Quickly search and filter recipes by:
+  - Category
+  - Tags
+  - Steps
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### 📊 **Sorting Options**
+- Organize recipes based on:
+  - Prep time
+  - Cook time
+  - Number of steps
 
-## Learn More
+### 📱 **Responsive Design**
+- Fully responsive and optimized for seamless use on mobile, tablet, and desktop devices.
 
-To learn more about Next.js, take a look at the following resources:
+### 🔒 **User Authentication**
+- Secure authentication for personalized experiences.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 🧭 **Interactive Navbar**
+- Easily navigate the app, perform searches, and apply sorting options.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+This app is ideal for anyone looking to simplify meal planning or expand their cooking repertoire with minimal effort.
