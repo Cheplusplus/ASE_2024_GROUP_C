@@ -22,6 +22,7 @@ const RecipeDetailCard = ({ recipe, id }) => {
   const router = useRouter();
   const [reviewUpdateKey, setReviewUpdateKey] = useState(0);
   const [voiceCommandsEnabled, setVoiceCommandsEnabled] = useState(false);
+  let stopVoiceCommands;
 
 
   const [speechRecognitionEnabled, setSpeechRecognitionEnabled] = useState(false);
@@ -106,7 +107,7 @@ const RecipeDetailCard = ({ recipe, id }) => {
     utterance.onend = () => {
       setSpeaking(false);
       setVoiceCommandsEnabled(false); // Disable voice commands after reading
-      stopVoiceCommands(); // Stop recognition explicitly
+     // stopVoiceCommands(); // Stop recognition explicitly
     };
   
     window.speechSynthesis.speak(utterance);
@@ -139,7 +140,7 @@ const handleVoiceCommands = () => {
     }
 
     if (command.includes("resume")) {
-      if (paused) {
+      if (!paused) {
         window.speechSynthesis.resume();
         setSpeaking(true);
         setPaused(false);
@@ -160,12 +161,16 @@ const handleVoiceCommands = () => {
   };
 };
   
+useEffect(() => {
+  if (voiceCommandsEnabled) {
+    handleVoiceCommands();
+  }
 
-  useEffect(() => {
-    if (voiceCommandsEnabled) {
-      handleVoiceCommands();
-    }
-  }, [voiceCommandsEnabled]);
+  return () => {
+    if (stopVoiceCommands) stopVoiceCommands(); // Cleanup when component unmounts or commands are disabled
+  };
+}, [voiceCommandsEnabled]);
+
   
   return (
     <div className="grid items-start grid-cols-1 md:grid-cols-2 gap-6">
