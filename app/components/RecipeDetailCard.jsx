@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import AddReview from "./Addreview";
-import { FaStar } from "react-icons/fa"; // Importing the star icon from Font Awesome
+import { FaStar } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import RecipeReviews from "./Reviews";
 
+// Helper function to format time
 const formatTime = (minutes) => {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
@@ -19,8 +20,8 @@ const RecipeDetailCard = ({ recipe, id }) => {
   const [selectedImage, setSelectedImage] = useState(recipe.images?.[0]);
   const [openTextArea, setOpenTextArea] = useState(false);
   const [message, setMessage] = useState("");
-  const router = useRouter();
   const [reviewUpdateKey, setReviewUpdateKey] = useState(0);
+  const router = useRouter();
 
   const totalTime = (recipe.prep || 0) + (recipe.cook || 0);
   const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
@@ -31,7 +32,6 @@ const RecipeDetailCard = ({ recipe, id }) => {
   }, [recipe.title]);
 
   const handleReviewAdded = () => {
-    console.log("rerender");
     setReviewUpdateKey((prevKey) => prevKey + 1);
   };
 
@@ -49,20 +49,21 @@ const RecipeDetailCard = ({ recipe, id }) => {
         setMessage("Recipe updated successfully!");
       } else {
         setMessage("Failed to update recipe.");
-        setTimeout(() => {
-          setMessage("");
-        }, 2000);
       }
+
+      setTimeout(() => {
+        setMessage("");
+      }, 2000);
 
       setOpenTextArea(false);
       router.refresh();
     } catch (error) {
       console.error(error);
       setMessage("An error occurred while updating.");
-      setOpenTextArea(false);
       setTimeout(() => {
         setMessage("");
       }, 2000);
+      setOpenTextArea(false);
     }
   };
 
@@ -82,6 +83,7 @@ const RecipeDetailCard = ({ recipe, id }) => {
 
   return (
     <div className="grid items-start grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Left Section: Images */}
       <div className="w-full lg:sticky top-0 flex flex-col gap-3">
         <div className="w-full">
           <Image
@@ -109,9 +111,11 @@ const RecipeDetailCard = ({ recipe, id }) => {
         </div>
       </div>
 
+      {/* Right Section: Details */}
       <div>
         <h1 className="text-3xl font-bold mb-2 text-gray-800">{recipe.title}</h1>
 
+        {/* Tags */}
         <div className="flex flex-wrap gap-2 my-4">
           {recipe.tags?.map((tag, index) => (
             <span
@@ -123,6 +127,7 @@ const RecipeDetailCard = ({ recipe, id }) => {
           ))}
         </div>
 
+        {/* Description */}
         <p className="text-lg italic text-gray-600 mb-6">
           Discover how to make this delicious {recipe.title}.{" "}
           {recipe.description || "for any occasion"}.
@@ -133,22 +138,17 @@ const RecipeDetailCard = ({ recipe, id }) => {
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="block p-2.5 w-[300px] text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="block p-2.5 w-[300px] text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Type here..."
               />
               <button
-                onClick={() => {
-                  handleUpdate();
-                  setOpenTextArea(false);
-                }}
+                onClick={handleUpdate}
                 className="w-20 bg-green-400 rounded hover:bg-green-500 text-black font-bold m-2"
               >
                 Submit
               </button>
               <button
-                onClick={() => {
-                  setOpenTextArea(false);
-                }}
+                onClick={() => setOpenTextArea(false)}
                 className="w-20 bg-red-400 rounded hover:bg-red-500 text-black font-bold m-2"
               >
                 Close
@@ -164,6 +164,7 @@ const RecipeDetailCard = ({ recipe, id }) => {
           )}
         </span>
 
+        {/* Recipe Details */}
         <div className="text-lg text-gray-800 space-y-2">
           <p>
             <strong>Prep Time:</strong> {formatTime(recipe.prep || 0)}
@@ -185,6 +186,7 @@ const RecipeDetailCard = ({ recipe, id }) => {
           </p>
         </div>
 
+        {/* Tabs */}
         <ul className="grid grid-cols-3 mt-10 border-b-2">
           {["ingredients", "instructions", "nutrition"].map((tab) => (
             <li
@@ -199,6 +201,7 @@ const RecipeDetailCard = ({ recipe, id }) => {
           ))}
         </ul>
 
+        {/* Tab Content */}
         <div className="mt-6">
           {activeTab === "ingredients" && (
             <div>
@@ -224,7 +227,7 @@ const RecipeDetailCard = ({ recipe, id }) => {
               </ul>
               <button
                 onClick={readInstructions}
-                className="w-2fit p-2 bg-green-400 rounded hover:bg-green-500 text-black font-bold m-2"
+                className="w-fit p-2 bg-green-400 rounded hover:bg-green-500 text-black font-bold m-2"
               >
                 Read Instructions
               </button>
@@ -252,7 +255,6 @@ const RecipeDetailCard = ({ recipe, id }) => {
         {/* Review Section */}
         <div className="mt-8">
           <RecipeReviews recipeId={id} reviewUpdateKey={reviewUpdateKey} />
-
           <AddReview recipeId={id} onAdd={handleReviewAdded} />
         </div>
       </div>
@@ -261,4 +263,3 @@ const RecipeDetailCard = ({ recipe, id }) => {
 };
 
 export default RecipeDetailCard;
-
