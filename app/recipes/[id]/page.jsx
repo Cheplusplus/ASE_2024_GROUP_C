@@ -44,9 +44,9 @@ export default function RecipeDetail({ params }) {
 
   if (error) {
     return (
-      <div className="text-center text-red-500 relative mt-40">
-        <p>{error}</p>
-        <Link href="/" className="text-blue-500 hover:underline">
+      <div className="text-center my-10">
+        <p className="text-red-600">{error}</p>
+        <Link href="/" className="text-blue-500 underline">
           Go back to Home Page
         </Link>
       </div>
@@ -54,9 +54,16 @@ export default function RecipeDetail({ params }) {
   }
 
   if (!recipe) {
-    return <p>Recipe not found</p>;
+    return (
+      <div className="text-center my-10">
+        <p className="text-gray-600">Recipe not found</p>
+        <Link href="/" className="text-blue-500 underline">
+          Go back to Home Page
+        </Link>
+      </div>
+    );
   }
-
+  
   return (
     <>
       {/* Dynamic meta tags for SEO */}
@@ -88,11 +95,11 @@ export default function RecipeDetail({ params }) {
 
       <div className="p-6 max-w-6xl mx-auto font-sans">
         {/* Main heading for SEO */}
-        <h1 className="text-3xl font-bold">{recipe.title}</h1>
+        <h1 className="text-3xl font-bold mb-2 text-gray-800 dark:text-gray-100">{recipe.title}</h1>
         
         <button
           onClick={(e) => {e.preventDefault();router.back()}}
-          className="text-gray-600 hover:text-gray-900 mb-4 flex items-center"
+          className="text-gray-200 hover:text-gray-500 mb-4 flex items-center"
         >
           ← Back
         </button>
