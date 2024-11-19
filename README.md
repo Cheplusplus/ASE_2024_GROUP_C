@@ -239,8 +239,11 @@ jsonCopy{
 ### Contact & Support
 
 -📧 Email: support@recipeapp.dev
+
 -📞 Phone: +1 555 123 4567
+
 -💬 Discord: Join our community
+
 -📝 Documentation: docs.recipeapp.dev
 
 #### Contributing
