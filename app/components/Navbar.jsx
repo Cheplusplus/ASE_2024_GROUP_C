@@ -118,62 +118,6 @@ const Navbar = () => {
               </Link>
             </div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:block">
-              <div className="ml-10 flex items-baseline space-x-4">
-                {navLinks.map((link) => (
-                  <div key={link.name} className="relative">
-                    <button
-                      onClick={() => {
-                        if (link.name === "Home" && pathname !== "/") {
-                          window.location.href = "/";
-                        } else {
-                          handleSublinkToggle(link.name);
-                        }
-                      }}
-                      className="text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 px-3 py-2 rounded-md text-sm font-medium focus:outline-none"
-                    >
-                      {link.name}
-                      {link.badge !== null && (
-                        <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                          {link.badge}
-                        </span>
-                      )}
-                    </button>
-                    {link.sublinks && openSublinks[link.name] && (
-                      <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 transition-colors duration-200">
-                        <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                          {link.sublinks.map((sublink) => (
-                            <Link 
-                              key={sublink.name} 
-                              href={sublink.href} 
-                              className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
-                            >
-                              {sublink.name}
-                            </Link>
-                          ))}
-                          <button 
-                            onClick={() => signOut()}
-                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
-                          >
-                            Sign Out
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-                {isLoggedIn && (
-                  <button
-                    onClick={(e)=>handleSignOut(e)}
-                    className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded"
-                  >
-                    Logout
-                  </button>
-                )}
-              </div>
-            </div>
-
             {/* Theme Toggle and Search */}
             <div className="flex items-center space-x-2">
               <ThemeToggle />
