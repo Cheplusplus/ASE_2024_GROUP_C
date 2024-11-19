@@ -142,15 +142,15 @@ cp .env.example .env.local
 
 6. Start Development Server:
 
-npm run dev
+    npm run dev
 
-yarn dev
+    yarn dev
 
 7. Build for Production:
 
-npm run build
+    npm run build
 
-yarn build
+    yarn build
 
 8. Troubleshooting
 
@@ -238,10 +238,10 @@ jsonCopy{
 } -->
 ### Contact & Support
 
-📧 Email: support@recipeapp.dev
-💬 Discord: Join our community
-🐦 Twitter: @recipeapp
-📝 Documentation: docs.recipeapp.dev
+-📧 Email: support@recipeapp.dev
+-📞 Phone: +1 555 123 4567
+-💬 Discord: Join our community
+-📝 Documentation: docs.recipeapp.dev
 
 #### Contributing
 We welcome contributions! Please see our Contributing Guide for guidelines.
