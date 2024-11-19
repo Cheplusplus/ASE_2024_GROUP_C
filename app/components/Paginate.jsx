@@ -20,14 +20,14 @@ const Paginate = ({ skip, totalRecipes }) => {
   const handleNext = (newPage) => {
     const newSkip = skip + RECIPES_PER_PAGE;
     setCurrentPage(newPage);
-    const newUrl = search || category || numSteps || sortOption || tags ? `/?search=${search}&skip=${newSkip}&category=${category}&tags=${tags.join(',')}&numSteps=${numSteps}&ingredients=${ingredients}&sortOption=${sortOption}` : `/?skip=${newSkip}`
+    const newUrl = search || category || numSteps || sortOption || tags ? `/all?search=${search}&skip=${newSkip}&category=${category}&tags=${tags.join(',')}&numSteps=${numSteps}&ingredients=${ingredients}&sortOption=${sortOption}` : `/all?skip=${newSkip}`
     router.push(newUrl); // Update the URL with the new skip value
   };
 
   const handlePrevious = (newPage) => {
     const newSkip = skip > RECIPES_PER_PAGE ? skip - RECIPES_PER_PAGE : 0;
     setCurrentPage(newPage);
-    const newUrl = search || category || numSteps || sortOption || tags ? `/?search=${search}&skip=${newSkip}&category=${category}&tags=${tags.join(',')}&numSteps=${numSteps}&ingredients=${ingredients}&sortOption=${sortOption}` : `/?skip=${newSkip}`
+    const newUrl = search || category || numSteps || sortOption || tags ? `/all?search=${search}&skip=${newSkip}&category=${category}&tags=${tags.join(',')}&numSteps=${numSteps}&ingredients=${ingredients}&sortOption=${sortOption}` : `/all?skip=${newSkip}`
     router.push(newUrl);
   };
   const totalPages = Math.ceil(150000 / RECIPES_PER_PAGE);

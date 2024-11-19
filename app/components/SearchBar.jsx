@@ -26,7 +26,7 @@ const SearchBar = ({ isOpen, onClose }) => {
       const debounceTimeout = setTimeout(()=> {
         fetchSuggestions(searchQuery);
         // Auto-submit search after 300ms of no typing
-        router.push(`/?search=${encodeURIComponent(searchQuery)}`);
+        router.push(`/all?search=${encodeURIComponent(searchQuery)}`);
         setHasSearched(true);
       }, 300);
       return () => clearTimeout(debounceTimeout);
@@ -34,9 +34,9 @@ const SearchBar = ({ isOpen, onClose }) => {
       setSearchResults([]);
       setHasSearched(false);
       // Reset the URL when the search query is cleared
-      if (searchQuery.trim().length === 0) {
-        router.push('/', undefined, { shallow: true });
-      }
+      // if (searchQuery.trim().length === 0) {
+      //   router.push(`/` || , undefined, { shallow: true });
+      // }
     }
   }, [searchQuery]);
 
@@ -98,7 +98,7 @@ const SearchBar = ({ isOpen, onClose }) => {
 
   const handleSuggestionClick = (title) => {
     const debounceTimeout = setTimeout(()=> {
-      router.push(`/?search=${encodeURIComponent(title)}`);
+      router.push(`/all?search=${encodeURIComponent(title)}`);
       onClose();
     }, 500)
     return ()=> clearTimeout(debounceTimeout)
