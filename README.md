@@ -8,49 +8,55 @@ The **Recipe App** is a user-friendly web application built using **Next.js** th
 ## Main Features
 
 ### 🍳 **Recipe Browsing**
-- Discover a collection of recipes with detailed information, including:
+- Browse a collection of recipes with:
   - Ingredients
   - Cooking steps
-  - Prep time
-  - Cook time
+  - Prep time and cook time
+  - Number of servings
+- Navigate between recipes with an intuitive UI.
 
 ### 🔍 **Search and Filtering**
-- Quickly search and filter recipes by:
-  - Category
-  - Tags
-  - Steps
+- Search recipes by keywords or ingredients.
+- Filter recipes based on:
+  - Categories (e.g., Vegan, Desserts, Quick Meals)
+  - Tags (e.g., Gluten-Free, High Protein)
+  - Number of steps or complexity.
 
 ### 📊 **Sorting Options**
-- Organize recipes based on:
-  - Prep time
-  - Cook time
+- Sort recipes by:
+  - Preparation time
+  - Cooking time
   - Number of steps
 
-### 📱 **Responsive Design**
-- Fully responsive and optimized for seamless use on mobile, tablet, and desktop devices.
+### 📥 **Save and Offline Access** (Planned Feature)
+- Save favorite recipes for offline viewing and easy access.
 
-### 🔒 **User Authentication**
-- Secure authentication for personalized experiences.
+### 🔔 **Push Notifications** (Planned Feature)
+- Get notifications for:
+  - New recipes matching your preferences.
+  - Reminders for saved recipes or meal prep times.
 
 ### 🧭 **Interactive Navbar**
-- Easily navigate the app, perform searches, and apply sorting options.
+- Seamlessly navigate between pages and features.
+- Perform quick searches and apply sorting options directly from the navigation bar.
+
+### 🔒 **User Authentication**
+- Secure login and account management.
+- Personalized recipe recommendations based on user preferences.
+
+### 📱 **Responsive Design**
+- Optimized for use across devices, including desktops, tablets, and mobile phones.
+
+### ⭐ **Wishlist Functionality**
+- Mark and save favorite recipes to a wishlist for quick access.
+
+### 🛠️ **Recipe Reviews and Ratings**
+- Users can leave reviews and ratings for recipes to help others make informed decisions.
+- View aggregated ratings and user comments.
+
+### 📤 **Recipe Sharing**
+- Share recipes with friends and family via social media or email.
 
 ---
 
-## Technologies Used
-
-This project leverages the following frameworks, tools, and libraries:
-
-- **[Next.js](https://nextjs.org/):** A React-based framework for server-side rendering and static site generation.
-- **React:** A JavaScript library for building user interfaces.
-- **Tailwind CSS:** A utility-first CSS framework for styling and responsiveness.
-- **Firebase:** Used for user authentication and storing recipe data.
-- **React Dropdown Select:** For dynamic tag and category selection in the filtering component.
-- **Radix UI Slider:** For interactive sliders to adjust values in the app.
-- **ESLint and Prettier:** For consistent code formatting and linting.
-- **Markdown:** For content-rich recipe descriptions.
-- **Git:** Version control to manage and track development progress.
-
----
-
-This app is ideal for anyone looking to simplify meal planning or expand their cooking repertoire with minimal effort. Its intuitive design and advanced filtering options make it a must-have for food enthusiasts.
+This app is ideal for food enthusiasts, meal planners, or anyone looking to simplify cooking and meal preparation while expanding their culinary repertoire.
