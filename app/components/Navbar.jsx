@@ -6,6 +6,7 @@ import SearchBar from "./SearchBar";
 import { signOut } from "next-auth/react";
 import { ThemeToggle } from "./ThemeToggle";
 import { useSession } from "next-auth/react";
+import { ShoppingCartIcon } from "lucide-react";
 /**
  * The main navigation component for the app.
  * @returns {JSX.Element} The rendered navbar component.
@@ -66,6 +67,11 @@ const Navbar = () => {
         { name: "Profile", href: "/profile" },
       ],
     },
+    {
+      name: "Shopping List",
+      href: "/shopping-list",
+      icon: <ShoppingCartIcon className="inline-block mr-2" />
+    }
   ];
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -118,7 +124,11 @@ const Navbar = () => {
 
             {/* Theme Toggle and Search */}
             <div className="flex items-center space-x-2">
-              <ThemeToggle />
+             <Link href="/shopping-list" className="p-2 rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <ShoppingCartIcon />
+          </Link> 
+          <ThemeToggle />
+              
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 className={`p-2 rounded-md text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none ${
