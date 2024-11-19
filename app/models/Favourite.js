@@ -1,13 +1,12 @@
-// models/Favourite.js
 import mongoose from 'mongoose';
 
 const FavouriteSchema = new mongoose.Schema({
-  userId: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
-  recipeId: {
+  recipe: {
     type: String,
     ref: 'Recipe',
     required: true
@@ -16,14 +15,24 @@ const FavouriteSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
-}, { timestamps: true });
+}, { 
+  timestamps: true,
+  collection: 'favourites'
+});
 
-// Compound index to ensure a user can't favourite the same recipe twice
-FavouriteSchema.index({ userId: 1, recipeId: 1 }, { unique: true });
+// Compound unique index to prevent duplicate favourites
+FavouriteSchema.index({ user: 1, recipe: 1 }, { unique: true });
 
-// Add a static method to get favourites count for a user
-FavouriteSchema.statics.getFavouritesCount = async function(userId) {
-  return await this.countDocuments({ userId });
+// Static method to get user's favourite recipes
+FavouriteSchema.statics.getUserFavourites = async function(userId) {
+  return await this.find({ user: userId }).populate('recipe');
 };
 
-export default mongoose.models.Favourite || mongoose.model('Favourite', FavouriteSchema);
+// Static method to get favourites count for a user
+FavouriteSchema.statics.getFavouritesCount = async function(userId) {
+  return await this.countDocuments({ user: userId });
+};
+
+const Favourite = mongoose.models.Favourite || mongoose.model('Favourite', FavouriteSchema);
+
+export default Favourite;
