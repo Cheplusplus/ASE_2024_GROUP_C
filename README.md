@@ -123,18 +123,19 @@ Download recipes for offline access (Planned)
 1. Clone the Repository
         git clone https://github.com/Cheplusplus/ASE_2024_GROUP_C.git
 2. Navigate to the  project directory(if necessary)
-        cd recipe-app
+        -cd recipe-app
 
 3. Install Dependencies
-npm install
+- npm install
  or
-yarn install
+-yarn install
 
 4. Configure Environment Variables
-
 cp .env.example .env.local
+
+
 5. Edit .env.local with your configuration:
-NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+-NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
 
