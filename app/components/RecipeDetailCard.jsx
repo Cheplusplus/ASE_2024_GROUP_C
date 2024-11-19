@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from 'next/image';
+import Image from "next/image";
 import AddReview from "./Addreview";
-import { FaStar } from 'react-icons/fa';  // Importing the star icon from Font Awesome
-import { useRouter } from 'next/navigation';
+import { FaStar } from "react-icons/fa"; // Importing the star icon from Font Awesome
+import { useRouter } from "next/navigation";
 import RecipeReviews from "./Reviews";
 
 const formatTime = (minutes) => {
@@ -17,27 +17,25 @@ const RecipeDetailCard = ({ recipe, id }) => {
   const [description, setDescription] = useState(recipe.description);
   const [activeTab, setActiveTab] = useState("ingredients");
   const [selectedImage, setSelectedImage] = useState(recipe.images?.[0]);
-  const [userReview, setUserReview] = useState("");
-  const [reviewerName, setReviewerName] = useState("");
-  const [starRating, setStarRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);  // For star hover effect
-  const [openTextArea,setOpenTextArea] = useState(false);
+  const [openTextArea, setOpenTextArea] = useState(false);
   const [message, setMessage] = useState("");
   const router = useRouter();
+  const [reviewUpdateKey, setReviewUpdateKey] = useState(0);
 
   const totalTime = (recipe.prep || 0) + (recipe.cook || 0);
-  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-
+  const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
   // Set document title
   useEffect(() => {
     document.title = `${recipe.title} | Recipe Details`;
   }, [recipe.title]);
 
+  const handleReviewAdded = () => {
+    console.log("rerender");
+    setReviewUpdateKey((prevKey) => prevKey + 1);
+  };
 
   const handleUpdate = async () => {
-   
-    
     try {
       const response = await fetch(`${url}/api/recipe/${id}/update`, {
         method: "PUT",
@@ -51,6 +49,9 @@ const RecipeDetailCard = ({ recipe, id }) => {
         setMessage("Recipe updated successfully!");
       } else {
         setMessage("Failed to update recipe.");
+        setTimeout(() => {
+          setMessage("");
+        }, 2000);
       }
 
       setOpenTextArea(false);
@@ -58,7 +59,24 @@ const RecipeDetailCard = ({ recipe, id }) => {
     } catch (error) {
       console.error(error);
       setMessage("An error occurred while updating.");
-      setOpenTextArea(false)
+      setOpenTextArea(false);
+      setTimeout(() => {
+        setMessage("");
+      }, 2000);
+    }
+  };
+
+  const readInstructions = () => {
+    if ("speechSynthesis" in window) {
+      const utterance = new SpeechSynthesisUtterance();
+      utterance.text = recipe.instructions?.join(". ") || "No instructions available.";
+      utterance.lang = "en-US";
+      utterance.rate = 1;
+      utterance.pitch = 1;
+
+      window.speechSynthesis.speak(utterance);
+    } else {
+      alert("Speech synthesis is not supported in this browser.");
     }
   };
 
@@ -67,8 +85,8 @@ const RecipeDetailCard = ({ recipe, id }) => {
       <div className="w-full lg:sticky top-0 flex flex-col gap-3">
         <div className="w-full">
           <Image
-            src={selectedImage || '/fallback-image.jpg'}
-            alt={recipe.title || 'Recipe Image'}
+            src={selectedImage || "/fallback-image.jpg"}
+            alt={recipe.title || "Recipe Image"}
             width={540}
             height={403}
             className="rounded-lg object-cover"
@@ -173,6 +191,12 @@ const RecipeDetailCard = ({ recipe, id }) => {
                   <li key={index}>{instruction}</li>
                 ))}
               </ul>
+              <button
+                onClick={readInstructions}
+                className="w-2fit p-2 bg-green-400 rounded hover:bg-green-500 text-black font-bold m-2"
+              >
+                Read Instructions
+              </button>
             </div>
           )}
           {activeTab === "nutrition" && (
@@ -193,8 +217,9 @@ const RecipeDetailCard = ({ recipe, id }) => {
         </div>
 
         <div className="mt-8">
-          <RecipeReviews recipeId={id}/>
-          <AddReview recipeId={id}/>
+          <RecipeReviews recipeId={id} reviewUpdateKey={reviewUpdateKey} />
+
+          <AddReview recipeId={id} onAdd={handleReviewAdded} />
         </div>
       </div>
     </div>

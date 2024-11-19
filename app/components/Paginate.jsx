@@ -30,8 +30,7 @@ const Paginate = ({ skip, totalRecipes }) => {
     const newUrl = search || category || numSteps || sortOption || tags ? `/?search=${search}&skip=${newSkip}&category=${category}&tags=${tags.join(',')}&numSteps=${numSteps}&ingredients=${ingredients}&sortOption=${sortOption}` : `/?skip=${newSkip}`
     router.push(newUrl);
   };
-
-  const totalPages = Math.ceil(totalRecipes / RECIPES_PER_PAGE);
+  const totalPages = Math.ceil(150000 / RECIPES_PER_PAGE);
 
   return (
     <div className="flex justify-center mt-8">
