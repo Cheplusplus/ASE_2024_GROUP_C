@@ -1,11 +1,12 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import SearchBar from "./SearchBar";
-import { signOut } from "next-auth/react";
-import { ThemeToggle } from "./ThemeToggle";
-import { useSession } from "next-auth/react";
+'use client';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import SearchBar from './SearchBar';
+import { signOut } from 'next-auth/react';
+import { ThemeToggle } from './ThemeToggle';
+import { useSession } from 'next-auth/react';
+
 /**
  * The main navigation component for the app.
  * @returns {JSX.Element} The rendered navbar component.
