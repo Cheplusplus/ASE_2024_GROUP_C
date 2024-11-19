@@ -35,7 +35,7 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
       if (search) params.set('search', search);
 
       setIsOpen(false);
-      router.push(`/?${params.toString()}`);
+      router.push(`/all?${params.toString()}`);
 
       if (count1) {
         setDisplayCount(true);
@@ -45,7 +45,7 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
       setCount(count1);
     } else {
       setIsOpen(false);
-      router.push('/');
+      router.push('/all');
     }
   };
 
@@ -77,7 +77,7 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
   return (
     <div className="dark:text-foreground">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Recipes</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">All Recipes</h1>
         <div className="flex items-center space-x-4">
           <Select
             value={sortOption}

@@ -44,7 +44,7 @@ export function ThemeProvider({ children }) {
   
     return (
       <ThemeContext.Provider value={{ theme, toggleTheme }}>
-        <div className={`min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300 ease-in-out`}>
+        <div className={`min-h-screen bg-white dark:bg-gray-900 theme-transition`}>
           {children}
         </div>
       </ThemeContext.Provider>
