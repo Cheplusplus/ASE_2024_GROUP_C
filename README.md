@@ -2,10 +2,10 @@
 ## Project Overview
 The Recipe App is a user-friendly web application built using Next.js that helps users explore, search, and manage a variety of recipes. Designed for food enthusiasts, it offers powerful filtering and sorting options to simplify the process of finding recipes based on categories, tags, and cooking steps. Users can view detailed recipes with step-by-step instructions and manage their preferences with ease.
 ## Features
-### Core Features
-#### 🍳 Recipe Browsing
+## Core Features
+### 🍳 Recipe Browsing
 
-##### Browse a collection of recipes with:
+#### Browse a collection of recipes with:
 
 - Ingredients
 - Cooking steps
@@ -13,9 +13,9 @@ The Recipe App is a user-friendly web application built using Next.js that helps
 - Number of servings
 
 
-### Navigate between recipes with an intuitive UI
+## Navigate between recipes with an intuitive UI
 
-#### 🔍 Search and Filtering
+### 🔍 Search and Filtering
 
 - Search recipes by keywords or ingredients
 - Filter recipes based on:
@@ -25,7 +25,7 @@ Number of steps or complexity
 
 
 
-#### 📊 Sorting Options
+### 📊 Sorting Options
 
 - Sort recipes by:
 
@@ -35,53 +35,53 @@ Number of steps
 
 
 
-#### User Features
-##### 🔒 User Authentication
+### User Features
+#### 🔒 User Authentication
 
 - Secure login and account management
 - Personalized recipe recommendations
 - Profile customization
 
-##### ⭐ Personal Collections
+#### ⭐ Personal Collections
 
 Save favorite recipes to wishlist
 Create custom recipe collections
 Download recipes for offline access (Planned)
 
-##### 🛠️ Recipe Interaction
+#### 🛠️ Recipe Interaction
 
 - Leave reviews and ratings
 - Comment on recipes
 - Share cooking tips
 
-#### Social Features
-##### 📤 Sharing Capabilities
+### Social Features
+#### 📤 Sharing Capabilities
 
 - Share recipes via social media
 - Email recipes to friends
 - Generate shareable links
 
-##### 🔔 Smart Notifications (Planned)
+<!-- ##### 🔔 Smart Notifications (Planned)
 
 -New recipe alerts
 - Cooking reminders
-- Personalized recommendations
+- Personalized recommendations -->
 
-#### Technical Features
-##### 📱 Responsive Design
+### Technical Features
+#### 📱 Responsive Design
 
 - Optimized for all devices
 - Adaptive UI components
 - Touch-friendly interface
 
-##### 🧭 Navigation
+#### 🧭 Navigation
 
 - Interactive navbar
 - Quick search functionality
 - Advanced filtering system
 
-#### Technology Stack
-##### Frontend
+### Technology Stack
+#### Frontend
 
 - Next.js (v13+)
 - React (v18+)
@@ -89,37 +89,36 @@ Download recipes for offline access (Planned)
 - Radix UI components
 - React Dropdown Select
 
-##### Backend Services
+#### Backend Services
 
--Firebase
+- Mongodb
 - Authentication
 - Realtime Database
 - Cloud Functions
 
 
-###### Cloud Storage
+#### Cloud Storage
 
 - Image optimization
 - Recipe asset management
 
 
-
-#### Development Tools
+### Development Tools
 
 - ESLint & Prettier
 - Git for version control
 - Markdown support
 - Jest for testing
 
-#### Installation
-##### Prerequisites
+### Installation
+#### Prerequisites
 
 - Node.js (v18.x or later) - Download
 - npm or yarn
 - Git - Download
 - VS Code (recommended) - Download
 
-##### Setup Steps
+#### Setup Steps
 
 1. Clone the Repository
         git clone https://github.com/Cheplusplus/ASE_2024_GROUP_C.git
@@ -128,7 +127,7 @@ Download recipes for offline access (Planned)
 
 3. Install Dependencies
 npm install
-# or
+ or
 yarn install
 
 4. Configure Environment Variables
@@ -139,16 +138,16 @@ NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
 
-6. Start Development Server
+6. Start Development Server:
 
 npm run dev
-# or
+
 yarn dev
 
-7. Build for Production
+7. Build for Production:
 
 npm run build
-# or
+
 yarn build
 
 8. Troubleshooting
@@ -235,15 +234,15 @@ jsonCopy{
     "source.fixAll.eslint": true
   }
 } -->
-#### Contact & Support
+### Contact & Support
 
 📧 Email: support@recipeapp.dev
 💬 Discord: Join our community
 🐦 Twitter: @recipeapp
 📝 Documentation: docs.recipeapp.dev
 
-###### Contributing
+#### Contributing
 We welcome contributions! Please see our Contributing Guide for guidelines.
 
-###### License
+#### License
 This project is licensed under the MIT License - see the LICENSE file for details.
