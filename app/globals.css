@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+.scrollbar-hide {
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none;    /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;            /* Safari and Chrome */
+}
+
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -27,6 +37,7 @@
     --ring: 240 5.9% 10%;
     --radius: 0.5rem;
   }
+
 
   .dark {
     --background: var(--background-dark);

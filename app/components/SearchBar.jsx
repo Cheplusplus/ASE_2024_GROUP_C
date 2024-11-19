@@ -34,9 +34,9 @@ const SearchBar = ({ isOpen, onClose }) => {
       setSearchResults([]);
       setHasSearched(false);
       // Reset the URL when the search query is cleared
-      if (searchQuery.trim().length === 0) {
-        router.push(`/all?search=${encodeURIComponent(searchQuery)}`, undefined, { shallow: true });
-      }
+      // if (searchQuery.trim().length === 0) {
+      //   router.push(`/` || , undefined, { shallow: true });
+      // }
     }
   }, [searchQuery]);
 
