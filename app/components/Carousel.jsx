@@ -15,7 +15,7 @@ const Carousel = ({heading}) => {
     const fetchRecipes = async () => {
       try {
         const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-        const res = await fetch(`${url}/api/recipe?limit=10`, {cache: "force-cache"});
+        const res = await fetch(`${url}/api/10Recipes`, {cache: "force-cache"});
         if (!res.ok) {
           throw new Error("Failed to fetch recipes");
         }
