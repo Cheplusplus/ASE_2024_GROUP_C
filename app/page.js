@@ -68,11 +68,33 @@ export default async function Home({ theme }) {
             className="dark:brightness-75 brightness-100 transition-all duration-300"
           />
           <div className="absolute inset-0 flex items-center justify-center z-20">
-            <Link
+            {/* <Link
               className="absolute z-10 inline-flex  items-center gap-2 rounded border border-indigo-600 px-8 py-3 text-indigo-600 hover:bg-indigo-600 hover:text-white focus:outline-none focus:ring active:bg-indigo-500"
               href="/all"
             >
               <span className="text-sm font-medium"> All Recipes </span>
+              <svg
+                className="size-5 rtl:rotate-180"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
+              </svg>
+            </Link> */}
+
+            <Link
+              className="inline-flex items-center gap-2 rounded border border-[#26442a] bg-[#26442a] px-8 py-3 text-white hover:bg-transparent hover:text-[#26442a] focus:outline-none focus:ring active:text-[#26442a]"
+              href="/all"
+            >
+              <span className="text-md font-medium"> All Recipes </span>
+
               <svg
                 className="size-5 rtl:rotate-180"
                 xmlns="http://www.w3.org/2000/svg"
