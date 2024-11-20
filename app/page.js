@@ -16,7 +16,7 @@ export default async function Home({ theme }) {
           alt={"wallpaper"}
           fill
           quality={100} // Balanced quality for performance
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          sizes="(max-width: 768px) 100vw, (max-width: 2560px) 50vw, 33vw"
           style={{ objectFit: "cover" }}
           className="dark:brightness-75 brightness-100 transition-all duration-300"
         />
@@ -65,7 +65,7 @@ export default async function Home({ theme }) {
             alt={"wallpaper"}
             fill
             quality={100} // Balanced quality for performance
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            sizes="(max-width: 768px) 100vw, (max-width: 2560px) 50vw, 33vw"
             style={{ objectFit: "cover" }}
             className="dark:brightness-75 w-full brightness-100 transition-all duration-300"
           />
