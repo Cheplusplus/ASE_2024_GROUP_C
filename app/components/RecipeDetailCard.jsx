@@ -28,6 +28,8 @@ const RecipeDetailCard = ({ recipe, id }) => {
   const [speechRecognitionEnabled, setSpeechRecognitionEnabled] = useState(false);
   const [speaking, setSpeaking] = useState(false);
   const [paused, setPaused] = useState(false);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [instructions, setInstructions] = useState([]); // Hold the recipe instructions
 
   const totalTime = (recipe.prep || 0) + (recipe.cook || 0);
   const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
@@ -79,26 +81,92 @@ const RecipeDetailCard = ({ recipe, id }) => {
       }, 2000);
     }
   };
+
   const readInstructions = () => {
-    setVoiceCommandsEnabled(true);
-    
     if (!("speechSynthesis" in window)) {
       alert("Speech synthesis is not supported in this browser.");
       return;
     }
   
-    if (window.speechSynthesis.speaking || speaking) {
-      window.speechSynthesis.cancel(); // Cancel any ongoing speech
-    }
-  
-    const instructionsText = recipe.instructions?.join(". ") || "No instructions available.";
-    if (!instructionsText) {
-      alert("No instructions to read.");
-      setVoiceCommandsEnabled(false);
+    if (!recipe.instructions || recipe.instructions.length === 0) {
+      alert("No instructions available to read.");
       return;
     }
   
-    const utterance = new SpeechSynthesisUtterance(instructionsText);
+    setInstructions(recipe.instructions); // Set the recipe instructions in state
+    setVoiceCommandsEnabled(true);
+    setCurrentStepIndex(0); // Start reading from the first step
+  };
+  
+  const handleVoiceCommands = () => {
+    if (!speechRecognitionEnabled) return;
+  
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+  
+    recognition.continuous = true;
+    recognition.lang = "en-US";
+  
+    recognition.onresult = (event) => {
+      const command = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+      console.log("Voice Command:", command);
+  
+      if (command.includes("pause")) {
+        if (window.speechSynthesis.speaking && !paused) {
+          window.speechSynthesis.pause();
+          setSpeaking(false);
+          setPaused(true);
+        }
+      }
+  
+      if (command.includes("resume")) {
+        console.log('resume')
+        if (!paused) {
+          window.speechSynthesis.resume();
+          setSpeaking(true);
+          setPaused(false);
+        }
+      }
+  
+      if (command.includes("next step")) {
+        setCurrentStepIndex((prevIndex) => Math.min(prevIndex + 1, instructions.length - 1));
+      }
+  
+      if (command.includes("repeat step")) {
+        setCurrentStepIndex((prevIndex) => prevIndex); // Re-read the current step
+      }
+  
+      if (command.includes("go back")) {
+        setCurrentStepIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+      }
+  
+      if (command.includes("skip this step")) {
+        setCurrentStepIndex((prevIndex) => Math.min(prevIndex + 1, instructions.length - 1));
+      }
+    };
+  
+    recognition.onerror = (event) => {
+      console.error("Speech recognition error:", event.error);
+    };
+  
+    recognition.start();
+  
+    // Store a reference to stop the recognition
+    stopVoiceCommands = () => {
+      recognition.stop();
+      console.log("Voice commands stopped");
+    };
+  };
+  
+  const readStep = (stepIndex) => {
+    if (stepIndex < 0 || stepIndex >= instructions.length) {
+      alert("Invalid step index.");
+      return;
+    }
+  
+    const stepText = instructions[stepIndex];
+    const utterance = new SpeechSynthesisUtterance(stepText);
     utterance.lang = "en-US";
     utterance.rate = 1;
     utterance.pitch = 1;
@@ -106,71 +174,31 @@ const RecipeDetailCard = ({ recipe, id }) => {
     utterance.onstart = () => setSpeaking(true);
     utterance.onend = () => {
       setSpeaking(false);
-      setVoiceCommandsEnabled(false); // Disable voice commands after reading
-     // stopVoiceCommands(); // Stop recognition explicitly
+      // Automatically proceed to the next step if not paused
+      if (!paused && voiceCommandsEnabled && stepIndex < instructions.length - 1) {
+        setCurrentStepIndex((prevIndex) => prevIndex + 1);
+      }
     };
   
     window.speechSynthesis.speak(utterance);
   };
   
-
-  
-  // Voice Command Handling
- 
-const handleVoiceCommands = () => {
-  if (!speechRecognitionEnabled) return;
-
-  const SpeechRecognition =
-    window.SpeechRecognition || window.webkitSpeechRecognition;
-  const recognition = new SpeechRecognition();
-
-  recognition.continuous = true;
-  recognition.lang = "en-US";
-
-  recognition.onresult = (event) => {
-    const command = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
-    console.log("Voice Command:", command);
-
-    if (command.includes("pause")) {
-      if (window.speechSynthesis.speaking && !paused) {
-        window.speechSynthesis.pause();
-        setSpeaking(false);
-        setPaused(true);
+  // Effect to handle voice commands and dynamic step reading
+  useEffect(() => {
+    if (voiceCommandsEnabled) {
+      if (currentStepIndex >= 0 && currentStepIndex < instructions.length) {
+        readStep(currentStepIndex);
       }
-    }
-
-    if (command.includes("resume")) {
-      if (!paused) {
-        window.speechSynthesis.resume();
-        setSpeaking(true);
-        setPaused(false);
-      }
-    }
-  };
-
-  recognition.onerror = (event) => {
-    console.error("Speech recognition error:", event.error);
-  };
-
-  recognition.start();
-
-  // Attach recognition stop to a helper function
-  stopVoiceCommands = () => {
-    recognition.stop(); // Stop recognition
-    console.log("Voice commands stopped");
-  };
-};
   
-useEffect(() => {
-  if (voiceCommandsEnabled) {
-    handleVoiceCommands();
-  }
-
-  return () => {
-    if (stopVoiceCommands) stopVoiceCommands(); // Cleanup when component unmounts or commands are disabled
-  };
-}, [voiceCommandsEnabled]);
-
+      handleVoiceCommands();
+    }
+  
+    return () => {
+      if (stopVoiceCommands) stopVoiceCommands(); // Stop voice recognition
+      window.speechSynthesis.cancel(); // Stop any ongoing speech
+    };
+  }, [voiceCommandsEnabled, currentStepIndex]);
+  
   
   return (
     <div className="grid items-start grid-cols-1 md:grid-cols-2 gap-6">
