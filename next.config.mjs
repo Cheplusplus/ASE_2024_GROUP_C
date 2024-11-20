@@ -16,7 +16,7 @@ const withPWA = require('next-pwa')({
         }
       ]
     },
-    // Add any other Next.js config options here
+    
   };
   
   export default withPWA(nextConfig);
