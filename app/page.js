@@ -12,10 +12,11 @@ export default async function Home({ theme }) {
         <div className="absolute inset-0 bg-background/40 dark:bg-black/40 z-10" />
         <Image
           priority={true}
-          src={"/wallpaper1.jpg"}
+          src={"/wallpaper2.jpg"}
           alt={"wallpaper"}
           fill
-          quality={100}
+          quality={100} // Balanced quality for performance
+          sizes="(max-width: 768px) 100vw, (max-width: 2560px) 50vw, 33vw"
           style={{ objectFit: "cover" }}
           className="dark:brightness-75 brightness-100 transition-all duration-300"
         />
@@ -63,16 +64,18 @@ export default async function Home({ theme }) {
             src={"/wallpaper2.jpg"}
             alt={"wallpaper"}
             fill
-            quality={100}
+            quality={100} // Balanced quality for performance
+            sizes="(max-width: 768px) 100vw, (max-width: 2560px) 50vw, 33vw"
             style={{ objectFit: "cover" }}
-            className="dark:brightness-75 brightness-100 transition-all duration-300"
+            className="dark:brightness-75 w-full brightness-100 transition-all duration-300"
           />
           <div className="absolute inset-0 flex items-center justify-center z-20">
             <Link
-              className="absolute z-10 inline-flex  items-center gap-2 rounded border border-indigo-600 px-8 py-3 text-indigo-600 hover:bg-indigo-600 hover:text-white focus:outline-none focus:ring active:bg-indigo-500"
+              className="inline-flex items-center gap-2 rounded border border-[#26442a] bg-[#26442a] px-8 py-3 text-white hover:bg-transparent hover:text-[#26442a] focus:outline-none focus:ring active:text-[#26442a]"
               href="/all"
             >
-              <span className="text-sm font-medium"> All Recipes </span>
+              <span className="text-md font-medium"> All Recipes </span>
+
               <svg
                 className="size-5 rtl:rotate-180"
                 xmlns="http://www.w3.org/2000/svg"
