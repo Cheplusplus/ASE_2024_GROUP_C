@@ -4,6 +4,7 @@ import Footer from "./components/Footer";
 import "./globals.css";
 import SessionProvider from "./components/SessionProvider";
 import { ThemeProvider } from "./components/ThemeProvider";
+import { NotificationProvider } from "./components/NotificationContext";
 
 // metadata for the RootLayout
 export const metadata = {
@@ -46,7 +47,9 @@ export default function RootLayout({ children }) {
           <ClientNavWrapper>
             <Navbar />
           </ClientNavWrapper>
+          <NotificationProvider>
           <main className="min-h-screen pt-16">{children}</main>
+          </NotificationProvider>
           <Footer />
           </ThemeProvider>
         </SessionProvider>
