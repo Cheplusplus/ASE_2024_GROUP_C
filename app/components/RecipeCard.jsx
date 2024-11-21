@@ -26,6 +26,7 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [intervalId, setIntervalId] = useState(null);
   const remainingTags = tags.length - MAX_VISIBLE_TAGS;
+  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
   const handleMouseEnter = () => {
     const id = setInterval(() => {
@@ -41,12 +42,13 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
   };
 
   const handleFavouriteClick = async (e) => {
+     console.log('clicked',_id)
     e.preventDefault(); // Prevent link navigation
     try {
-      const response = await fetch('/api/favourites', {
+      const response = await fetch(`${url}/api/favourites`, {
         method: isFavourited ? 'DELETE' : 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ recipeId: recipe._id })
+        body: JSON.stringify({ recipeId: _id })
       });
 
       if (!response.ok) throw new Error('Failed to update favourites');
