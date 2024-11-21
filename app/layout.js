@@ -9,6 +9,7 @@ import { ThemeProvider } from "./components/ThemeProvider";
 export const metadata = {
   title: "Recipe Rush - The Source for Culinary Inspiration",
   description: "Discover delicious recipes and cooking tips to elevate your culinary skills.",
+  manifest: "/manifest.json",
   openGraph: {
     type: "website",
     url: "https://metatags.io/",
