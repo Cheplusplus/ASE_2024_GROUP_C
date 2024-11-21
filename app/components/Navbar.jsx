@@ -16,10 +16,34 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openSublinks, setOpenSublinks] = useState({});
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [shoppingListCount, setShoppingListCount] = useState(0);
   const pathname = usePathname();
   const router = useRouter();
 
   const { data: session } = useSession();
+
+   // Update shopping list count
+   useEffect(() => {
+    const updateShoppingListCount = () => {
+      const storedItems = localStorage.getItem("shoppingList");
+      const items = storedItems ? JSON.parse(storedItems) : [];
+      setShoppingListCount(items.length);
+    };
+
+    // Initial count
+    updateShoppingListCount();
+
+    // Listen for storage changes
+    window.addEventListener('storage', updateShoppingListCount);
+
+    // Add custom event listener
+    window.addEventListener('shopping-list-updated', updateShoppingListCount);
+
+    return () => {
+      window.removeEventListener('storage', updateShoppingListCount);
+      window.removeEventListener('shopping-list-updated', updateShoppingListCount);
+    };
+  }, []);
 
   useEffect(() => {
     // Check if user is logged in, for example, by checking a token in localStorage
@@ -122,10 +146,15 @@ const Navbar = () => {
               </Link>
             </div>
 
-            {/* Theme Toggle and Search */}
+            {/* Shopping cart, Theme Toggle and Search */}
             <div className="flex items-center space-x-2">
-             <Link href="/shopping-list" className="p-2 rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+             <Link href="/shopping-list" className="relative p-2 rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
             <ShoppingCartIcon />
+            {shoppingListCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {shoppingListCount}
+                  </span>
+                )}
           </Link> 
           <ThemeToggle />
               
