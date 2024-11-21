@@ -128,7 +128,7 @@ Download recipes for offline access (Planned)
 3. Install Dependencies
 - npm install
  or
--yarn install
+- yarn install
 
 4. Configure Environment Variables
 cp .env.example .env.local
@@ -142,24 +142,24 @@ cp .env.example .env.local
 
 6. Start Development Server: (Ensure that it's running on https://localhost:3000)
 
-    npm run dev
-
-    yarn dev
+    - npm run dev
+    or
+    - yarn dev
 
 7. Build for Production:
 
-    npm run build
-
-    yarn build
+    - npm run build
+    or
+    - yarn build
 
 8. Troubleshooting
 
-- Clear .next folder if you encounter build issues:
-rm -rf .next
+ Clear .next folder if you encounter build issues:
+- rm -rf .next
 
-- Reset node modules if you face dependency issues:
-rm -rf node_modules
-npm install
+ Reset node modules if you face dependency issues:
+- rm -rf node_modules
+- npm install
 
 
 <!-- ##### API Documentation
