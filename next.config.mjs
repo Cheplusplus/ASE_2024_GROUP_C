@@ -1,10 +1,7 @@
 /** @type {import('next').NextConfig} */
-const withPWA = require('next-pwa')({
-    dest: 'public',
-    disable: process.env.NODE_ENV === 'development',
-    register: true,
-    skipWaiting: true,
-  });
+import withPWA from 'next-pwa'
+
+
   
   const nextConfig = {
     images: {
@@ -18,5 +15,12 @@ const withPWA = require('next-pwa')({
     },
     
   };
+
+  const pwaConfig = withPWA({
+    dest: 'public',
+    disable: process.env.NODE_ENV === 'development',
+    register: true,
+    skipWaiting: true,
+  });
   
-  export default withPWA(nextConfig);
+  export default pwaConfig(nextConfig);
