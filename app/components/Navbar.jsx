@@ -8,6 +8,7 @@ import { ThemeToggle } from './ThemeToggle';
 import { useSession } from 'next-auth/react';
 
 import { ShoppingCartIcon } from "lucide-react";
+import Image from "next/image";
 /**
  * The main navigation component for the app.
  * @returns {JSX.Element} The rendered navbar component.
@@ -147,7 +148,7 @@ const Navbar = () => {
           <div className="flex items-center justify-between h-16">
             {/* Mobile and Logo */}
 
-            <div className="flex items-center space-x-4 w-full md:w-auto justify-between md:justify-start">
+            <div className="flex items-center  w-full md:w-auto md:justify-start">
               <div className="md:hidden">
                 <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -174,16 +175,31 @@ const Navbar = () => {
                 </button>
               </div>
 
-              <Link
-                href="/"
-                className="text-2xl font-bold text-gray-800 dark:text-gray-200"
-              >
-                Recipe Rush
-              </Link>
+              <div className="relative left-[42%] w-full">
+                <Link
+                  style={{ width: "auto", height: "auto" }}
+                  href="/"
+                  // className="font-bold text-gray-800 dark:text-gray-200"
+                >
+                  <Image
+                    style={{
+                      objectFit:"cover",
+                      width: "auto",
+                      height: "auto",
+                    }}
+                    priority={true}
+                    src="/rush.png"
+                    quality={100}
+                    alt="logo"
+                    width={50}
+                    height={50}
+                  />
+                </Link>
+              </div>
             </div>
 
             {/* Shopping cart, Theme Toggle and Search */}
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center ">
             <Link href="/favourites" className="relative" >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
                   <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
@@ -206,7 +222,7 @@ const Navbar = () => {
               
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className={`p-2 rounded-md text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none ${
+                className={`p-2 rounded-md relative text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none ${
                   isSearchOpen ? "bg-gray-100 dark:bg-gray-700" : ""
                 } transition-colors duration-200`}
                 aria-label="Toggle search"
@@ -297,7 +313,6 @@ const Navbar = () => {
                       <span className="text-sm font-medium"> Settings </span>
                     </a>
                   </li>
-
 
                   <li>
                     <details className="group [&_summary::-webkit-details-marker]:hidden">

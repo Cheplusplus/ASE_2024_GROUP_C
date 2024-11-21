@@ -4,12 +4,14 @@ import Footer from "./components/Footer";
 import "./globals.css";
 import SessionProvider from "./components/SessionProvider";
 import { ThemeProvider } from "./components/ThemeProvider";
+import MobileBar from "./components/MobileBar";
 import { NotificationProvider } from "./components/NotificationContext";
 
 // metadata for the RootLayout
 export const metadata = {
   title: "Recipe Rush - The Source for Culinary Inspiration",
   description: "Discover delicious recipes and cooking tips to elevate your culinary skills.",
+  manifest: "/manifest.json",
   openGraph: {
     type: "website",
     url: "https://metatags.io/",
@@ -40,7 +42,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" >
       <body className="bg-background text-foreground transition-colors duration-300">
        <SessionProvider>
         <ThemeProvider >
@@ -51,6 +53,7 @@ export default function RootLayout({ children }) {
           <main className="min-h-screen pt-16">{children}</main>
           </NotificationProvider>
           <Footer />
+          <MobileBar/>
           </ThemeProvider>
         </SessionProvider>
       </body>
