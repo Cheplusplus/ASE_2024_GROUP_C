@@ -6,7 +6,7 @@ import { clientPromise } from "@/app/lib/connectMongoose";
 import User from "@/app/models/user";
 import bcrypt from "bcrypt";
 
-const authOptions = {
+export const authOptions = {
   adapter: MongoDBAdapter(clientPromise, {
     databaseName: "devdb", // Explicitly specify your database
     collections: {
