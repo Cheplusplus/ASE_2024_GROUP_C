@@ -8,19 +8,20 @@ import LayoutRecipesGrid from "./components/LayoutRecipesGrid";
 export default async function Home({ theme }) {
   return (
     <div className="min-h-screen bg-background transition-colors duration-300">
-      <div className="relative h-64 md:min-h-96  overflow-hidden">
-        <div className="absolute inset-0 bg-background/40 dark:bg-black/40 z-10" />
+      <div className="relative top-0 h-64 md:min-h-96  overflow-hidden">
+        <div className="absolute top-0 inset-0 bg-background/40 dark:bg-black/40 z-10" />
         <Image
           priority={true}
-          src={"/wallpaper1.jpg"}
+          src={"/wallpaper2.jpg"}
           alt={"wallpaper"}
           fill
-          quality={100}
+          quality={99} // Balanced quality for performance
+          sizes="(max-width: 768px) 100vw, (max-width: 2560px) 50vw, 33vw"
           style={{ objectFit: "cover" }}
           className="dark:brightness-75 brightness-100 transition-all duration-300"
         />
       </div>
-      <div className="absolute top-64 md:top-96 z-20 left-1/2 transform -translate-x-1/2 bg-white rounded-lg w-11/12 p-4 py-6 shadow-lg ">
+      <div className="absolute top-52 md:top-72 z-20 left-1/2 transform -translate-x-1/2 bg-white rounded-lg w-11/12 p-4 py-4 shadow-lg ">
         <Carousel heading={"Recipes You Might Like..."} />
         {/* <ViewAll/> */}
       </div>
@@ -48,31 +49,33 @@ export default async function Home({ theme }) {
         </div>
 
         <div className="pt-4">
-          <h1 className="flex items-center text-3xl font-bold text-gray-800 mb-3">
+          <h1 className="flex items-center md:text-3xl text-2xl font-bold text-gray-700 mb-3">
             Recipes
-            <hr className="flex-grow ml-4 border-t-4 border-gray-800" />
+            <hr className="flex-grow ml-4 border-t-2 border-gray-700" />
           </h1>
 
           <LayoutRecipesGrid />
         </div>
 
         <div className="relative h-64 md:min-h-80  overflow-hidden">
-          <div className="absolute inset-0 bg-background/40 dark:bg-black/40 z-10" />
+          <div className="absolute inset-0 bg-background/40 dark:bg-black/40 " />
           <Image
             priority={true}
             src={"/wallpaper2.jpg"}
             alt={"wallpaper"}
             fill
-            quality={100}
+            quality={99} // Balanced quality for performance
+            sizes="(max-width: 768px) 100vw, (max-width: 2560px) 50vw, 33vw"
             style={{ objectFit: "cover" }}
-            className="dark:brightness-75 brightness-100 transition-all duration-300"
+            className="dark:brightness-75 w-full brightness-100 transition-all duration-300"
           />
-          <div className="absolute inset-0 flex items-center justify-center z-20">
+          <div className="absolute inset-0 flex items-center justify-center">
             <Link
-              className="absolute z-10 inline-flex  items-center gap-2 rounded border border-indigo-600 px-8 py-3 text-indigo-600 hover:bg-indigo-600 hover:text-white focus:outline-none focus:ring active:bg-indigo-500"
+              className="inline-flex items-center gap-2 rounded border border-[#26442a] bg-[#26442a] px-8 py-3 text-white hover:bg-transparent hover:text-[#26442a] focus:outline-none focus:ring active:text-[#26442a]"
               href="/all"
             >
-              <span className="text-sm font-medium"> All Recipes </span>
+              <span className="text-md font-medium"> All Recipes </span>
+
               <svg
                 className="size-5 rtl:rotate-180"
                 xmlns="http://www.w3.org/2000/svg"

@@ -6,6 +6,7 @@ import SearchBar from "./SearchBar";
 import { signOut } from "next-auth/react";
 import { ThemeToggle } from "./ThemeToggle";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 /**
  * The main navigation component for the app.
  * @returns {JSX.Element} The rendered navbar component.
@@ -32,8 +33,6 @@ const Navbar = () => {
       [linkName]: !prev[linkName],
     }));
   };
-
-
 
   const handleSignOut = async (e) => {
     e.preventDefault();
@@ -83,7 +82,7 @@ const Navbar = () => {
           <div className="flex items-center justify-between h-16">
             {/* Mobile and Logo */}
 
-            <div className="flex items-center space-x-4 w-full md:w-auto justify-between md:justify-start">
+            <div className="flex items-center  w-full md:w-auto md:justify-start">
               <div className="md:hidden">
                 <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -110,20 +109,35 @@ const Navbar = () => {
                 </button>
               </div>
 
-              <Link
-                href="/"
-                className="text-2xl font-bold text-gray-800 dark:text-gray-200"
-              >
-                Recipe Rush
-              </Link>
+              <div className="relative left-[42%] w-full">
+                <Link
+                  style={{ width: "auto", height: "auto" }}
+                  href="/"
+                  // className="font-bold text-gray-800 dark:text-gray-200"
+                >
+                  <Image
+                    style={{
+                      objectFit:"cover",
+                      width: "auto",
+                      height: "auto",
+                    }}
+                    priority={true}
+                    src="/rush.png"
+                    quality={100}
+                    alt="logo"
+                    width={50}
+                    height={50}
+                  />
+                </Link>
+              </div>
             </div>
 
             {/* Theme Toggle and Search */}
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center ">
               <ThemeToggle />
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className={`p-2 rounded-md text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none ${
+                className={`p-2 rounded-md relative text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none ${
                   isSearchOpen ? "bg-gray-100 dark:bg-gray-700" : ""
                 } transition-colors duration-200`}
                 aria-label="Toggle search"
@@ -144,7 +158,7 @@ const Navbar = () => {
               </button>
               {session ? (
                 <div className="relative">
-                  <div className="h-10 w-10" onClick={toggleMenu}>
+                  <div className="h-8 w-8 md:h-10 md:w-10" onClick={toggleMenu}>
                     {session.user.image ? (
                       <img
                         className="h-full w-full rounded-full object-cover object-center"
@@ -152,7 +166,7 @@ const Navbar = () => {
                         alt=""
                       />
                     ) : (
-                      <div className="h-full bg-slate-200 w-full flex text-center items-center justify-center rounded-full object-cover object-center">
+                      <div className="h-full hover:bg-slate-100 w-full flex text-center items-center justify-center rounded-full object-cover object-center">
                         <p className="font-semibold text-xl">
                           {session.user.name.charAt(0)}
                         </p>
@@ -162,8 +176,8 @@ const Navbar = () => {
                 </div>
               ) : (
                 <div className="relative">
-                  <div className="h-10 w-10" onClick={toggleMenu}>
-                    <div className="h-full bg-slate-200 w-full flex text-center items-center justify-center rounded-full object-cover object-center">
+                  <div className="h-8 w-8 md:h-10 md:w-10" onClick={toggleMenu}>
+                    <div className="h-full bg-slate-100 w-full flex text-center items-center justify-center rounded-full object-cover object-center">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -184,11 +198,11 @@ const Navbar = () => {
               )}
               {/**Drop Down Menu */}
               {menuOpen && (
-                <ul className="space-y-1 absolute top-14 right-1 bg-white mt-2">
+                <ul className="space-y-1 absolute top-14  right-4 md:right-auto bg-white mt-2">
                   <li>
                     <a
                       href="#"
-                      className="flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-gray-700"
+                      className="flex items-center gap-2 rounded-lg hover:bg-gray-400 px-4 py-2 text-gray-700"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -211,54 +225,6 @@ const Navbar = () => {
                       </svg>
 
                       <span className="text-sm font-medium"> Settings </span>
-                    </a>
-                  </li>
-
-                  <li>
-                    <a
-                      href="#"
-                      className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="size-5 opacity-75"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-                        />
-                      </svg>
-
-                      <span className="text-sm font-medium"> Billing </span>
-                    </a>
-                  </li>
-
-                  <li>
-                    <a
-                      href="#"
-                      className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="size-5 opacity-75"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-                        />
-                      </svg>
-
-                      <span className="text-sm font-medium"> Invoices </span>
                     </a>
                   </li>
 
@@ -308,21 +274,21 @@ const Navbar = () => {
                           Profile
                         </Link>
 
-                        <li>
+                        {session ? (
+                          <button
+                            onClick={() => signOut()}
+                            className="w-full rounded-lg px-4 py-2 text-sm font-medium text-red-600 [text-align:_inherit] hover:bg-gray-100 hover:text-gray-700"
+                          >
+                            Logout
+                          </button>
+                        ) : (
                           <Link
                             href="/sign-in"
                             className="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                           >
                             Sign In
                           </Link>
-                        </li>
-
-                        <button
-                          onClick={() => signOut()}
-                          className="w-full rounded-lg px-4 py-2 text-sm font-medium text-red-600 [text-align:_inherit] hover:bg-gray-100 hover:text-gray-700"
-                        >
-                          Logout
-                        </button>
+                        )}
                       </ul>
                     </details>
                   </li>
