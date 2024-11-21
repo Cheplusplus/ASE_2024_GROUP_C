@@ -1,84 +1,3 @@
-// "use client";
-// import React, { useState, useEffect } from 'react';
-// import RecipeCard from '../components/RecipeCard';
-// import { useSession } from 'next-auth/react';
-// import { useRouter } from 'next/navigation';
-
-// const FavouritesPage = () => {
-//   const [favourites, setFavourites] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const { data: session, status } = useSession();
-//   const router = useRouter();
-
-//   useEffect(() => {
-//     if (status === 'unauthenticated') {
-//       router.push('/sign-in');
-//       return;
-//     }
-
-//     if (status === 'authenticated') {
-//       fetchFavourites();
-//     }
-//   }, [status]);
-
-//   const fetchFavourites = async () => {
-//     try {
-//       const response = await fetch('/api/favourites');
-//       if (!response.ok) throw new Error('Failed to fetch favourites');
-//       const data = await response.json();
-//       setFavourites(data.favourites);
-//     } catch (error) {
-//       console.error('Error fetching favourites:', error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleRemoveFavourite = async (recipeId) => {
-//     try {
-//       const response = await fetch('/api/favourites', {
-//         method: 'DELETE',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({ recipeId })
-//       });
-
-//       if (!response.ok) throw new Error('Failed to remove favourite');
-//       setFavourites(prev => prev.filter(recipe => recipe._id !== recipeId));
-//     } catch (error) {
-//       console.error('Error removing favourite:', error);
-//     }
-//   };
-
-//   if (loading) {
-//     return <div className="container mx-auto p-4">Loading...</div>;
-//   }
-
-//   return (
-//     <div className="container mx-auto p-4">
-//       <h1 className="text-3xl font-bold mb-6">My Favourites</h1>
-//       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-//         {favourites.length > 0 ? (
-//           favourites.map(recipe => (
-//             <RecipeCard
-//               key={recipe._id}
-//               recipe={recipe}
-//               onRemoveFromFavourites={() => handleRemoveFavourite(recipe._id)}
-//               isFavourited={true}
-
-//             />
-//           ))
-//         ) : (
-//           <p className="text-gray-500">You have no favourite recipes yet. Start adding some!</p>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default FavouritesPage;
-
-
-
 "use client";
 import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
@@ -89,6 +8,7 @@ const FavouritesPage = () => {
   const [loading, setLoading] = useState(true);
   const { data: session, status } = useSession();
   const router = useRouter();
+  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -103,7 +23,7 @@ const FavouritesPage = () => {
 
   const fetchFavourites = async () => {
     try {
-      const response = await fetch('/api/favourites');
+      const response = await fetch(`${url}/api/favourites`);
       if (!response.ok) throw new Error('Failed to fetch favourites');
       const data = await response.json();
       setFavourites(data.favourites);
@@ -149,7 +69,7 @@ const FavouritesPage = () => {
       <h1 className="text-3xl font-bold mb-6">My Favourites</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {favourites.length > 0 ? (
-          favourites.map(recipe => (
+          favourites.map((recipe={}) => (
             <RecipeCard
               key={recipe._id}
               recipe={recipe}
