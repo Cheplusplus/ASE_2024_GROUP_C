@@ -1,5 +1,5 @@
-## MIT License
-### Copyright (c) 2024 Recipe App - 
+MIT License
+Copyright (c) 2024 Recipe App - 
 A Modern Recipe Management Application
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (including but not limited to
@@ -16,7 +16,7 @@ Recipe content, images, and user-generated content within the application
 are subject to their respective owners' copyrights and may not be used without
 appropriate permission.
 
-### Any redistribution of the Software must:
+Any redistribution of the Software must:
 
 - Maintain attribution to the original authors
 - Include this license and copyright notice
@@ -38,7 +38,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
-### Additional Notices:
+Additional Notices:
 
 - Third-party components and libraries used in this Software are subject to their MIT License
 Copyright (c) 2024 Recipe App - A Modern Recipe Management Application
@@ -56,12 +56,12 @@ copies or substantial portions of the Software.
 Recipe content, images, and user-generated content within the application
 are subject to their respective owners' copyrights and may not be used without
 appropriate permission.
-Any redistribution of the Software must:
 
-Maintain attribution to the original authors
-Include this license and copyright notice
-State any significant changes made to the original Software
-Not misrepresent the original Software's origin
+Any redistribution of the Software must:
+- Maintain attribution to the original authors
+- Include this license and copyright notice
+- State any significant changes made to the original Software
+- Not misrepresent the original Software's origin
 
 
 The Recipe App name, logo, and branding elements are trademarks of Recipe App
