@@ -140,7 +140,7 @@ cp .env.example .env.local
     NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_aut_domain
     NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
 
-6. Start Development Server:
+6. Start Development Server: (Ensure that it's running on https://localhost:3000)
 
     npm run dev
 
