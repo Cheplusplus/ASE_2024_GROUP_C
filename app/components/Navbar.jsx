@@ -45,6 +45,40 @@ const Navbar = () => {
     router.push("/"); // Redirect to sign-in page
   };
 
+  // Fetch favourites count when session changes
+  useEffect(() => {
+    const fetchFavouritesCount = async () => {
+      if (status === 'authenticated') {
+        try {
+          const response = await fetch('/api/favourites');
+          if (response.ok) {
+            const data = await response.json();
+            setFavouritesCount(data.count);
+          }
+        } catch (error) {
+          console.error('Error fetching favourites count:', error);
+        }
+      } else {
+        setFavouritesCount(0);
+      }
+    };
+
+    fetchFavouritesCount();
+  }, [status]);
+
+  // Listen for favourites updates from other components
+  useEffect(() => {
+    const handleFavouritesUpdate = (e) => {
+      setFavouritesCount(e.detail.count);
+    };
+
+    document.addEventListener('favouritesUpdated', handleFavouritesUpdate);
+
+    return () => {
+      document.removeEventListener('favouritesUpdated', handleFavouritesUpdate);
+    };
+  }, []);
+
   const navLinks = [
     { name: "Home", href: "/" },
     {
@@ -70,6 +104,11 @@ const Navbar = () => {
   const toggleMenu = () => {
     setMenuOpen((prev) => !prev);
   };
+
+  const favouritesLink = navLinks.find(link => link.name === 'Favourites');
+  if (favouritesLink && status === 'authenticated') {
+    favouritesLink.badge = favouritesCount;
+  }
 
   return (
     <>
@@ -112,9 +151,20 @@ const Navbar = () => {
                 Recipe Rush
               </Link>
             </div>
+            
 
             {/* Theme Toggle and Search */}
             <div className="flex items-center space-x-2">
+            <Link href="/favourites" className="relative" >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                  <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
+                </svg>
+                {favouritesCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
+                    {favouritesCount}
+                  </span>
+                )}
+            </Link>
               <ThemeToggle />
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
@@ -177,6 +227,7 @@ const Navbar = () => {
                   </div>
                 </div>
               )}
+              
               {/**Drop Down Menu */}
               {menuOpen && (
                 <ul className="space-y-1 absolute top-14  right-4 md:right-auto bg-white mt-2">
