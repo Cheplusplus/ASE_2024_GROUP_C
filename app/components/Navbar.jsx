@@ -123,6 +123,7 @@ const Navbar = () => {
                     }}
                     priority={true}
                     src="/rush.png"
+                    quality={100}
                     alt="logo"
                     width={50}
                     height={50}
