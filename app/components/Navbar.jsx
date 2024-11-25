@@ -26,7 +26,37 @@ const Navbar = () => {
     // Check if user is logged in, for example, by checking a token in localStorage
     const token = localStorage.getItem("authToken");
     setIsLoggedIn(!!token);
-  }, []);
+  
+
+  const fetchInitialFavouritesCount = async () => {
+    if (status === 'authenticated') {
+      try {
+        const response = await fetch('/api/favourites');
+        if (response.ok) {
+          const data = await response.json();
+          setFavouritesCount(data.count);
+        }
+      } catch (error) {
+        console.error('Error fetching favourites count:', error);
+      }
+    }
+  };
+
+  fetchInitialFavouritesCount();
+}, [status]);
+
+// Update favourites count dynamically
+useEffect(() => {
+  const handleFavouritesUpdate = (e) => {
+    setFavouritesCount(e.detail.count);
+  };
+
+  document.addEventListener('favouritesUpdated', handleFavouritesUpdate);
+
+  return () => {
+    document.removeEventListener('favouritesUpdated', handleFavouritesUpdate);
+  };
+}, []);
 
   const handleSublinkToggle = (linkName) => {
     setOpenSublinks((prev) => ({
@@ -156,9 +186,9 @@ const Navbar = () => {
             {/* Theme Toggle and Search */}
             <div className="flex items-center space-x-2">
             <Link href="/favourites" className="relative" >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-                  <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
-                </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart">
+              <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+            </svg>
                 {favouritesCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
                     {favouritesCount}
