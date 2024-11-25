@@ -8,90 +8,28 @@ const RECIPES_PER_PAGE = 50;
 const Paginate = ({ skip = 50, totalRecipes = 240, filteredCount = null }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [searchPage, setSearchPage] = useState('');
-  
-  // Calculate current page from skip parameter with default values
-  const currentPage = Math.floor((skip || 0) / RECIPES_PER_PAGE) + 1;
-  const totalPages = Math.max(1, Math.ceil(totalRecipes / RECIPES_PER_PAGE));
+  const search = searchParams.get("search") || ""; 
 
-    // Use filteredCount if available, otherwise use total recipes
-    const activeTotal = filteredCount !== null ? filteredCount : totalRecipes;
+  const category = searchParams.get('category') || '';
+  const tags = searchParams.get('tags') ? searchParams.get('tags').split(',') : [];
+  const numSteps = parseInt(searchParams.get('numSteps')) || '';
+  const ingredients = searchParams.get('ingredients') || '';
+  const sortOption = searchParams.get('sortOption') || '';
 
-    useEffect(() => {
-      if (currentPage > totalPages && totalPages > 0) {
-        handlePageChange(1);
-      }
-    }, [filteredCount]);
-
-  // Get visible page numbers
-  const getVisiblePages = () => {
-    if (!totalRecipes) return [1];
-    
-    const delta = 2;
-    const range = [];
-    const rangeWithDots = [];
-
-    for (
-      let i = Math.max(2, currentPage - delta);
-      i <= Math.min(totalPages - 1, currentPage + delta);
-      i++
-    ) {
-      range.push(i);
-    }
-
-    if (currentPage - delta > 2) {
-      rangeWithDots.push(1, '...');
-    } else {
-      rangeWithDots.push(1);
-    }
-
-    rangeWithDots.push(...range);
-
-    if (currentPage + delta < totalPages - 1) {
-      rangeWithDots.push('...', totalPages);
-    } else if (totalPages > 1) {
-      rangeWithDots.push(totalPages);
-    }
-
-    return rangeWithDots;
+  const handleNext = (newPage) => {
+    const newSkip = skip + RECIPES_PER_PAGE;
+    setCurrentPage(newPage);
+    const newUrl = search || category || numSteps || sortOption || tags ? `/all?search=${search}&skip=${newSkip}&category=${category}&tags=${tags.join(',')}&numSteps=${numSteps}&ingredients=${ingredients}&sortOption=${sortOption}` : `/all?skip=${newSkip}`
+    router.push(newUrl); // Update the URL with the new skip value
   };
 
-  const createQueryString = (page) => {
-    const params = new URLSearchParams(searchParams.toString());
-    const newSkip = (page - 1) * RECIPES_PER_PAGE;
-    params.set('skip', newSkip.toString());
-    return params.toString();
+  const handlePrevious = (newPage) => {
+    const newSkip = skip > RECIPES_PER_PAGE ? skip - RECIPES_PER_PAGE : 0;
+    setCurrentPage(newPage);
+    const newUrl = search || category || numSteps || sortOption || tags ? `/all?search=${search}&skip=${newSkip}&category=${category}&tags=${tags.join(',')}&numSteps=${numSteps}&ingredients=${ingredients}&sortOption=${sortOption}` : `/all?skip=${newSkip}`
+    router.push(newUrl);
   };
-
-  const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      router.push(`/?${createQueryString(page)}`);
-    }
-  };
-
-  const handleJumpToPage = (e) => {
-    e.preventDefault();
-    const page = parseInt(searchPage);
-    if (page >= 1 && page <= totalPages) {
-      router.push(`/?${createQueryString(page)}`);
-      setSearchPage('');
-    }
-  };
-
-  // Calculate recipe range with safety checks
-  const startRecipe = activeTotal ? skip + 1 : 0;
-  const endRecipe = Math.min((skip || 0) + RECIPES_PER_PAGE, activeTotal || 0);
-
-  // If there are no recipes, show a simplified view
-  if (!activeTotal) {
-    return (
-      <div className="w-full max-w-4xl mx-auto p-4">
-        <div className="text-center text-gray-600">
-          No recipes found
-        </div>
-      </div>
-    );
-  }
+  const totalPages = Math.ceil(150000 / RECIPES_PER_PAGE);
 
   return (
     <div className="w-full max-w-4xl mx-auto p-4">
