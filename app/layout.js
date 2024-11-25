@@ -5,11 +5,15 @@ import "./globals.css";
 import SessionProvider from "./components/SessionProvider";
 import { ThemeProvider } from "./components/ThemeProvider";
 import MobileBar from "./components/MobileBar";
+import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
 
 // metadata for the RootLayout
 export const metadata = {
+  metadataBase: new URL('http://localhost:3000/'),
   title: "Recipe Rush - The Source for Culinary Inspiration",
   description: "Discover delicious recipes and cooking tips to elevate your culinary skills.",
+  category: "website",
+  generator: "Next.js",
   manifest: "/manifest.json",
   openGraph: {
     type: "website",
@@ -51,6 +55,7 @@ export default function RootLayout({ children }) {
           <main className="min-h-screen ">{children}</main>
           <Footer />
           <MobileBar/>
+          <ServiceWorkerRegistration/>
           </ThemeProvider>
         </SessionProvider>
       </body>
