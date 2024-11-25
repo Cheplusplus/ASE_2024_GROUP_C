@@ -22,10 +22,11 @@ const PeopleIcon = (
   </svg>
 );
 
-const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags = [] } }) => {
+const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags = [] },  onAddToFavourites, onRemoveFromFavourites, isFavourited = false}) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [intervalId, setIntervalId] = useState(null);
   const remainingTags = tags.length - MAX_VISIBLE_TAGS;
+  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
   const handleMouseEnter = () => {
     const id = setInterval(() => {
@@ -40,15 +41,37 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
     setCurrentImageIndex(0); // Reset to the first image
   };
 
+  const handleFavouriteClick = async (e) => {
+     console.log('clicked',_id)
+    e.preventDefault(); // Prevent link navigation
+    try {
+      const response = await fetch(`${url}/api/favourites`, {
+        method: isFavourited ? 'DELETE' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ recipeId: _id })
+      });
+
+      if (!response.ok) throw new Error('Failed to update favourites');
+      
+      if (isFavourited) {
+        onRemoveFromFavourites && onRemoveFromFavourites();
+      } else {
+        onAddToFavourites && onAddToFavourites();
+      }
+    } catch (error) {
+      console.error('Error updating favourites:', error);
+    }
+  };
+
   return (
     <Link href={`/recipes/${_id}`} className="block">
       <div
-        className="group relative bg-white rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg"
+        className="group relative bg-card text-card-foreground rounded-sm overflow-hidden transition-all duration-300 hover:shadow-lg"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
         {/* Main Image Container */}
-        <div className="relative h-64 overflow-hidden">
+        <div className="relative h-40 sm:h-40  overflow-hidden">
           <Image
             priority = 'true'
             src={images[currentImageIndex]}
@@ -63,14 +86,14 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
         </div>
         
         {/* Content Container */}
-        <div className="p-6">
+        <div className="p-1">
           {/* Title */}
-          <h2 className="text-xl font-semibold text-gray-900 mb-3 line-clamp-2">
+          <h2 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2">
             {title}
           </h2>
           
           {/* Meta Information */}
-          <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
+          <div className="flex flex-wrap gap-2 text-sm text-gray-600  mb-2 md:mb-4">
             <div className="flex items-center gap-1">
               {ClockIcon}
               <span>Prep: {prep} mins</span>
@@ -103,6 +126,16 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
               )}
             </div>
           )}
+            <button
+              onClick={handleFavouriteClick}
+              className={`mt-2 px-3 py-1 rounded ${
+                isFavourited 
+                  ? 'bg-red-500 hover:bg-red-600' 
+                  : 'bg-blue-500 hover:bg-blue-600'
+              } text-white`}
+            >
+              {isFavourited ? 'Remove from Favourites' : 'Add to Favourites'}
+            </button>
         </div>
       </div>
     </Link>

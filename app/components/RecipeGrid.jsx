@@ -14,14 +14,14 @@ const RecipeGrid = async ({ searchParams }) => {
   const search = searchParams.search || "";
 
   try {
-
     const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-    console.log(url)
     const res = await fetch(`${url}/api/recipe?search=${search}&skip=${skip}&category=${category}&tags=${tags.join(',')}&numSteps=${numSteps}&ingredients=${ingredients}&sortOption=${sortOption}`,{cache:'no-store'},{
     headers: { 'Content-Type': 'application/json' }
   });
+  console.log(res.status,'stats')
     if (!res.ok) throw new Error('Failed to fetch recipes');
     const recipes = await res.json();
+   // console.log(recipes)
     let categories;
 
       const response = await fetch(`${url}/api/categories`);
@@ -29,7 +29,6 @@ const RecipeGrid = async ({ searchParams }) => {
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     
        categories = await response.json();
-      console.log(categories, 'categories');
    
      
     return (
