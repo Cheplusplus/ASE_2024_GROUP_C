@@ -20,23 +20,15 @@ const SearchBar = ({ isOpen, onClose }) => {
 
   const router = useRouter();
 
-  // Clear search when closing search overlay
-  useEffect(() => {
-    if(searchQuery.trim().length >= 3) {
-      const debounceTimeout = setTimeout(()=> {
-        fetchSuggestions(searchQuery);
-        // Auto-submit search after 300ms of no typing
-        router.push(`/all?search=${encodeURIComponent(searchQuery)}`);
-        setHasSearched(true);
-      }, 300);
-      return () => clearTimeout(debounceTimeout);
+  // debounce function to handle delayed search
+  const debounceSearch = useCallback(() => {
+    // only trigger search if the query is 3 or more characters
+    if ( searchQuery.trim().length >= 3 ) {
+      setIsLoading(true);
+      fetchSuggestions(searchQuery); 
     } else {
       setSearchResults([]);
       setHasSearched(false);
-      // Reset the URL when the search query is cleared
-      // if (searchQuery.trim().length === 0) {
-      //   router.push(`/` || , undefined, { shallow: true });
-      // }
     }
   }, [ searchQuery ]);
 
@@ -92,9 +84,11 @@ useEffect(() => {
     try {
       setIsLoading(true);
       const response = await fetch(`/api/recipe/?search=${encodeURIComponent(query)}&limit=10`);
+      
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+      
       const data = await response.json();
       
       if (data.success) {
@@ -114,12 +108,19 @@ useEffect(() => {
     }
   };
 
+  /**
+   * Handles a click on a search suggestion by pushing the search query to the browser
+   * and closing the search bar after a short delay.
+   *
+   * @param {string} title - The title of the recipe to search for.
+   *
+   * @returns {() => void} A function to clear the timeout.
+   */
   const handleSuggestionClick = (title) => {
-    const debounceTimeout = setTimeout(()=> {
-      router.push(`/all?search=${encodeURIComponent(title)}`);
+    const debounceTimeout = setTimeout(() => {
+      router.push(`/?search=${encodeURIComponent(title)}`);
       onClose();
-    }, 500)
-    return ()=> clearTimeout(debounceTimeout)
+    })
   };
 
   return (

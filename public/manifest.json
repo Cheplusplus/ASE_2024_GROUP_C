@@ -7,6 +7,16 @@
     "background_color": "#ffffff",
     "theme_color": "#000000",
     "orientation": "portrait-primary",
+    "id": "uniquekey1",
+    "dir": "ltr",
+    "lang": "en",
+    "categories": [
+      "business",
+      "food",
+      "shopping"
+    ], 
+    "prefer_related_applications": false,
+  "iarc_rating_id": "13", 
     "icons": [
         {
             "src": "/logo.png",
