@@ -1,12 +1,12 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import SearchBar from './SearchBar';
-import { signOut } from 'next-auth/react';
-import { ThemeToggle } from './ThemeToggle';
-import { useSession } from 'next-auth/react';
-
+"use client";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import SearchBar from "./SearchBar";
+import { signOut } from "next-auth/react";
+import { ThemeToggle } from "./ThemeToggle";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
 /**
  * The main navigation component for the app.
  * @returns {JSX.Element} The rendered navbar component.
@@ -147,7 +147,7 @@ useEffect(() => {
           <div className="flex items-center justify-between h-16">
             {/* Mobile and Logo */}
 
-            <div className="flex items-center space-x-4 w-full md:w-auto justify-between md:justify-start">
+            <div className="flex items-center  w-full md:w-auto md:justify-start">
               <div className="md:hidden">
                 <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -174,12 +174,27 @@ useEffect(() => {
                 </button>
               </div>
 
-              <Link
-                href="/"
-                className="text-2xl font-bold text-gray-800 dark:text-gray-200"
-              >
-                Recipe Rush
-              </Link>
+              <div className="relative left-[42%] w-full">
+                <Link
+                  style={{ width: "auto", height: "auto" }}
+                  href="/"
+                  // className="font-bold text-gray-800 dark:text-gray-200"
+                >
+                  <Image
+                    style={{
+                      objectFit:"cover",
+                      width: "auto",
+                      height: "auto",
+                    }}
+                    priority={true}
+                    src="/rush.png"
+                    quality={100}
+                    alt="logo"
+                    width={50}
+                    height={50}
+                  />
+                </Link>
+              </div>
             </div>
             
 
@@ -198,7 +213,7 @@ useEffect(() => {
               <ThemeToggle />
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className={`p-2 rounded-md text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none ${
+                className={`p-2 rounded-md relative text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none ${
                   isSearchOpen ? "bg-gray-100 dark:bg-gray-700" : ""
                 } transition-colors duration-200`}
                 aria-label="Toggle search"
@@ -289,7 +304,6 @@ useEffect(() => {
                       <span className="text-sm font-medium"> Settings </span>
                     </a>
                   </li>
-
 
                   <li>
                     <details className="group [&_summary::-webkit-details-marker]:hidden">

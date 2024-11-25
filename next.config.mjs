@@ -1,14 +1,26 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-    images: {
-        remotePatterns: [
-            {
-                protocol: 'https',
-                hostname: 'img.sndimg.com',
-                pathname: '/**'
-            }
-        ]
-    }
-};
+import withPWA from 'next-pwa'
 
-export default nextConfig;
+
+  
+  const nextConfig = {
+    images: {
+      remotePatterns: [
+        {
+          protocol: 'https',
+          hostname: 'img.sndimg.com',
+          pathname: '/**'
+        }
+      ]
+    },
+    
+  };
+
+  const pwaConfig = withPWA({
+    dest: 'public',
+    disable: process.env.NODE_ENV === 'development',
+    register: true,
+    skipWaiting: true,
+  });
+  
+  export default pwaConfig(nextConfig);
