@@ -1,73 +1,79 @@
 {
-    "name": "Recipe Rush",
-    "short_name": "Recipe Rush",
-    "description": "Discover, save, and cook amazing recipes",
-    "start_url": "/",
-    "display": "standalone",
-    "background_color": "#ffffff",
-    "theme_color": "#000000",
-    "orientation": "portrait-primary",
-    "id": "uniquekey1",
-    "dir": "ltr",
-    "lang": "en",
-    "categories": [
-      "business",
-      "food",
-      "shopping"
-    ], 
-    "prefer_related_applications": false,
-  "iarc_rating_id": "13", 
-    "icons": [
+  "name": "Recipe Rush",
+  "short_name": "Recipe Rush",
+  "description": "Discover, save, and cook amazing recipes",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "id": "uniquekey1",
+  "dir": "ltr",
+  "lang": "en",
+  "categories": ["business", "food", "shopping"],
+  "shortcuts": [
+    {
+      "name": "Favorites",
+      "short_name": "favorites",
+      "description": "Go to your Favorites",
+      "url": "/favorites",
+      "icons": [
         {
-            "src": "/logo.png",
-            "sizes": "72x72",
-            "type": "image/png"
-          },
-          {
-            "src": "/logo.png",
-            "sizes": "96x96",
-            "type": "image/png"
-          },
-
-          {
-            "src": "/logo.png",
-            "sizes": "128x128",
-            "type": "image/png"
-          },
-
-          {
-            "src": "/logo.png",
-            "sizes": "144x144",
-            "type": "image/png"
-          },
-
-          {
-            "src": "/logo.png",
-            "sizes": "152x152",
-            "type": "image/png"
-          },
-
-        {
-          "src": "/logo.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        },
-
-    
-        {
-            "src": "/logo.png",
-            "sizes": "384x384",
-            "type": "image/png"
-          },
-
-        {
-          "src": "/logo.png",
-          "sizes": "512x512",
+          "src": "/right.png",
+          "sizes": "72x72",
           "type": "image/png"
         }
       ]
     }
+  ],
+  "prefer_related_applications": false,
+  "iarc_rating_id": "13",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
 
+    {
+      "src": "/logo.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
 
+    {
+      "src": "/logo.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
 
-    
+    {
+      "src": "/logo.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+
+    {
+      "src": "/logo.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
