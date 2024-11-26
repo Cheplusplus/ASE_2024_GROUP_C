@@ -1,29 +1,22 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import {
-  ShoppingCartIcon,
-  PlusIcon,
-  TrashIcon,
-  ShareIcon,
-  CheckIcon,
-} from "lucide-react";
+import {ShoppingCartIcon, PlusIcon, TrashIcon, ShareIcon, CheckIcon,} from "lucide-react";
 import { useSession } from "next-auth/react";
-import {
-  useNotification,
-  NOTIFICATION_TYPES,
-} from "../components/NotificationContext";
+import {useNotification, NOTIFICATION_TYPES,} from "../components/NotificationContext";
 
 const ShoppingList = () => {
   const [items, setItems] = useState([]);
   const [newItem, setNewItem] = useState("");
   const { data: session } = useSession();
   const { addNotification } = useNotification();
-
+  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+  
   // Fetch shopping list from backend
   useEffect(() => {
     const fetchShoppingList = async () => {
+      console.log(session.user.id)
       try {
-        const response = await fetch('/api/shopping-list');
+        const response = await fetch(`${url}/api/shoppingList/item?user=${session.user.id}`);
         if (response.ok) {
           const data = await response.json();
           setItems(data);
@@ -44,7 +37,7 @@ const ShoppingList = () => {
     if (!newItem.trim()) return;
 
     try {
-      const response = await fetch('/api/shopping-list/item', {
+      const response = await fetch(`${url}/api/shoppingList/item`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -73,17 +66,17 @@ const ShoppingList = () => {
 
   const removeItem = async (itemId) => {
     try {
-      const response = await fetch('/api/shopping-list/item', {
+      const response = await fetch(`${url}/api/shopping-list/item`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ itemId })
       });
-
+  
       if (!response.ok) throw new Error('Failed to remove item');
-
+  
       const updatedItems = await response.json();
       setItems(updatedItems);
-
+  
       addNotification(
         'Item removed from shopping list', 
         NOTIFICATION_TYPES.WARNING
@@ -217,9 +210,9 @@ const ShoppingList = () => {
         </button>
       </div>
 
-      {items.map((item, index) => (
+      {items.map((item) => (
         <div
-          key={index}
+          key={item.id}
           className={`flex items-center mb-2 p-2 rounded ${
             item.purchased ? "bg-gray-100 line-through" : "bg-white"
           }`}
@@ -240,7 +233,7 @@ const ShoppingList = () => {
             )}
           </div>
           <button
-            onClick={() => togglePurchased(index)}
+            onClick={() => togglePurchased(item.id)}
             className={`mr-2 p-1 rounded ${
               item.purchased ? "bg-green-500 text-white" : "bg-gray-200"
             }`}
@@ -248,7 +241,7 @@ const ShoppingList = () => {
             <CheckIcon />
           </button>
           <button
-            onClick={() => removeItem(index)}
+            onClick={() => removeItem(item._id)}
             className="p-1 bg-red-500 text-white rounded"
           >
             <TrashIcon />
