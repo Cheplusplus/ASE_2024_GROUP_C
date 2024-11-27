@@ -10,7 +10,7 @@ import { NotificationProvider } from "./components/NotificationContext";
 
 // metadata for the RootLayout
 export const metadata = {
-  metadataBase: new URL('http://localhost:3000/'),
+  metadataBase: new URL('https://ase-2024-group-c.vercel.app/'),
   title: "Recipe Rush - The Source for Culinary Inspiration",
   description: "Discover delicious recipes and cooking tips to elevate your culinary skills.",
   category: "website",
