@@ -45,9 +45,7 @@ export default function ProfilePage({ userId, db }) {
   return (
     <>
       <div className="max-w-3xl mx-auto p-6  bg-white shadow-lg rounded-lg mt-10">
-        <h1 className="text-2xl font-bold  text-gray-800">
-          Account & Profile
-        </h1>
+        <h1 className="text-2xl font-bold  text-gray-800">Account & Profile</h1>
 
         {/* Success/Error Message */}
         {message.content && (
@@ -72,18 +70,25 @@ export default function ProfilePage({ userId, db }) {
             <div className=" min-h-screen p-3 ">
               <div className="bg-white rounded-lg shadow-lg overflow-hidden w-full w-4xl px-2 mt-12 ">
                 <div className="relative">
-                  <img
+                  <Image
                     className="w-full rounded-lg h-36 object-cover"
-                    src={"/wallpaper2.jpg"}
+                    src="/wallpaper2.jpg"
                     alt="Background"
+                    layout="responsive"
+                    width={1920} // Adjust to the actual dimensions of the wallpaper
+                    height={144} // Adjust to the desired aspect ratio of the image
+                    priority // Optional: Use this if the background image is important for the first render
                   />
                   <div className="absolute top-24 left-4">
                     {session.user.image ? (
-                      <img
-                        className="rounded-full w-full  h-32 border-4 border-white object-cover"
-                        src={session.user.image}
-                        alt="Profile"
-                      />
+                      <Image
+                      className="rounded-full w-32 h-32 border-4 border-white object-cover"
+                      src={session.user.image}
+                      alt="Profile"
+                      width={128} // Set the width of the profile image
+                      height={128} // Set the height of the profile image
+                      objectFit="cover" // Ensures the image covers the container without distortion
+                    />
                     ) : (
                       <div className="rounded-full w-32 h-32 text-[6rem] border-4 border-white object-cover hover:bg-slate-100 flex text-center items-center justify-center bg-slate-200 object-center">
                         {session.user.name.charAt(0)}
