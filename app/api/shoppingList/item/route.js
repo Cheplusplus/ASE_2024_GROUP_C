@@ -85,12 +85,13 @@ export async function PUT(req) {
 // DELETE method handler
 export async function DELETE(req) {
   try {
-    // const user = await initialize(req);
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("user");
     const { itemId } = await req.json();
 
     if (!itemId) throw new Error("Item ID is required");
 
-    const shoppingList = await ShoppingList.findOne({ user: user.id });
+    const shoppingList = await ShoppingList.findOne({ user: id });
     if (!shoppingList) throw new Error("Shopping list not found");
 
     shoppingList.items = shoppingList.items.filter(
