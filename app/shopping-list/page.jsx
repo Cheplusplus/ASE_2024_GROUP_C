@@ -9,6 +9,7 @@ const ShoppingList = () => {
   const [newItem, setNewItem] = useState("");
   const { data: session } = useSession();
   const { addNotification } = useNotification();
+  const [isLoading, setIsLoading] = useState(true);
   const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
   
   // Fetch shopping list from backend
@@ -19,25 +20,39 @@ const ShoppingList = () => {
         const response = await fetch(`${url}/api/shoppingList/item?user=${session.user.id}`);
         if (response.ok) {
           const data = await response.json();
-          setItems(data);
+          setItems(data.length > 0 ? data : []);
         } else {
+          console.log('123fail')
           throw new Error('Failed to fetch shopping list');
         }
       } catch (error) {
-        addNotification(error.message, NOTIFICATION_TYPES.ERROR);
+        // Only add notification if it's not an empty list
+        if (error.message !== 'Failed to fetch shopping list') {
+          addNotification(error.message, NOTIFICATION_TYPES.ERROR);
       }
+      setItems([]);
+    } finally {
+      setIsLoading(false)
+    }
     };
 
     if (session) {
       fetchShoppingList();
     }
-  }, [session]);
+  }, [session, url, addNotification]);
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-4 mt-20 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>);
+  }
 
   const addItem = async () => {
     if (!newItem.trim()) return;
 
     try {
-      const response = await fetch(`${url}/api/shoppingList/item`, {
+      const response = await fetch(`${url}/api/shoppingList/item?user=${session.user.id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -66,7 +81,7 @@ const ShoppingList = () => {
 
   const removeItem = async (itemId) => {
     try {
-      const response = await fetch(`${url}/api/shopping-list/item`, {
+      const response = await fetch(`${url}/api/shoppingList/item?user=${session.user.id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ itemId })
@@ -89,7 +104,7 @@ const ShoppingList = () => {
   const togglePurchased = async (itemId) => {
     try {
       const itemToUpdate = items.find(item => item._id === itemId);
-      const response = await fetch('/api/shopping-list/item', {
+      const response = await fetch(`${url}/api/shoppingList/item?user=${session.user.id}`,{
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -114,7 +129,7 @@ const ShoppingList = () => {
 
   const updateQuantity = async (itemId, quantity) => {
     try {
-      const response = await fetch('/api/shopping-list/item', {
+      const response = await fetch(`${url}/api/shoppingList/item?user=${session.user.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -139,7 +154,7 @@ const ShoppingList = () => {
 
   const clearList = async () => {
     try {
-      const response = await fetch('/api/shopping-list', { method: 'DELETE' });
+      const response = await fetch(`${url}/api/shoppingList/deleteShoppingList?user=${session.user.id}`, { method: 'DELETE' });
       if (!response.ok) throw new Error('Failed to clear list');
 
       setItems([]);
@@ -161,7 +176,7 @@ const ShoppingList = () => {
     window.open(whatsappUrl, "_blank");
   };
 
-  if (!session) {
+  if (!session?.user?.id) {
     return (
       <div className="container mx-auto p-4 text-center">
         <p>Please log in to view your shopping list</p>
@@ -212,7 +227,7 @@ const ShoppingList = () => {
 
       {items.map((item) => (
         <div
-          key={item.id}
+          key={item._id}
           className={`flex items-center mb-2 p-2 rounded ${
             item.purchased ? "bg-gray-100 line-through" : "bg-white"
           }`}
@@ -220,7 +235,7 @@ const ShoppingList = () => {
           <input
             type="number"
             value={item.quantity}
-            onChange={(e) => updateQuantity(index, parseInt(e.target.value))}
+            onChange={(e) => updateQuantity(item._id, parseInt(e.target.value))}
             min="1"
             className="w-16 mr-2 p-1 border rounded"
           />
@@ -233,7 +248,7 @@ const ShoppingList = () => {
             )}
           </div>
           <button
-            onClick={() => togglePurchased(item.id)}
+            onClick={() => togglePurchased(item._id)}
             className={`mr-2 p-1 rounded ${
               item.purchased ? "bg-green-500 text-white" : "bg-gray-200"
             }`}
