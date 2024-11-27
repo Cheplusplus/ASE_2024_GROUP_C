@@ -13,6 +13,21 @@
   "categories": ["business", "food", "shopping"],
   "prefer_related_applications": false,
   "iarc_rating_id": "13",
+  "shortcuts": [
+    {
+      "name": "Favorites",
+      "short_name": "favorites",
+      "description": "Go to your Favorites",
+      "url": "/favorites",
+      "icons": [
+        {
+          "src": "/right.png",
+          "sizes": "72x72",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
   "icons": [
     {
       "src": "windows11/SmallTile.scale-100.png",
