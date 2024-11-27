@@ -3,9 +3,10 @@ import ShoppingList from "@/app/models/shoppingList";
 
 export async function DELETE(req) {
   try {
-    // const user = await initialize(req); // Authenticate and retrieve user
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("user");
 
-    const shoppingList = await ShoppingList.findOneAndDelete({ user: user.id });
+    const shoppingList = await ShoppingList.findOneAndDelete({ user: id });
     if (!shoppingList) throw new Error("Shopping list not found");
 
     return new Response(
