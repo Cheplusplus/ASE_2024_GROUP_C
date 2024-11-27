@@ -1,13 +1,34 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 
-export default function AddReview({ recipeId,onAdd }) {
+export default function AddReview({ recipeId, onAdd }) {
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [pendingReview, setPendingReview] = useState(null); // For offline submission
   const { data: session } = useSession();
   const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
+  // Listen for online/offline events
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOffline(false);
+      if (pendingReview) {
+        retryPendingReview();
+      }
+    };
+    const handleOffline = () => setIsOffline(true);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, [pendingReview]);
 
   // Function to submit a review
   const submitReview = async () => {
@@ -15,50 +36,87 @@ export default function AddReview({ recipeId,onAdd }) {
       setError("You must be logged in to submit a review.");
       setTimeout(() => {
         setError("");
-      }, 2000); // Reset message after 3 seconds
+      }, 2000);
+      return;
+    }
+
+    if (!comment || !rating) {
+      setError("All fields are required.");
+      setTimeout(() => {
+        setError("");
+      }, 2000);
+      return;
+    }
+
+    const reviewData = {
+      recipeId,
+      comment,
+      rating,
+      reviewerName: session.user.name,
+    };
+
+    if (isOffline) {
+      setSuccess("Review saved locally. Will submit when online.");
+      setPendingReview(reviewData);
+      setComment("");
+      setRating(0);
       return;
     }
 
     try {
       setError("");
       setSuccess("");
-      if (!comment || !rating) {
-        setError("All fields are required.");
-        setTimeout(() => {
-          setError("");
-        }, 2000); // Reset message after 3 seconds
-        return;
-      }
 
       const response = await fetch(`${url}/api/addReview`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          recipeId,
-          comment,
-          rating,
-          reviewerName: session.user.name, // Use logged-in user name
-        }),
+        body: JSON.stringify(reviewData),
       });
 
       if (!response.ok) throw new Error("Failed to submit review");
 
       setSuccess("Review submitted successfully!");
-
       setComment("");
-      setRating(1);
+      setRating(0);
       onAdd();
       setTimeout(() => {
         setSuccess("");
-      }, 2000); // Reset message after 3 seconds
+      }, 2000);
     } catch (error) {
       console.error("Error submitting review:", error);
       setError("Failed to submit review. Please try again.");
       setTimeout(() => {
         setError("");
-      }, 2000); // Reset message after 3 seconds
+      }, 2000);
+    }
+  };
+
+  // Retry pending review when back online
+  const retryPendingReview = async () => {
+    if (!pendingReview) return;
+
+    try {
+      const response = await fetch(`${url}/api/addReview`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(pendingReview),
+      });
+
+      if (!response.ok) throw new Error("Failed to submit pending review");
+
+      setSuccess("Pending review submitted successfully!");
+      setPendingReview(null);
+      onAdd();
+      setTimeout(() => {
+        setSuccess("");
+      }, 2000);
+    } catch (error) {
+      console.error("Error submitting pending review:", error);
+      setError("Failed to submit pending review. Will retry when online.");
     }
   };
 
@@ -67,6 +125,7 @@ export default function AddReview({ recipeId,onAdd }) {
       <h2 className="text-lg font-bold mb-4">Add a Review</h2>
       {error && <p className="text-red-500">{error}</p>}
       {success && <p className="text-green-500">{success}</p>}
+      {isOffline && <p className="text-orange-500">You are offline. Reviews will be submitted when back online.</p>}
 
       <textarea
         placeholder="Your Comment"
