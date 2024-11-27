@@ -1,18 +1,4 @@
 {
-  "name": "Recipe Rush",
-  "short_name": "Recipe Rush",
-  "description": "Discover, save, and cook amazing recipes",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
-  "orientation": "portrait-primary",
-  "id": "uniquekey1",
-  "dir": "ltr",
-  "lang": "en",
-  "categories": ["business", "food", "shopping"],
-  "prefer_related_applications": false,
-  "iarc_rating_id": "13",
   "icons": [
     {
       "src": "windows11/SmallTile.scale-100.png",
