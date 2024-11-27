@@ -3,10 +3,12 @@ import AWS from 'aws-sdk';
 
 // AWS Polly Configuration for TTS
 AWS.config.update({
-  region: process.env.REGION,
-  accessKeyId: process.env.ACCESSKEYID,
-  secretAccessKey: process.env.SECRETACCESSKEY,
-});
+    region: process.env.NEXT_PUBLIC_REGION,
+    accessKeyId: process.env.NEXT_PUBLIC_ACCESS_KEY_ID,
+    secretAccessKey: process.env.NEXT_PUBLIC_SECRET_ACCESS_KEY,
+  });
+  
+  
 
 const polly = new AWS.Polly();
 
@@ -64,6 +66,7 @@ const InstructionReader = ({ instructions }) => {
   };
 
   const handleVoiceCommand = (command) => {
+    console.log(currentInstructionRef.current,'command:',command);
     if (command.includes('pause')) {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -73,44 +76,53 @@ const InstructionReader = ({ instructions }) => {
         audioRef.current.play();
       }
     } else if (command.includes('next step')) {
-      if (currentInstructionRef.current < instructions.length - 1) {
-        stopReading(); // Stop current playback
-        const newIndex = currentInstructionRef.current + 1;
-        currentInstructionRef.current = newIndex; // Update ref
-        setCurrentInstructionIndex(newIndex); // Sync with state
-        readInstructionAtIndex(newIndex, true); // Play new instruction and continue reading
-      }
+        if (currentInstructionRef.current < instructions.length - 1) {
+            stopReading(); // Stop current playback without resetting state
+            const newIndex = currentInstructionRef.current + 1;
+            currentInstructionRef.current = newIndex; // Update ref
+            setCurrentInstructionIndex(newIndex); // Sync with state
+            readInstructionAtIndex(newIndex, true); // Play new instruction and continue reading
+          }
     } else if (command.includes('go back')) {
-      if (currentInstructionRef.current > 0) {
-        stopReading(); // Stop current playback
-        const newIndex = currentInstructionRef.current - 1;
-        currentInstructionRef.current = newIndex; // Update ref
-        setCurrentInstructionIndex(newIndex); // Sync with state
-        readInstructionAtIndex(newIndex, true); // Play new instruction and continue reading
-      }
+        console.log(currentInstructionRef.current);
+        if (currentInstructionRef.current > 0) {
+            stopReading(); // Stop current playback without resetting state
+            const newIndex = currentInstructionRef.current - 1;
+            currentInstructionRef.current = newIndex; // Update ref
+            setCurrentInstructionIndex(newIndex); // Sync with state
+            readInstructionAtIndex(newIndex, true); // Play new instruction and continue reading
+          }
     }
   };
   
   
 
-  const readInstructionAtIndex = async (index, continueReading = false,command) => {
+  const readInstructionAtIndex = async (index, continueReading = false) => {
+    // Stop any existing playback
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0; // Reset the audio to the start
+      audioRef.current = null; // Clear the reference
+    }
+  
     const text = instructions[index];
     const audio = await synthesizeSpeech(text);
     audioRef.current = audio;
   
+    // Play the new audio
     audio.play();
-
-    currentInstructionRef.current += 1;
-   
   
+    // Wait for the current instruction to finish playing
     await new Promise((resolve) => {
-        console.log('stoppedon')
       audio.onended = resolve;
     });
-    if (continueReading ) {
-      readAllInstructions(); // Continue reading the remaining instructions
+  
+    // Continue reading the next instruction if requested
+    if (continueReading && index < instructions.length - 1) {
+      readInstructionAtIndex(index + 1, true); // Recursively read the next instruction
     }
   };
+  
   
 
   const readAllInstructions = async () => {
@@ -118,9 +130,11 @@ const InstructionReader = ({ instructions }) => {
     for (let i = currentInstructionRef.current; i < instructions.length; i++) {
       if (!isReadingRef.current) break; // Check ref for interruption
       currentInstructionRef.current = i; // Update ref
+      console.log(currentInstructionRef.current);
       setCurrentInstructionIndex(i); // Sync with state for UI updates
   
       const text = instructions[i];
+      console.log(text)
       const audio = await synthesizeSpeech(text);
       audioRef.current = audio;
   
@@ -130,21 +144,25 @@ const InstructionReader = ({ instructions }) => {
         audio.onended = resolve;
       });
     }
-    isReadingRef.current = false; // Mark as finished reading
-    currentInstructionRef.current = 0; // Reset index to the start
-    setCurrentInstructionIndex(0); // Sync with state
-  };
+    console.log('done')
+  stopReading('stop')
+  }
 
-  const stopReading = () => {
-    isReadingRef.current = false; // Update ref to interrupt reading
+  const stopReading = (action = '') => {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0; // Reset the audio to the start
       audioRef.current = null; // Clear the reference to the audio
     }
-    currentInstructionRef.current = 0; // Reset instruction index reference
-    setCurrentInstructionIndex(0); // Reset the current instruction state
-    setTranscription(''); // Clear the transcription state
+  
+    if (action === 'stop') {
+      // Full stop: Reset everything
+      isReadingRef.current = false; // Update ref to indicate reading has stopped
+      currentInstructionRef.current = 0; // Reset instruction index reference
+      setCurrentInstructionIndex(0); // Reset the current instruction state
+      setTranscription(''); // Clear the transcription state
+      if (isListening) toggleListening(); // Stop listening if active
+    }
   };
   
 
@@ -180,7 +198,7 @@ const InstructionReader = ({ instructions }) => {
 
     {/* Stop Reading Button */}
     <button
-  onClick={stopReading}
+  onClick={()=>stopReading('stop')}
   className={`px-4 py-2 rounded-lg font-semibold transition duration-200 ${
     !isReadingRef.current
       ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
