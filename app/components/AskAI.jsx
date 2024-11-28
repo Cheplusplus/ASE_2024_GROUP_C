@@ -44,7 +44,7 @@ const RecipeTips = ({ recipe }) => {
       {/* Colorful Animated Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="w-16 h-16 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 rounded-full flex items-center justify-center animate-pulse fixed bottom-8 right-8 shadow-lg"
+        className="w-16 h-16 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 rounded-full flex items-center justify-center animate-pulse fixed bottom-24 right-8 shadow-lg"
       >
         <span className="w-12 h-12 bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 rounded-full"></span>
       </button>
