@@ -50,17 +50,18 @@ const ShoppingList = () => {
 
   const addItem = async () => {
     if (!newItem.trim()) return;
-
+    
     try {
-      const response = await fetch(`${url}/api/shoppingList/item?user=${session.user.id}`, {
+      const response = await fetch(`${url}/api/shoppingList/item`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          item: {
+          items: [{
             name: newItem,
             quantity: 1,
-            purchased: false
-          }
+            purchased: false,
+            source: `${session.user.name}`
+          }],user:session.user 
         })
       });
 
