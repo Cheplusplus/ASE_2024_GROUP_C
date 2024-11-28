@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import RecipeCard from '../components/RecipeCard';
+import { TrashIcon } from 'lucide-react';
+import {useNotification, NOTIFICATION_TYPES,} from "../components/NotificationContext";
+
 const FavouritesPage = () => {
   const [favourites, setFavourites] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -58,7 +61,7 @@ const FavouritesPage = () => {
 
   const handleClearAllFavourites = async () => {
     try {
-      const response = await fetch('/api/favourites/clear', { method: 'DELETE' });
+      const response = await fetch(`${url}/api/favourites`, { method: 'DELETE' });
       
       if (!response.ok) throw new Error('Failed to clear favourites');
       
@@ -88,9 +91,11 @@ const FavouritesPage = () => {
         {favourites.length > 0 && (
           <button
             onClick={handleClearAllFavourites}
-            className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+            //className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+            className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
+            title="Clear Favourites List"
           >
-            Clear All Favourites
+            <TrashIcon />
           </button>
         )}
       </div>
