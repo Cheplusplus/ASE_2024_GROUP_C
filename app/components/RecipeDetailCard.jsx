@@ -7,6 +7,7 @@ import { FaStar } from "react-icons/fa"; // Importing the star icon from Font Aw
 import { useRouter } from "next/navigation";
 import RecipeReviews from "./Reviews";
 import InstructionReader from "./ReadInstructions";
+import RecipeTips from './AskAI';
 
 const formatTime = (minutes) => {
   const hours = Math.floor(minutes / 60);
@@ -243,6 +244,7 @@ const RecipeDetailCard = ({ recipe, id }) => {
           <RecipeReviews recipeId={id} reviewUpdateKey={reviewUpdateKey} />
 
           <AddReview recipeId={id} onAdd={handleReviewAdded} />
+          <RecipeTips recipe={recipe.ingredients}/>
         </div>
       </div>
     </div>
