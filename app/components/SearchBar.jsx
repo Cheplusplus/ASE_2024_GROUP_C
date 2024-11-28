@@ -139,7 +139,7 @@ const SearchBar = ({ isOpen, onClose }) => {
 
           {/* Search Results / Auto Suggestion */}
           {searchResults.length > 0 && (
-            <div className="absolute w-full mt-2 bg-white rounded-md shadow-lg max-h-64 overflow-y-auto">
+            <div className="absolute w-full mt-2 bg-white rounded-md shadow-lg max-h-32 overflow-y-auto">
               {searchResults.map((recipe) => (
                 <Link
                   key={recipe._id}
