@@ -58,7 +58,6 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [intervalId, setIntervalId] = useState(null);
   const remainingTags = tags.length - MAX_VISIBLE_TAGS;
-  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
   const handleMouseEnter = () => {
     const id = setInterval(() => {
