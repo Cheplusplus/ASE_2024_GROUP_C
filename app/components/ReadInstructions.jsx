@@ -1,175 +1,239 @@
-import { useState } from "react";
-import AWS from "aws-sdk";
+import React, { useState, useEffect, useRef } from 'react';
+import AWS from 'aws-sdk';
 
-const RecipeTips = ({ recipe }) => {
-  const [isOpen, setIsOpen] = useState(false); // Controls the modal
-  const [question, setQuestion] = useState("");
-  const [loading, setLoading] = useState(false); // Loading state
-  const [answer, setAnswer] = useState("");
-  const [isPlaying, setIsPlaying] = useState(false); // To track if TTS is playing
-
-  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-
-  // AWS Polly configuration
-  AWS.config.update({
+// AWS Polly Configuration for TTS
+AWS.config.update({
     region: process.env.NEXT_PUBLIC_REGION,
     accessKeyId: process.env.NEXT_PUBLIC_ACCESS_KEY_ID,
     secretAccessKey: process.env.NEXT_PUBLIC_SECRET_ACCESS_KEY,
   });
+  
+  
+
+const polly = new AWS.Polly();
+
+const InstructionReader = ({ instructions }) => {
+  const [recognition, setRecognition] = useState(null);
+  const [isListening, setIsListening] = useState(false);
+  const [transcription, setTranscription] = useState('');
+  const [currentInstructionIndex, setCurrentInstructionIndex] = useState(0);
+  const isReadingRef = useRef(false); // Ref to track reading state
+  const audioRef = useRef(null);
+  const currentInstructionRef = useRef(0); // Ref for immediate access to current index
+
+
+  // Initialize Web Speech Recognition API
+  useEffect(() => {
+    if (!('webkitSpeechRecognition' in window)) {
+      alert('Web Speech Recognition is not supported in this browser.');
+      return;
+    }
+
+    const speechRecognition = new window.webkitSpeechRecognition();
+    speechRecognition.continuous = true;
+    speechRecognition.interimResults = false;
+    speechRecognition.lang = 'en-US';
+
+    speechRecognition.onresult = (event) => {
+      const transcript = event.results[event.results.length - 1][0].transcript.trim();
+      setTranscription(transcript);
+      handleVoiceCommand(transcript.toLowerCase());
+    };
+
+    speechRecognition.onerror = (error) => {
+      console.error('Speech Recognition Error:', error);
+    };
+
+    setRecognition(speechRecognition);
+  }, []);
 
   const synthesizeSpeech = async (text) => {
     const params = {
       Text: text,
-      OutputFormat: "mp3",
-      VoiceId: "Salli", // You can choose another voice, like Joanna, Matthew, etc.
+      OutputFormat: 'mp3',
+      VoiceId: 'Salli',
     };
 
-    const polly = new AWS.Polly();
     try {
       const data = await polly.synthesizeSpeech(params).promise();
-      const audioBlob = new Blob([data.AudioStream], { type: "audio/mp3" });
+      const audioBlob = new Blob([data.AudioStream], { type: 'audio/mp3' });
       const audioUrl = URL.createObjectURL(audioBlob);
-
       const audio = new Audio(audioUrl);
-      audio.play();
-
-      setIsPlaying(true);
-
-      audio.onended = () => {
-        setIsPlaying(false);
-      };
-    } catch (error) {
-      console.error("Error synthesizing speech:", error);
+      return audio;
+    } catch (err) {
+      console.error('Error synthesizing speech:', err);
     }
   };
 
-  const handleAskQuestion = async () => {
-    setLoading(true);
-    setAnswer("");
-
-    try {
-      console.log(recipe);
-      const response = await fetch(`${url}/api/whisper`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ question, recipe }),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        setAnswer(data.answer);
-      } else {
-        setAnswer("Sorry, I couldn't fetch tips at the moment.");
+  const handleVoiceCommand = (command) => {
+    console.log(currentInstructionRef.current,'command:',command);
+    if (command.includes('pause')) {
+      if (audioRef.current) {
+        audioRef.current.pause();
       }
-    } catch (error) {
-      setAnswer("An error occurred while fetching the tips.");
-    } finally {
-      setLoading(false);
+    } else if (command.includes('resume')) {
+      if (audioRef.current) {
+        audioRef.current.play();
+      }
+    } else if (command.includes('next step')) {
+        if (currentInstructionRef.current < instructions.length - 1) {
+            stopReading(); // Stop current playback without resetting state
+            const newIndex = currentInstructionRef.current + 1;
+            currentInstructionRef.current = newIndex; // Update ref
+            setCurrentInstructionIndex(newIndex); // Sync with state
+            readInstructionAtIndex(newIndex, true); // Play new instruction and continue reading
+          }
+    } else if (command.includes('go back')) {
+        console.log(currentInstructionRef.current);
+        if (currentInstructionRef.current > 0) {
+            stopReading(); // Stop current playback without resetting state
+            const newIndex = currentInstructionRef.current - 1;
+            currentInstructionRef.current = newIndex; // Update ref
+            setCurrentInstructionIndex(newIndex); // Sync with state
+            readInstructionAtIndex(newIndex, true); // Play new instruction and continue reading
+          }
     }
   };
+  
+  
 
-  const handleClose = () => {
-    setIsOpen(false);
-    setQuestion("");
-    setAnswer("");
+  const readInstructionAtIndex = async (index, continueReading = false) => {
+    // Stop any existing playback
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0; // Reset the audio to the start
+      audioRef.current = null; // Clear the reference
+    }
+  
+    const text = instructions[index];
+    const audio = await synthesizeSpeech(text);
+    audioRef.current = audio;
+  
+    // Play the new audio
+    audio.play();
+  
+    // Wait for the current instruction to finish playing
+    await new Promise((resolve) => {
+      audio.onended = resolve;
+    });
+  
+    // Continue reading the next instruction if requested
+    if (continueReading && index < instructions.length - 1) {
+      readInstructionAtIndex(index + 1, true); // Recursively read the next instruction
+    }
+  };
+  
+  
+
+  const readAllInstructions = async () => {
+    isReadingRef.current = true; // Mark as reading
+    for (let i = currentInstructionRef.current; i < instructions.length; i++) {
+      if (!isReadingRef.current) break; // Check ref for interruption
+      currentInstructionRef.current = i; // Update ref
+      console.log(currentInstructionRef.current);
+      setCurrentInstructionIndex(i); // Sync with state for UI updates
+  
+      const text = instructions[i];
+      console.log(text)
+      const audio = await synthesizeSpeech(text);
+      audioRef.current = audio;
+  
+      audio.play();
+      // Wait for the current instruction to finish playing
+      await new Promise((resolve) => {
+        audio.onended = resolve;
+      });
+    }
+    console.log('done')
+  stopReading('stop')
+  }
+
+  const stopReading = (action = '') => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0; // Reset the audio to the start
+      audioRef.current = null; // Clear the reference to the audio
+    }
+  
+    if (action === 'stop') {
+      // Full stop: Reset everything
+      isReadingRef.current = false; // Update ref to indicate reading has stopped
+      currentInstructionRef.current = 0; // Reset instruction index reference
+      setCurrentInstructionIndex(0); // Reset the current instruction state
+      setTranscription(''); // Clear the transcription state
+      if (isListening) toggleListening(); // Stop listening if active
+    }
+  };
+  
+
+  const toggleListening = () => {
+    if (isListening) {
+      recognition.stop();
+    } else {
+      recognition.start();
+    }
+    setIsListening(!isListening);
   };
 
   return (
-    <>
-      {/* Colorful Animated Button */}
-      <button
-        onClick={() => setIsOpen(true)}
-        className="w-16 h-16 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 rounded-full flex items-center justify-center animate-pulse fixed bottom-8 right-8 shadow-lg"
-      >
-        <span className="w-12 h-12 bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 rounded-full"></span>
-      </button>
+<div className="max-w-2xl mx-auto p-6 bg-gray-100 rounded-lg shadow-md">
+  <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
+    Voice-Controlled Instruction Reader
+  </h1>
+  
+  {/* Action Buttons */}
+  <div className="flex justify-center space-x-4 mb-4">
+    {/* Read All Instructions Button */}
+    <button
+      onClick={readAllInstructions}
+      disabled={isReadingRef.current}
+      className={`px-4 py-2 rounded-lg font-semibold transition duration-200 ${
+        isReadingRef.current
+          ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+          : 'bg-blue-600 text-white hover:bg-blue-700'
+      }`}
+    >
+      {isReadingRef.current ? 'Reading...' : 'Read All Instructions'}
+    </button>
 
-      {/* Modal */}
-      {isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white w-96 p-6 rounded-lg shadow-lg relative">
-            {/* Close Button */}
-            <button
-              onClick={handleClose}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-            >
-              ✕
-            </button>
+    {/* Stop Reading Button */}
+    <button
+  onClick={()=>stopReading('stop')}
+  className={`px-4 py-2 rounded-lg font-semibold transition duration-200 ${
+    !isReadingRef.current
+      ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+      : 'bg-red-600 text-white hover:bg-red-700'
+  }`}
+  disabled={!isReadingRef.current}
+>
+  Stop
+</button>
 
-            <h2 className="text-lg font-bold mb-4">Ask for Tips</h2>
+    {/* Toggle Listening Button */}
+    <button
+      onClick={toggleListening}
+      className={`px-4 py-2 rounded-lg font-semibold transition duration-200 ${
+        isListening
+          ? 'bg-red-600 text-white hover:bg-red-700'
+          : 'bg-green-600 text-white hover:bg-green-700'
+      }`}
+    >
+      {isListening ? 'Stop Listening' : 'Start Listening'}
+    </button>
+  </div>
+  
+  {/* Current Instruction Display */}
+  <div className="p-4 bg-white rounded-lg shadow-inner">
+    <p className="text-lg font-semibold text-gray-700 mb-2">
+      <strong>Current Instruction:</strong> {instructions[currentInstructionIndex]}
+    </p>
+    <p className="text-gray-600">
+      <strong>Transcription:</strong> {transcription || 'Waiting for voice input...'}
+    </p>
+  </div>
+</div>
 
-            {/* Textarea */}
-            <textarea
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-              placeholder="Ask something like: How can I make this vegan?"
-              rows="4"
-              className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-
-            {/* Buttons */}
-            <div className="flex justify-end gap-2 mt-4">
-              <button
-                onClick={handleClose}
-                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleAskQuestion}
-                disabled={loading || !question.trim()}
-                className={`px-4 py-2 text-white rounded ${
-                  loading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-blue-600 hover:bg-blue-700"
-                }`}
-              >
-                {loading ? "Loading..." : "Submit"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Loading Animation */}
-      {loading && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-          <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      )}
-
-      {/* Response Modal */}
-      {answer && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-          <div className="bg-white w-96 p-6 rounded-lg shadow-lg relative">
-            {/* Close Button */}
-            <button
-              onClick={handleClose}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-            >
-              ✕
-            </button>
-
-            <h2 className="text-lg font-bold mb-4">Answer</h2>
-            <p>{answer}</p>
-
-            {/* Read Button */}
-            <button
-              onClick={() => synthesizeSpeech(answer)}
-              disabled={isPlaying}
-              className={`mt-4 px-4 py-2 bg-green-500 text-white rounded ${
-                isPlaying ? "bg-gray-400 cursor-not-allowed" : "hover:bg-green-600"
-              }`}
-            >
-              a{isPlaying ? "Reading..." : "Read Aloud"}
-            </button>
-          </div>
-        </div>
-      )}
-    </>
   );
 };
 
-export default RecipeTips;
+export default InstructionReader;
