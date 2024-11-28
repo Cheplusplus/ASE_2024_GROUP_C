@@ -1,11 +1,13 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import SearchBar from "./SearchBar";
-import { signOut } from "next-auth/react";
-import { ThemeToggle } from "./ThemeToggle";
-import { useSession } from "next-auth/react";
+'use client';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import SearchBar from './SearchBar';
+import { signOut } from 'next-auth/react';
+import { ThemeToggle } from './ThemeToggle';
+import { useSession } from 'next-auth/react';
+
+import { ShoppingCartIcon } from "lucide-react";
 import Image from "next/image";
 /**
  * The main navigation component for the app.
@@ -16,11 +18,35 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openSublinks, setOpenSublinks] = useState({});
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [shoppingListCount, setShoppingListCount] = useState(0);
   const pathname = usePathname();
   const router = useRouter(); 
 
   const { data: session } = useSession();
   const [favouritesCount, setFavouritesCount] = useState(0);
+
+   // Update shopping list count
+   useEffect(() => {
+    const updateShoppingListCount = () => {
+      const storedItems = localStorage.getItem("shoppingList");
+      const items = storedItems ? JSON.parse(storedItems) : [];
+      setShoppingListCount(items.length);
+    };
+
+    // Initial count
+    updateShoppingListCount();
+
+    // Listen for storage changes
+    window.addEventListener('storage', updateShoppingListCount);
+
+    // Add custom event listener
+    window.addEventListener('shopping-list-updated', updateShoppingListCount);
+
+    return () => {
+      window.removeEventListener('storage', updateShoppingListCount);
+      window.removeEventListener('shopping-list-updated', updateShoppingListCount);
+    };
+  }, []);
 
   useEffect(() => {
     // Check if user is logged in, for example, by checking a token in localStorage
@@ -127,6 +153,11 @@ useEffect(() => {
         { name: "Profile", href: "/profile" },
       ],
     },
+    {
+      name: "Shopping List",
+      href: "/shopping-list",
+      icon: <ShoppingCartIcon className="inline-block mr-2" />
+    }
   ];
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -196,21 +227,29 @@ useEffect(() => {
                 </Link>
               </div>
             </div>
-            
 
-            {/* Theme Toggle and Search */}
-            <div className="flex items-center space-x-2">
-            <Link href="/favourites" className="relative" >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart">
-              <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
-            </svg>
+            {/* Shopping cart, Theme Toggle and Search */}
+            <div className="flex items-center ">
+            <Link href="/favorites" className=" hidden md:block relative" >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
+                  <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
+                </svg>
                 {favouritesCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
                     {favouritesCount}
                   </span>
                 )}
             </Link>
-              <ThemeToggle />
+             <Link href="/shopping-list" className="hidden md:block relative p-2 rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <ShoppingCartIcon />
+            {shoppingListCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {shoppingListCount}
+                  </span>
+                )}
+          </Link> 
+          <ThemeToggle />
+              
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 className={`p-2 rounded-md relative text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none ${

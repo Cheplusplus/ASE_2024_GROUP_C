@@ -93,7 +93,7 @@ export default function RecipeDetail({ params }) {
         </script>
       </Head>
 
-      <div className="p-6 max-w-6xl mx-auto font-sans">
+      <div className="p-6 max-w-6xl mx-auto font-sans pt-16">
         
         
         <button
