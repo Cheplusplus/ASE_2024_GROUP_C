@@ -4,11 +4,18 @@ import Footer from "./components/Footer";
 import "./globals.css";
 import SessionProvider from "./components/SessionProvider";
 import { ThemeProvider } from "./components/ThemeProvider";
+import MobileBar from "./components/MobileBar";
+import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
+import { NotificationProvider } from "./components/NotificationContext";
 
 // metadata for the RootLayout
 export const metadata = {
+  metadataBase: new URL('https://ase-2024-group-c.vercel.app/'),
   title: "Recipe Rush - The Source for Culinary Inspiration",
   description: "Discover delicious recipes and cooking tips to elevate your culinary skills.",
+  category: "website",
+  generator: "Next.js",
+  manifest: "/manifest.json",
   openGraph: {
     type: "website",
     url: "https://metatags.io/",
@@ -39,15 +46,19 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" >
       <body className="bg-background text-foreground transition-colors duration-300">
        <SessionProvider>
         <ThemeProvider >
           <ClientNavWrapper>
             <Navbar />
           </ClientNavWrapper>
+          <NotificationProvider>
           <main className="min-h-screen pt-16">{children}</main>
+          </NotificationProvider>
           <Footer />
+          <MobileBar/>
+          <ServiceWorkerRegistration/>
           </ThemeProvider>
         </SessionProvider>
       </body>

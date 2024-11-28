@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import RecipeReviews from "./Reviews";
 import InstructionReader from "./ReadInstructions";
 import RecipeTips from './AskAI';
+import ShoppingListButton from "./ShoppingListButton";
 
 const formatTime = (minutes) => {
   const hours = Math.floor(minutes / 60);
@@ -83,6 +84,7 @@ const RecipeDetailCard = ({ recipe, id }) => {
             className="rounded-lg object-cover"
           />
         </div>
+
         <div className="flex flex-wrap gap-2 mt-4">
           {recipe.images?.map((image, index) => (
             <Image
@@ -101,7 +103,17 @@ const RecipeDetailCard = ({ recipe, id }) => {
       </div>
 
       <div>
-        <h1 className="text-3xl font-bold mb-2 text-gray-800">{recipe.title}</h1>
+        {/* New: Added flex container with ShoppingListButton */}
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
+            {recipe.title}
+          </h1>
+
+          <ShoppingListButton
+            ingredients={recipe.ingredients}
+            recipeName={recipe.title}
+          />
+        </div>
 
         <div className="flex flex-wrap gap-2 my-4">
           {recipe.tags?.map((tag, index) => (
@@ -230,7 +242,9 @@ const RecipeDetailCard = ({ recipe, id }) => {
                 <li>Fat: {recipe.nutrition?.fat || "N/A"}g</li>
                 <li>Saturated Fat: {recipe.nutrition?.saturated || "N/A"}g</li>
                 <li>Sodium: {recipe.nutrition?.sodium || "N/A"}mg</li>
-                <li>Carbohydrates: {recipe.nutrition?.carbohydrates || "N/A"}g</li>
+                <li>
+                  Carbohydrates: {recipe.nutrition?.carbohydrates || "N/A"}g
+                </li>
                 <li>Fiber: {recipe.nutrition?.fiber || "N/A"}g</li>
                 <li>Sugar: {recipe.nutrition?.sugar || "N/A"}g</li>
                 <li>Protein: {recipe.nutrition?.protein || "N/A"}g</li>

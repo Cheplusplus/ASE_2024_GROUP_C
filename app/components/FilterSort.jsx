@@ -199,29 +199,21 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
                 </Button>
               </div>
 
-              <Button 
-                variant="default" 
-                onClick={applyFilters} 
-                className="w-full mt-4"
-              >
-                Apply Filters
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => setIsOpen(false)} 
-                className="w-full mt-2 bg-red-400 hover:bg-red-700 text-white dark:bg-red-400 dark:hover:bg-red-700 dark:text-white"
-              >
-                Close
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-      {displayCount && (
-        <div className="mt-4 text-sm text-gray-600 dark:text-muted-foreground">
-          {count} results found
-        </div>
-      )}
+        <Button variant="primary" onClick={applyFilters} className="mt-4 w-full">
+          Apply Filters
+        </Button>
+        <Button variant="outline" onClick={() => setIsOpen(false)} className="mt-2 bg-red-600 hover:bg-red-700 w-full text-white">
+          Close
+        </Button>
+      </div>
+    </div>
+  </div>
+)}
+         {console.log(displayCount)}
+     {displayCount && <div >
+       {count} results found
+      </div>}
+
     </div>
   );
 };

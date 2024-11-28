@@ -3,7 +3,7 @@ import RecipeGrid from '../components/RecipeGrid'
 
 const AllRecipes = ({searchParams}) => {
   return (
-    <div className="relative">
+    <div className="relative pt-16">
     <section className="w-full">
       <RecipeGrid searchParams={searchParams} />
     </section>
