@@ -1,9 +1,10 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
 const MAX_VISIBLE_TAGS = 2;
+
 
 // SVG Icons as constants for reusability and improved readability
 const ClockIcon = (
@@ -23,10 +24,40 @@ const PeopleIcon = (
 );
 
 const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags = [] },  onAddToFavourites, onRemoveFromFavourites, isFavourited = false}) => {
+
+  const [stats, setStats] = useState([]);
+  const [aveRating,setAveRating] = useState(0);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response2 = await fetch(`${url}/api/getReviews?recipeId=${_id}`,{cache:'force-cache'});
+
+        if (!response2.ok) {
+          throw new Error(`HTTP error! Status: ${response2.status}`);
+        }
+
+        const reviewsData = await response2.json();
+        setStats(reviewsData.stats);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReviews();
+  },[]); // Dependency array
+
+  
+
+
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [intervalId, setIntervalId] = useState(null);
   const remainingTags = tags.length - MAX_VISIBLE_TAGS;
-  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
   const handleMouseEnter = () => {
     const id = setInterval(() => {
@@ -107,7 +138,6 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
               <span>{servings} servings</span>
             </div>
           </div>
-
           {/* Tags with "more" indicator */}
           {tags.length > 0 && (
             <div className="flex flex-wrap items-center gap-2">
@@ -126,6 +156,8 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
               )}
             </div>
           )}
+          <p className="text-yellow-500">{`★`.repeat(stats.averageRating)}</p>
+          <p className='bold'>{stats.numberOfComments} <i>reviews</i> </p>
             <button
               onClick={handleFavouriteClick}
               className={`mt-2 px-3 py-1 rounded ${

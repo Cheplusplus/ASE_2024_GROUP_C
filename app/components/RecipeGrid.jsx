@@ -48,8 +48,10 @@ const RecipeGrid = async ({ searchParams }) => {
           </div>
          : 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6">
+            
             {recipes.recipes.map((recipe) => (
-              <RecipeCard key={recipe._id} recipe={recipe} />
+               <RecipeCard key={recipe._id} recipe={recipe} />
+              
             ))}
           </div>
         }

@@ -21,8 +21,20 @@ export async function GET(req) {
     // Fetch reviews for the given recipeId
     const reviews = await Review.find({ recipeId });
 
+    const calculateStats = (reviews) => {
+      if (!reviews.length) {
+        return { averageRating: 0, numberOfComments: 0 };
+      }
+    
+      const numberOfComments = reviews.length;
+      const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+      const averageRating = totalRating / numberOfComments;
+    
+      return { averageRating:Math.round(averageRating), numberOfComments };
+    };
+    let stats = calculateStats(reviews);
     // Return reviews in response
-    return NextResponse.json(reviews, { status: 200 });
+    return NextResponse.json({reviews,stats}, { status: 200 });
   } catch (error) {
     console.error("Error fetching reviews:", error);
 
