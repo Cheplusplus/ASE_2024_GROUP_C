@@ -12,7 +12,6 @@ const RecipeTips = ({ recipe }) => {
     setAnswer("");
 
     try {
-      console.log(recipe)
       const response = await fetch(`${url}/api/whisper`, {
         method: "POST",
         headers: {
