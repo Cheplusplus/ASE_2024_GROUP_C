@@ -18,13 +18,12 @@ export default function RecipeDetail({ params }) {
     const fetchRecipe = async (id) => {
       try {
         const response = await fetch(`/api/recipe/${id}`);
-        console.log(response)
+        console.log(response);
         if (!response.ok) {
           throw new Error(`Failed to fetch recipe: ${response.statusText}`);
         }
         const data = await response.json();
         setRecipe(data.recipe);
-
       } catch (error) {
         console.error("Error fetching recipe:", error);
         setError("Failed to load recipe. Please try again later.");
@@ -63,7 +62,7 @@ export default function RecipeDetail({ params }) {
       </div>
     );
   }
-  
+
   return (
     <>
       {/* Dynamic meta tags for SEO */}
@@ -72,8 +71,13 @@ export default function RecipeDetail({ params }) {
         <meta name="description" content={recipe.description} />
         <meta property="og:title" content={recipe.title} />
         <meta property="og:description" content={recipe.description} />
-        <meta property="og:url" content={`https://recipe-rush.vercel.app/recipes/${id}`} />
-        {recipe.images && <meta property="og:image" content={recipe.images[0]} />}
+        <meta
+          property="og:url"
+          content={`https://recipe-rush.vercel.app/recipes/${id}`}
+        />
+        {recipe.images && (
+          <meta property="og:image" content={recipe.images[0]} />
+        )}
 
         {/* Structured Data for Recipe */}
         <script type="application/ld+json">
@@ -87,28 +91,26 @@ export default function RecipeDetail({ params }) {
             recipeInstructions: recipe.instructions,
             author: {
               "@type": "Person",
-              name: recipe.author || "Recipe Rush"
-            }
+              name: recipe.author || "Recipe Rush",
+            },
           })}
         </script>
       </Head>
 
       <div className="p-6 max-w-6xl mx-auto font-sans pt-16">
-        
-        
         <button
-          onClick={(e) => {e.preventDefault();router.back()}}
+          onClick={(e) => {
+            e.preventDefault();
+            router.back();
+          }}
           className="text-gray-200 hover:text-gray-500 mb-4 flex items-center"
         >
           ← Back
         </button>
 
         {/* RecipeDetailCard should ensure alt text is included for images */}
-        <RecipeDetailCard recipe={recipe}  id={id}/>
+        <RecipeDetailCard recipe={recipe} id={id} />
       </div>
     </>
   );
 }
-
-
-
