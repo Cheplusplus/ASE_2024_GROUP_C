@@ -5,61 +5,58 @@ import RecipeSkeleton from "../../components/RecipeDetailSkeleton";
 import RecipeDetailCard from "../../components/RecipeDetailCard";
 import { useEffect, useState } from "react";
 import Head from "next/head";
-import Link from "next/link"; // Import Link for navigation
-
+import Link from "next/link";
 
 export default function RecipeDetail({ params }) {
   const { id } = params;
   const router = useRouter();
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); // State to track errors
-  const [isDownloaded, setIsDownloaded] = useState(false)
+  const [error, setError] = useState(null);
+  const [isDownloaded, setIsDownloaded] = useState(false);
 
-  useEffect(()=> {
-    const downloadedRecipe = JSON.parse(localStorage.getItem('downloadedRecipes')) || []
-    setIsDownloaded(downloadedRecipe.some(r => r.id === recipe._id))
+  useEffect(() => {
+    const downloadedRecipes =
+      JSON.parse(localStorage.getItem("downloadedRecipes")) || [];
+    setIsDownloaded(downloadedRecipes.some((r) => r.id === id));
+  }, [id]);
 
-  }, [id])
+  const downloadRecipe = async () => {
+    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
+      const messageChannel = new MessageChannel();
 
-  const downloadRecipe = async ()=> {
-    if('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-      const messageChannel = new MessageChannel()
-      console.log('clicked')
-      console.log(id)
-
-      messageChannel.port1.onmessage =(event)=> {
-        if(event.data.success) {
-          const downloadedRecipes = JSON.parse(localStorage.getItem('downloadedRecipes'))
-
-          /**This Saves the Full Recipe Object */
-          downloadedRecipes.push(recipe)
-          localStorage.setItem('downloadedRecipes', JSON.stringify(downloadedRecipes))
-          setIsDownloaded(true)
-
-          alert('Recipe is now Available Offline')
-        }else {
-          alert('Failed to download Recipe for offline use')
+      messageChannel.port1.onmessage = (event) => {
+        if (event.data.success) {
+          const downloadedRecipes =
+            JSON.parse(localStorage.getItem("downloadedRecipes")) || [];
+          downloadedRecipes.push(recipe);
+          localStorage.setItem(
+            "downloadedRecipes",
+            JSON.stringify(downloadedRecipes)
+          );
+          setIsDownloaded(true);
+          alert("Recipe is now available offline!");
+        } else {
+          alert("Failed to download recipe for offline use.");
         }
-      }
+      };
 
-      navigator.serviceWorker.controller.postMessage (
+      navigator.serviceWorker.controller.postMessage(
         {
-          type: 'CACHE_RECIPE',
-          recipeUrl: `api/recipe/${id}`
-        }, 
+          type: "CACHE_RECIPE",
+          recipeUrl: `/api/recipe/${id}`,
+        },
         [messageChannel.port2]
-      )
-    }else {
-      alert('Offline functionality is not supported')
+      );
+    } else {
+      alert("Offline functionality is not supported.");
     }
-  }
+  };
 
   useEffect(() => {
     const fetchRecipe = async (id) => {
       try {
         const response = await fetch(`/api/recipe/${id}`);
-        console.log(response);
         if (!response.ok) {
           throw new Error(`Failed to fetch recipe: ${response.statusText}`);
         }
@@ -106,7 +103,6 @@ export default function RecipeDetail({ params }) {
 
   return (
     <>
-      {/* Dynamic meta tags for SEO */}
       <Head>
         <title>{recipe.title} - Recipe Rush</title>
         <meta name="description" content={recipe.description} />
@@ -119,8 +115,6 @@ export default function RecipeDetail({ params }) {
         {recipe.images && (
           <meta property="og:image" content={recipe.images[0]} />
         )}
-
-        {/* Structured Data for Recipe */}
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -130,14 +124,10 @@ export default function RecipeDetail({ params }) {
             image: recipe.images ? recipe.images[0] : "",
             recipeIngredient: recipe.ingredients,
             recipeInstructions: recipe.instructions,
-            author: {
-              "@type": "Person",
-              name: recipe.author || "Recipe Rush",
-            },
+            author: { "@type": "Person", name: recipe.author || "Recipe Rush" },
           })}
         </script>
       </Head>
-
       <div className="p-6 max-w-6xl mx-auto font-sans pt-16">
         <button
           onClick={(e) => {
@@ -148,15 +138,13 @@ export default function RecipeDetail({ params }) {
         >
           ← Back
         </button>
-
-
         <button
-        onClick={downloadRecipe}
-        // disabled={isDownloaded}
-        className="btn btn-primary"
-      >
-        {isDownloaded ? 'Downloaded' : 'Download for Offline Use'}
-      </button>
+          onClick={downloadRecipe}
+          disabled={isDownloaded}
+          className="btn btn-primary"
+        >
+          {isDownloaded ? "Downloaded" : "Download for Offline Use"}
+        </button>
         <RecipeDetailCard recipe={recipe} id={id} />
       </div>
     </>
