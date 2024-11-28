@@ -1,17 +1,54 @@
 import { useState } from "react";
+import AWS from "aws-sdk";
 
 const RecipeTips = ({ recipe }) => {
   const [isOpen, setIsOpen] = useState(false); // Controls the modal
   const [question, setQuestion] = useState("");
   const [loading, setLoading] = useState(false); // Loading state
   const [answer, setAnswer] = useState("");
+  const [isPlaying, setIsPlaying] = useState(false); // To track if TTS is playing
+
   const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+
+  // AWS Polly configuration
+  AWS.config.update({
+    region: process.env.NEXT_PUBLIC_REGION,
+    accessKeyId: process.env.NEXT_PUBLIC_ACCESS_KEY_ID,
+    secretAccessKey: process.env.NEXT_PUBLIC_SECRET_ACCESS_KEY,
+  });
+
+  const synthesizeSpeech = async (text) => {
+    const params = {
+      Text: text,
+      OutputFormat: "mp3",
+      VoiceId: "Salli", // You can choose another voice, like Joanna, Matthew, etc.
+    };
+
+    const polly = new AWS.Polly();
+    try {
+      const data = await polly.synthesizeSpeech(params).promise();
+      const audioBlob = new Blob([data.AudioStream], { type: "audio/mp3" });
+      const audioUrl = URL.createObjectURL(audioBlob);
+
+      const audio = new Audio(audioUrl);
+      audio.play();
+
+      setIsPlaying(true);
+
+      audio.onended = () => {
+        setIsPlaying(false);
+      };
+    } catch (error) {
+      console.error("Error synthesizing speech:", error);
+    }
+  };
 
   const handleAskQuestion = async () => {
     setLoading(true);
     setAnswer("");
 
     try {
+      console.log(recipe);
       const response = await fetch(`${url}/api/whisper`, {
         method: "POST",
         headers: {
@@ -117,6 +154,17 @@ const RecipeTips = ({ recipe }) => {
 
             <h2 className="text-lg font-bold mb-4">Answer</h2>
             <p>{answer}</p>
+
+            {/* Read Button */}
+            <button
+              onClick={() => synthesizeSpeech(answer)}
+              disabled={isPlaying}
+              className={`mt-4 px-4 py-2 bg-green-500 text-white rounded ${
+                isPlaying ? "bg-gray-400 cursor-not-allowed" : "hover:bg-green-600"
+              }`}
+            >
+              {isPlaying ? "Reading..." : "Read Aloud"}
+            </button>
           </div>
         </div>
       )}
