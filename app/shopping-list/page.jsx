@@ -102,8 +102,18 @@ const ShoppingList = () => {
   };
 
   const togglePurchased = async (itemId) => {
+    const itemToUpdate = items.find(item => item._id === itemId);
+
+     // Optimistically update the local state first
+    const updatedItems = items.map(item => 
+      item._id === itemId 
+        ? { ...item, purchased: !item.purchased }
+        : item
+    );
+
+    setItems(updatedItems)
+
     try {
-      const itemToUpdate = items.find(item => item._id === itemId);
       const response = await fetch(`${url}/api/shoppingList/item?user=${session.user.id}`,{
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -113,21 +123,37 @@ const ShoppingList = () => {
         })
       });
 
-      if (!response.ok) throw new Error('Failed to update item');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update item');
+      };
 
-      const updatedItems = await response.json();
-      setItems(updatedItems);
+      const serverUpdatedItems = await response.json();
+      setItems(serverUpdatedItems);
 
       addNotification(
         `Marked item as ${itemToUpdate.purchased ? 'not purchased' : 'purchased'}`,
         NOTIFICATION_TYPES.SUCCESS
       );
     } catch (error) {
+      setItems(items)
       addNotification(error.message, NOTIFICATION_TYPES.ERROR);
     }
   };
 
   const updateQuantity = async (itemId, quantity) => {
+
+    if (quantity < 1) return;
+
+  // Optimistically update the local state first
+  const updatedQuantity = items.map(item => 
+    item._id === itemId 
+      ? { ...item, quantity: quantity }
+      : item
+  );
+
+  setItems(updatedQuantity)
+
     try {
       const response = await fetch(`${url}/api/shoppingList/item?user=${session.user.id}`, {
         method: 'PUT',
@@ -138,16 +164,20 @@ const ShoppingList = () => {
         })
       });
 
-      if (!response.ok) throw new Error('Failed to update quantity');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update quantity');
+      };
 
-      const updatedItems = await response.json();
-      setItems(updatedItems);
+      const serverUpdatedItems = await response.json();
+      setItems(serverUpdatedItems);
 
       addNotification(
         'Quantity updated',
         NOTIFICATION_TYPES.SUCCESS
       );
     } catch (error) {
+      setItems(items)
       addNotification(error.message, NOTIFICATION_TYPES.ERROR);
     }
   };

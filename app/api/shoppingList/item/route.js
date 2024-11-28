@@ -55,12 +55,22 @@ export async function POST(req) {
 // PUT method handler
 export async function PUT(req) {
   try {
-    const user = await initialize(req);
+    await connectToDatabase();
+    //const user = await initialize(req);
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("user");
+
+    const session = await getServerSession(authOptions);
+    
+    if (!session) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+    }
+
     const { itemId, updates } = await req.json();
 
     if (!itemId || !updates) throw new Error("Item ID and updates are required");
 
-    const shoppingList = await ShoppingList.findOne({ user: user._id });
+    const shoppingList = await ShoppingList.findOne({ user: id });
     if (!shoppingList) throw new Error("Shopping list not found");
 
     const itemIndex = shoppingList.items.findIndex(
@@ -77,6 +87,7 @@ export async function PUT(req) {
     await shoppingList.save();
     return new Response(JSON.stringify(shoppingList.items), { status: 200 });
   } catch (error) {
+    console.error("PUT Error:", error);
     return new Response(JSON.stringify({ error: error.message }), { status: 400 });
   }
 }
