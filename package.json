@@ -9,20 +9,45 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth/mongodb-adapter": "^3.7.3",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@google-cloud/speech": "^6.7.0",
+    "@google-cloud/text-to-speech": "^5.6.0",
+    "@radix-ui/react-dialog": "^1.1.2",
+    "@radix-ui/react-select": "^2.1.2",
+    "@radix-ui/react-slider": "^1.2.1",
+    "aws-sdk": "^2.1692.0",
+    "@serwist/next": "^9.0.10",
+    "axios": "^1.7.7",
+    "bcrypt": "^5.1.1",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
     "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "formidable": "^3.5.2",
+    "framer-motion": "^11.11.17",
     "fuse.js": "^7.0.0",
+    "js-cookie": "^3.0.5",
     "lucide-react": "^0.453.0",
+    "mongodb": "^6.10.0",
     "mongoose": "^8.7.2",
+    "multer": "^1.4.5-lts.1",
     "next": "14.2.15",
+    "next-auth": "^4.24.7",
+    "next-connect": "^1.0.0",
+    "nodemailer": "^6.9.16",
+    "openai": "^2.0.5",
     "react": "^18",
     "react-dom": "^18",
-    "react-icons": "^5.3.0"
+    "react-icons": "^5.3.0",
+    "sharp": "^0.33.5",
+    "tailwind-merge": "^2.5.4"
   },
   "devDependencies": {
     "eslint": "^8",
     "eslint-config-next": "14.2.15",
     "postcss": "^8",
+    "serwist": "^9.0.10",
     "tailwindcss": "^3.4.1"
   }
 }
