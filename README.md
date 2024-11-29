@@ -80,6 +80,11 @@ Download recipes for offline access (Planned)
 - Quick search functionality
 - Advanced filtering system
 
+#### 🧭 Progressive Web App(PWA)
+- Enables offline functionality, allowing users to access the app without an internet connection
+- Provides a seamless user experience, even on low-bandwidth networks
+
+
 ### Technology Stack
 #### Frontend
 
