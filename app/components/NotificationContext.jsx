@@ -1,43 +1,65 @@
-"use client"
+"use client";
 
-import React, { createContext, useState, useContext, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, CheckCircle, AlertTriangle, Info } from 'lucide-react';
+import React, { createContext, useState, useContext, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, CheckCircle, AlertTriangle, Info } from "lucide-react";
 
 // Notification types
 const NOTIFICATION_TYPES = {
-  SUCCESS: 'success',
-  ERROR: 'error',
-  WARNING: 'warning',
-  INFO: 'info'
+  SUCCESS: "success",
+  ERROR: "error",
+  WARNING: "warning",
+  INFO: "info",
 };
 
 // Notification Context
 const NotificationContext = createContext(null);
 
+/**
+ * Provides a context for displaying notifications to the user. The context
+ * provides `addNotification` and `removeNotification` functions, which can be
+ * used to add and remove notifications, respectively. The context also provides
+ * the `notifications` state, which is an array of objects with `id`, `message`, and
+ * `type` properties.
+ *
+ * @param {React.ReactNode} children The children elements to be wrapped by the
+ *                                    notification provider.
+ *
+ * @returns {React.ReactElement} The wrapped children elements with the
+ *                              notification context provider.
+ */
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
 
-  const addNotification = useCallback((message, type = NOTIFICATION_TYPES.SUCCESS, duration = 3000) => {
-    const id = Date.now();
-    const newNotification = { id, message, type };
-    
-    setNotifications((prev) => [...prev, newNotification]);
+  const addNotification = useCallback(
+    (message, type = NOTIFICATION_TYPES.SUCCESS, duration = 3000) => {
+      const id = Date.now();
+      const newNotification = { id, message, type };
 
-    // Auto remove notification
-    setTimeout(() => {
-      setNotifications((prev) => prev.filter(notification => notification.id !== id));
-    }, duration);
+      setNotifications((prev) => [...prev, newNotification]);
 
-    return id;
-  }, []);
+      // Auto remove notification
+      setTimeout(() => {
+        setNotifications((prev) =>
+          prev.filter((notification) => notification.id !== id)
+        );
+      }, duration);
+
+      return id;
+    },
+    []
+  );
 
   const removeNotification = useCallback((id) => {
-    setNotifications((prev) => prev.filter(notification => notification.id !== id));
+    setNotifications((prev) =>
+      prev.filter((notification) => notification.id !== id)
+    );
   }, []);
 
   return (
-    <NotificationContext.Provider value={{ addNotification, removeNotification, notifications }}>
+    <NotificationContext.Provider
+      value={{ addNotification, removeNotification, notifications }}
+    >
       {children}
       <NotificationContainer />
     </NotificationContext.Provider>
@@ -48,7 +70,9 @@ export const NotificationProvider = ({ children }) => {
 export const useNotification = () => {
   const context = useContext(NotificationContext);
   if (!context) {
-    throw new Error('useNotification must be used within a NotificationProvider');
+    throw new Error(
+      "useNotification must be used within a NotificationProvider"
+    );
   }
   return context;
 };
@@ -63,7 +87,7 @@ const NotificationContainer = () => {
    * @returns {React.ReactElement} The icon.
    */
   const getNotificationIcon = (type) => {
-    switch(type) {
+    switch (type) {
       case NOTIFICATION_TYPES.SUCCESS:
         return <CheckCircle className="w-6 h-6 text-white" />;
       case NOTIFICATION_TYPES.ERROR:
@@ -83,17 +107,17 @@ const NotificationContainer = () => {
    * @returns {string} The tailwindcss background color class.
    */
   const getTypeStyles = (type) => {
-    switch(type) {
+    switch (type) {
       case NOTIFICATION_TYPES.SUCCESS:
-        return 'bg-green-500';
+        return "bg-green-500";
       case NOTIFICATION_TYPES.ERROR:
-        return 'bg-red-500';
+        return "bg-red-500";
       case NOTIFICATION_TYPES.WARNING:
-        return 'bg-yellow-500';
+        return "bg-yellow-500";
       case NOTIFICATION_TYPES.INFO:
-        return 'bg-blue-500';
+        return "bg-blue-500";
       default:
-        return 'bg-gray-500';
+        return "bg-gray-500";
     }
   };
 
@@ -106,10 +130,10 @@ const NotificationContainer = () => {
             initial={{ opacity: 0, x: 100 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 100 }}
-            transition={{ 
-              type: "spring", 
-              stiffness: 300, 
-              damping: 20 
+            transition={{
+              type: "spring",
+              stiffness: 300,
+              damping: 20,
             }}
             className={`
               ${getTypeStyles(notification.type)} 
@@ -127,10 +151,8 @@ const NotificationContainer = () => {
             <div className="flex-shrink-0">
               {getNotificationIcon(notification.type)}
             </div>
-            <div className="flex-grow">
-              {notification.message}
-            </div>
-            <button 
+            <div className="flex-grow">{notification.message}</div>
+            <button
               onClick={() => removeNotification(notification.id)}
               className="opacity-50 hover:opacity-100 transition-opacity"
             >
