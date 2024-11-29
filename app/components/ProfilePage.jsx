@@ -5,6 +5,17 @@ import { getUserProfile } from "@/lib/api";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 
+/**
+ * ProfilePage is a Next.js component that displays the user's profile and allows them to edit it.
+ * It fetches the user's profile from the database and displays it in a profile card.
+ * When the user clicks the "Edit Profile" button, it sets editMode to true and displays the EditProfileForm component.
+ * If the user updates their profile successfully, it sets editMode to false and displays a success message.
+ * If there is an error, it displays an error message.
+ * @param {object} props - Component props
+ * @param {string} props.userId - User ID to fetch profile for
+ * @param {string} props.db - Database to fetch profile from (either 'test' or 'devdb')
+ * @returns A React component that displays the user's profile and allows them to edit it
+ */
 export default function ProfilePage({ userId, db }) {
   const [user, setUser] = useState(null);
   const [editMode, setEditMode] = useState(false);
@@ -12,6 +23,17 @@ export default function ProfilePage({ userId, db }) {
   const { data: session } = useSession();
 
   useEffect(() => {
+ /**
+ * Asynchronously fetches the user's profile data from the specified database and sets it to the state variable "user".
+ * If successful, updates the user state with the fetched data.
+ * If an error occurs during fetching, sets an error message.
+ * @function
+ * @async
+ * @throws {Error} If the request fails
+ *
+ * @returns {Promise<void>} A promise that resolves when the profile data is fetched and state is updated.
+ */
+ 
     async function fetchData() {
       try {
         const data = await getUserProfile(userId, db);
