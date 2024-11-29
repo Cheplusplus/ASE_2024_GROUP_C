@@ -148,6 +148,16 @@ const InstructionReader = ({ instructions }) => {
   };
   
   
+/**
+ * Reads and plays the instruction at the given index and plays it using AWS Polly..
+ * Stops any existing audio playback before starting the new instruction.
+ * Optionally continues reading the next instruction automatically if specified.
+ *
+ * @param {number} index - The index of the instruction to read.
+ * @param {boolean} [continueReading=false] - Whether to continue reading the next instruction
+ *        automatically after the current one finishes playing.
+ * @returns {Promise<void>} 
+ */
 
   const readInstructionAtIndex = async (index, continueReading = false) => {
     // Stop any existing playback
