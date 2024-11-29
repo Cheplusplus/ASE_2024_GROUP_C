@@ -82,6 +82,11 @@ const InstructionReader = ({ instructions }) => {
     setRecognition(speechRecognition);
   }, []);
 
+/**
+ * Synthesizes speech using AWS Polly given a text.
+ * @param {string} text The text to synthesize into speech.
+ * @returns {Promise<Audio>} The audio object containing the synthesized speech.
+ */
   const synthesizeSpeech = async (text) => {
     const params = {
       Text: text,
