@@ -173,6 +173,15 @@ const Navbar = () => {
 
   const [menuOpen, setMenuOpen] = useState(false);
 
+  /**
+   * Toggles the state of the menu open variable.
+   *
+   * This function inverses the current state of the `menuOpen`
+   * variable, effectively opening the menu if it is currently closed,
+   * and closing it if it is currently open.
+   * @function Toggles the navbar's menu open state.
+   * @returns {void}
+   */
   const toggleMenu = () => {
     setMenuOpen((prev) => !prev);
   };
