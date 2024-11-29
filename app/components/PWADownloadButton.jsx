@@ -2,6 +2,12 @@
 
 import { useState, useEffect } from "react";
 
+/**
+ * Renders a button to install a PWA, but only if the app is installable and not already in standalone mode.
+ * Listens for the `beforeinstallprompt` event and saves the event to show the native install prompt later.
+ * Listens for the `appinstalled` event to hide the button if the app is already installed.
+ * @returns {JSX.Element} A button to install the app if installable, otherwise `null`.
+ */
 export default function PWADownloadButton() {
   const [isInstallable, setIsInstallable] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
