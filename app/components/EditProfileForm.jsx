@@ -44,6 +44,13 @@ export default function EditProfileForm({ user, onComplete, onError }) {
     }
   };
 
+/**
+ * Handles changes to the input fields in the form.
+ * Updates the formData state with the new value for the
+ * corresponding input field.
+ * 
+ * @param {Event} e - The change event triggered by the form input.
+ */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
