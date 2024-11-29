@@ -1,4 +1,4 @@
-"use client"; // Ensure this runs on the client side
+"use client"; // Ensures this runs on the client side
 
 import { useState, useEffect } from "react";
 
@@ -48,6 +48,14 @@ export default function PWADownloadButton() {
     };
   }, []);
 
+/**
+ * Handles the click event for installing the PWA by using the deferred prompt.
+ * If a prompt is available, it is shown to the user, and the outcome is checked.
+ * If the installation is accepted, the install button is hidden and the prompt is cleared.
+ * If the installation is declined or fails, appropriate messages are logged.
+ * 
+ * @returns {Promise<void>}
+ */
   const handleInstallClick = async () => {
     if (deferredPrompt) {
       try {
