@@ -5,13 +5,13 @@ import Image from "next/image";
 export default function MobileBar() {
     return (
       <div className="sticky bottom-4 mx-6 ">
-        <div className="justify-center rounded-3xl px-2 w-full shadow-md z-10 md:hidden backdrop-blur-md bg-white/30 dark:bg-gray-900/30  transition-colors duration-200">
+        <div className="justify-center rounded-3xl px-2 w-full shadow-md z-10 md:hidden backdrop-blur-md bg-white/50 dark:bg-gray-900/30  transition-colors duration-200">
           <div className="flex justify-between items-center text-center p-4">
             <div className="text-center flex flex-col items-center">
-              <Link href={"/category"}>
-                <Image width={10} height={10} className=" w-6" src={"/category.svg"} alt="" />
+              <Link href={"/shopping-list"}>
+                <Image width={10} height={10} className=" w-6" src={"/cart.svg"} alt="" />
               </Link>
-              <p className="text-[12px]">Categories</p>
+              <p className="text-[12px]">Shopping</p>
             </div>
             <div className="text-center flex flex-col items-center">
               <Link href={"/search"}>
@@ -20,16 +20,16 @@ export default function MobileBar() {
               <p className="text-[12px]">Search</p>
             </div>
             <div className="text-center flex flex-col items-center">
-              <Link href="/wishlist">
+              <Link href="/favorites">
                 <Image width={10} height={10}  className=" w-6" src={"/wishlist.svg"} alt="" />
               </Link>
-              <p className="text-[12px]">Wishlist</p>
+              <p className="text-[12px]">Favourite</p>
             </div>
             <div className="text-center flex flex-col items-center">
-              <Link href="/profile">
-                <Image width={10} height={10}  className=" w-6" src={"/user.svg"} alt="" />
+              <Link href="/downloads">
+                <Image width={10} height={10}  className=" w-6" src={"/download.svg"} alt="" />
               </Link>
-              <p className="text-[12px]">Account</p>
+              <p className="text-[12px]">Downloads</p>
             </div>
           </div>
         </div>

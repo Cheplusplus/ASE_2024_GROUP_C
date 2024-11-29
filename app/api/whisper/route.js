@@ -1,91 +1,61 @@
-import multer from 'multer';
-import fs from 'fs';
-import path from 'path';
-import { NextResponse } from 'next/server';
-
-// Replace with your OpenAI API key
-const OPENAI_API_KEY = 'YOUR_OPENAI_API_KEY';
-
-// Directory where files will be stored
-const uploadDir = './uploads';
-
-// Ensure the uploads directory exists
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Configure Multer storage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir); // Save files to the uploads directory
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  },
-});
-
-const upload = multer({ storage });
-
-// Middleware to handle file upload
-const fileMiddleware = (req, res) =>
-  new Promise((resolve, reject) => {
-    upload.single('file')(req, res, (err) => {
-      if (err) return reject(err);
-      resolve(req);
-    });
-  });
-
-export const config = {
-  api: {
-    bodyParser: false, // Disable body parsing for file uploads
-  },
-};
+export const runtime = 'nodejs'; // Ensure the handler runs in a Node.js environment
 
 export async function POST(req) {
   try {
-    // Parse the incoming request with Multer
-    const res = {}; // Mock response object for Multer
-    await fileMiddleware(req, res);
+    const body = await req.json(); // Parse the JSON body from the request
+    const { question, recipe } = body;
+    const ingredientsString = Object.entries(recipe)
+  .map(([ingredient, amount]) => `${amount} of ${ingredient}`)
+  .join(", ");
 
-    if (!req.file) {
-      console.error('Multer did not attach a file to req.file');
-      return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
-    }
 
-    const audioFilePath = req.file.path; // Path to the uploaded file
+    // Define the conversation messages
+    const messages = [
+      {
+        role: "system",
+        content: "You are a helpful cooking assistant who provides tips and substitutions for recipes.",
+      },
+      {
+        role: "user",
+        content: `Recipe: ${ingredientsString}\n\nQuestion: ${question}\n\nProvide a helpful, short, and concise answer.`,
+      },
+    ];
 
-    // Prepare the file for the OpenAI Whisper API
-    const formData = new FormData();
-    formData.append('file', fs.createReadStream(audioFilePath));
-    formData.append('model', 'whisper-1'); // Specify the Whisper model
-
-    // Make a request to OpenAI's Whisper API
-    const openAIResponse = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+    // Use fetch to call the OpenAI Chat API
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Include your API key here
       },
-      body: formData,
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo", // Specify the model
+        messages: messages,
+        max_tokens: 150,
+        temperature: 0.7,
+      }),
     });
 
-    if (!openAIResponse.ok) {
-      console.error('Error from OpenAI API:', await openAIResponse.text());
-      throw new Error('Failed to communicate with OpenAI API');
+    // Handle the response
+    if (!response.ok) {
+      const errorDetails = await response.text();
+      throw new Error(`OpenAI API Error: ${errorDetails}`);
     }
 
-    const responseData = await openAIResponse.json();
-    const transcribedText = responseData.text;
+    const data = await response.json();
 
-    // Clean up the temporary file
-    fs.unlinkSync(audioFilePath);
-
-    // Respond with the transcription result
-    return NextResponse.json({ text: transcribedText });
+    // Return the answer to the client
+    return new Response(
+      JSON.stringify({ answer: data.choices[0].message.content.trim() }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
   } catch (error) {
-    console.error('Error during transcription:', error);
-    return NextResponse.json(
-      { error: 'Failed to transcribe audio' },
-      { status: 500 }
+    // Log the error for debugging
+    console.error("Error in POST handler:", error);
+
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 }

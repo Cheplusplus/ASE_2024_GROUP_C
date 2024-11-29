@@ -16,7 +16,7 @@ export default function RecipeReviews({ recipeId,reviewUpdateKey}) {
       const response = await fetch(`${url}/api/getReviews?recipeId=${recipeId}`);
       if (!response.ok) throw new Error("Failed to fetch reviews");
       const data = await response.json();
-      setReviews(data);
+      setReviews(data.reviews);
     } catch (error) {
       console.error("Error fetching reviews:", error);
     } finally {
@@ -126,7 +126,7 @@ export default function RecipeReviews({ recipeId,reviewUpdateKey}) {
             ) : (
               <div key={review._id} className="border-b pb-4">
                 <p className="font-semibold">{review.reviewerName}</p>
-                <p className="text-yellow-500">{`⭐️`.repeat(review.rating)}</p>
+                <p className="text-yellow-500">{`★`.repeat(review.rating)}</p>
                 <p>{review.comment}</p>
                 {session?.user?.name === review.reviewerName && ( // Check ownership
                   <div className="flex space-x-4 mt-2">
