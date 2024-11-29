@@ -19,6 +19,12 @@ export default function PWADownloadButton() {
       return;
     }
 
+    /**
+     * Handles the `beforeinstallprompt` event by saving the event to
+     * trigger the native install prompt later, and enabling the button
+     * to install the PWA.
+     * @param {Event} event The `beforeinstallprompt` event.
+     */
     const handleBeforeInstallPrompt = (event) => {
       event.preventDefault(); // Prevent automatic display
       setDeferredPrompt(event); // Save the event to trigger later
