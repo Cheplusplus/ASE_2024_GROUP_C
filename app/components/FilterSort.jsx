@@ -64,6 +64,10 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
   };
 
 
+  /**
+   * Resets all filters and sorting options to their default values and triggers a navigation to
+   * the unfiltered list of recipes.
+   */
   const clearFilters = () => {
     setSelectedCategory('');
     setSelectedTags([]);
@@ -74,6 +78,12 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
     applyFilters({}, true);
   };
 
+  /**
+   * Handles changes to the text input used for adding tags. It simply updates the tagInput state
+   * variable to the new value of the input field.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The change event triggered by changing the
+   *   input field.
+   */
   const handleTagInputChange = (e) => {
     setTagInput(e.target.value);
   };
