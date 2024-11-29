@@ -94,10 +94,13 @@ const RecipeTips = ({ recipe }) => {
     }
   };
 
-/**
- * Closes the modal and resets all states to their initial values.
- */
 
+
+/**
+ * Closes the modal and resets the question and answer states.
+ * Sets the modal's open state to false, and clears the input
+ * fields for question and answer.
+ */
   const handleClose = () => {
     setIsOpen(false);
     setQuestion("");
