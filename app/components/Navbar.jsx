@@ -23,7 +23,7 @@ const Navbar = () => {
   const router = useRouter();
 
   const { data: session } = useSession();
-  const [favoritesCount, setFavoritesCount] = useState(0);
+  const [favouritesCount, setFavouritesCount] = useState(0);
 
   // Update shopping list count
   useEffect(() => {
@@ -91,54 +91,54 @@ const Navbar = () => {
     router.push("/"); // Redirect to sign-in page
   };
 
-  // Fetch favorites count when session changes
+  // Fetch favourites count when session changes
   useEffect(() => {
     /**
-     * Fetches the count of favorite items for the authenticated user.
+     * Fetches the count of favourite items for the authenticated user.
      *
-     * This function makes an API request to retrieve the user's favorites
+     * This function makes an API request to retrieve the user's favourites
      * count and updates the state with the retrieved count. If the user is
-     * not authenticated, it sets the favorites count to zero.
+     * not authenticated, it sets the favourites count to zero.
      *
      * @throws Will log an error to the console if the fetch request fails.
      */
-    const fetchFavoritesCount = async () => {
+    const fetchFavouritesCount = async () => {
       if (status === "authenticated") {
         try {
-          const response = await fetch("/api/favorites");
+          const response = await fetch("/api/favourites");
           if (response.ok) {
             const data = await response.json();
-            setFavoritesCount(data.count);
+            setFavouritesCount(data.count);
           }
         } catch (error) {
-          console.error("Error fetching favorites count:", error);
+          console.error("Error fetching favourites count:", error);
         }
       } else {
-        setFavoritesCount(0);
+        setFavouritesCount(0);
       }
     };
 
-    fetchFavoritesCount();
+    fetchFavouritesCount();
   }, [status]);
 
-  // Listen for favorites updates from other components
+  // Listen for favourites updates from other components
   useEffect(() => {
     /**
-     * Handles the "favoritesUpdated" event dispatched by other components to
-     * update the favorites count in the navbar.
+     * Handles the "favouritesUpdated" event dispatched by other components to
+     * update the favourites count in the navbar.
      *
-     * @param {CustomEvent} e - The event that triggered the favorites count update.
-     *        The event's detail property contains the new count of favorites.
+     * @param {CustomEvent} e - The event that triggered the favourites count update.
+     *        The event's detail property contains the new count of favourites.
      */
 
     const handleFavouritesUpdate = (e) => {
       setFavouritesCount(e.detail.count);
     };
 
-    document.addEventListener("favoritesUpdated", handleFavoritesUpdate);
+    document.addEventListener("favouritesUpdated", handleFavouritesUpdate);
 
     return () => {
-      document.removeEventListener("favoritesUpdated", handleFavoritesUpdate);
+      document.removeEventListener("favouritesUpdated", handleFavouritesUpdate);
     };
   }, []);
 
@@ -186,9 +186,9 @@ const Navbar = () => {
     setMenuOpen((prev) => !prev);
   };
 
-  const favoritesLink = navLinks.find((link) => link.name === "Favorites");
-  if (favoritesLink && status === "authenticated") {
-    favoritesLink.badge = favoritesCount;
+  const favouritesLink = navLinks.find((link) => link.name === "Favourites");
+  if (favouritesLink && status === "authenticated") {
+    favouritesLink.badge = favouritesCount;
   }
 
   return (
@@ -259,9 +259,9 @@ const Navbar = () => {
                 >
                   <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
                 </svg>
-                {favoritesCount > 0 && (
+                {favouritesCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
-                    {favoritesCount}
+                    {favouritesCount}
                   </span>
                 )}
               </Link>
