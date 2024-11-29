@@ -34,6 +34,7 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
   useEffect(() => {
     const fetchReviews = async () => {
       try {
+        console.log('123')
         const response2 = await fetch(`${url}/api/getReviews?recipeId=${_id}`,{cache:'force-cache'});
 
         if (!response2.ok) {
@@ -41,6 +42,7 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
         }
 
         const reviewsData = await response2.json();
+        console.log(reviewsData)
         setStats(reviewsData.stats);
       } catch (error) {
         setError(error.message);
