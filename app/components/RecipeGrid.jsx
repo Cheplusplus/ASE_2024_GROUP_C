@@ -15,7 +15,7 @@ const RecipeGrid = async ({ searchParams }) => {
 
   try {
     const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-    const res = await fetch(`${url}/api/recipe?search=${search}&skip=${skip}&category=${category}&tags=${tags.join(',')}&numSteps=${numSteps}&ingredients=${ingredients}&sortOption=${sortOption}`,{cache:'no-store'},{
+    const res = await fetch(`${url}/api/recipe?search=${search}&skip=${skip}&category=${category}&tags=${tags.join(',')}&numSteps=${numSteps}&ingredients=${ingredients}&sortOption=${sortOption}`,{cache:'force-cache'},{
     headers: { 'Content-Type': 'application/json' }
   });
   console.log(res.status,'stats')
@@ -24,7 +24,7 @@ const RecipeGrid = async ({ searchParams }) => {
    // console.log(recipes)
     let categories;
 
-      const response = await fetch(`${url}/api/categories`);
+      const response = await fetch(`${url}/api/categories`, {cache: 'force-cache'});
       console.log(response.status,'status')
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     
@@ -48,8 +48,10 @@ const RecipeGrid = async ({ searchParams }) => {
           </div>
          : 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6">
+            
             {recipes.recipes.map((recipe) => (
-              <RecipeCard key={recipe._id} recipe={recipe} />
+               <RecipeCard key={recipe._id} recipe={recipe} />
+              
             ))}
           </div>
         }

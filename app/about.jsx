@@ -13,11 +13,11 @@ const AboutUs = () =>{
                 <div className="flex flex-wrap mt-12 justify-center gap-y-14 max-w-3xl mx-auto lg:max-w-full">
                     {[
                         { name: "Nomusa Mtshali", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/nomusamtshali", linkin: "https://www.linkedin.com/in/nomusa-mtshali/" },
+                        { name: "Karabo M. Radebe", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/Karabo-M-Radebe", linkin: "https://www.linkedin.com/in/karabo-m-radebe/" },
                         { name: "Phillip Bogopane", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/Phillip-tech", linkin: "https://linkedin.com/in/username" },
                         { name: "Kutlwano Ramotebele", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/kutlwano10", linkin: "https://www.linkedin.com/in/kutlwano-ramotebele-769461296/" },
                         { name: "Kealeboga A Ntheledi", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/Kea-Angel-Ntheledi", linkin: "https://linkedin.com/in/username" },
                         { name: "Koketso Moilwe", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/KoketsoMoilwe20", linkin: "https://www.linkedin.com/in/koketsomoilwe/" },
-                        { name: "Karabo M. Radebe", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/Karabo-M-Radebe", linkin: "https://www.linkedin.com/in/karabo-m-radebe/" },
                         { name: "Kitso Mogale", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/KitsoMogale", linkin: "https://www.linkedin.com/in/kitso-mogale-200663321/" },
                         { name: "Mmakgosana Makgaka", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/Mmakgosana", linkin: "https://www.linkedin.com/in/mmakgosana-makgaka-b32478313/" },
                         { name: "Mateo Benzien", role: "add role", imgSrc: "https://via.placeholder.com/150", github: "https://github.com/Mateo-Benzien", linkin: "https://www.linkedin.com/in/mateo-benzien-857864302/" },

@@ -4,7 +4,7 @@ import RecipeCard from './RecipeCard';
 const LayoutRecipesGrid = async() => {
     try {
         const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-        const res = await fetch(`${url}/api/recipe?limit=8`,{cache:'no-store'},{
+        const res = await fetch(`${url}/api/recipe?limit=8`,{cache:'force-cache'},{
         headers: { 'Content-Type': 'application/json' }
       });
       console.log(res.status,'stats')
