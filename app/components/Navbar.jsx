@@ -72,6 +72,12 @@ const Navbar = () => {
     }));
   };
 
+  /**
+   * Handles the sign out process by calling the next-auth signOut function, clearing
+   * the next-auth cookies manually, and redirecting to the sign-in page.
+   *
+   * @param {Event} e - The DOM event that triggered the sign out.
+   */
   const handleSignOut = async (e) => {
     e.preventDefault();
     await signOut({ callbackUrl: "/" });
