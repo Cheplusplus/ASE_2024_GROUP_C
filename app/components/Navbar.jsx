@@ -27,6 +27,12 @@ const Navbar = () => {
 
    // Update shopping list count
    useEffect(() => {
+/**
+ * Updates the shopping list count state by retrieving items from localStorage.
+ *
+ * This function fetches the shopping list from localStorage, parses it,
+ * and updates the shopping list count state with the number of items.
+ */
     const updateShoppingListCount = () => {
       const storedItems = localStorage.getItem("shoppingList");
       const items = storedItems ? JSON.parse(storedItems) : [];
@@ -54,6 +60,11 @@ const Navbar = () => {
     setIsLoggedIn(!!token);
   }, []);
 
+  /**
+   * Toggles the sublink open state for the given link name.
+   *
+   * @param {string} linkName - The name of the link to toggle.
+   */
   const handleSublinkToggle = (linkName) => {
     setOpenSublinks((prev) => ({
       ...prev,
