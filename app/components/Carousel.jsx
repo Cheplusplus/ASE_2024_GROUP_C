@@ -5,11 +5,22 @@ import Image from "next/image";
 import ViewAll from "./ui/ViewAll";
 import SkeletonGrid from "./SkeletonMain";
 
+/**
+ * A component that displays a list of recipes in a carousel.
+ * @param {Object} props Component props
+ * @param {string} props.heading The heading to display above the carousel
+ * @returns {JSX.Element} The component
+ */
 const Carousel = ({ heading }) => {
   const [recipes, setRecipes] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+  /**
+   * Fetches 10 recipes from the API and updates the state with the data
+   * @throws {Error} If the request fails
+   * @returns {Promise<void>}
+   */
     const fetchRecipes = async () => {
       try {
         const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
