@@ -6,6 +6,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Button } from "./ui/button";
 import { Slider } from "./ui/slider";
 
+/**
+ * FilterSortComponent provides a UI for filtering and sorting recipes.
+ *
+ * This component allows users to filter recipes by category, tags, number of steps, and ingredients.
+ * It also provides sorting options for the recipes. The filters and sort options are applied by
+ * updating the URL query parameters, which triggers a navigation to the filtered and sorted results.
+ *
+ * @param {Object} props - The component props.
+ * @param {Array} props.categories - The list of categories available for filtering.
+ * @param {number|null} props.count1 - The initial count of recipes, used for display purposes.
+ * @param {string} props.search - The search query string for filtering recipes.
+ *
+ * @returns {JSX.Element} - The rendered FilterSortComponent.
+ */
 const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
   const router = useRouter();
 
@@ -48,6 +62,7 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
       router.push('/all');
     }
   };
+
 
   const clearFilters = () => {
     setSelectedCategory('');
