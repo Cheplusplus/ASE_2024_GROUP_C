@@ -218,6 +218,15 @@ const readInstructionAtIndex = async (index, continueReading = false) => {
   stopReading('stop')
   }
 
+/**
+ * Stops any existing audio playback and resets the reading process.
+ * If the `action` argument is 'stop', it fully resets the reading process
+ * by clearing the current instruction index and transcription state.
+ * If listening is active, it also stops listening.
+ * @param {string} [action=''] - The action to take when stopping the reading
+ *        process. If 'stop', fully resets the reading process.
+ * @returns {void}
+ */
   const stopReading = (action = '') => {
     if (audioRef.current) {
       audioRef.current.pause();
