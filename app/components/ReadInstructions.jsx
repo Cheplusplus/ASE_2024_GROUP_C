@@ -12,6 +12,35 @@ AWS.config.update({
 
 const polly = new AWS.Polly();
 
+/**
+ * InstructionReader is a React component that provides a voice-controlled
+ * interface for reading instructions aloud. It uses the Web Speech Recognition
+ * API to recognize voice commands and control the instruction reading
+ * experience.
+ *
+ * The component accepts an array of strings as a prop, where each string is an
+ * instruction to be read aloud. The component also renders a set of action
+ * buttons that allow the user to control the instruction reading experience.
+ *
+ * The component is designed to be used in a recipe or DIY tutorial context,
+ * where the user needs to follow a series of instructions to complete a task.
+ * 
+ * It renders a set of action buttons to read all instructions, stop reading, and
+ * toggle listening. It also displays the current instruction and transcription.
+ *
+ * Voice commands are supported to control the reading flow. The supported commands
+ * are:
+ *   - 'pause': Pause the current instruction playback.
+ *   - 'resume': Resume the current instruction playback.
+ *   - 'next step': Go to the next instruction and continue reading.
+ *   - 'go back': Go to the previous instruction and continue reading.
+ *
+ * @param {string[]} instructions - An array of strings, where each string is an
+ * instruction to be read aloud.
+ *
+ * @returns {React.ReactElement/JSX.Element} - A React component that renders the instruction
+ * reading interface.
+ */
 const InstructionReader = ({ instructions }) => {
   const [recognition, setRecognition] = useState(null);
   const [isListening, setIsListening] = useState(false);
