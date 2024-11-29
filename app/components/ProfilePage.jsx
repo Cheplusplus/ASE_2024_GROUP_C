@@ -33,7 +33,6 @@ export default function ProfilePage({ userId, db }) {
  *
  * @returns {Promise<void>} A promise that resolves when the profile data is fetched and state is updated.
  */
- 
     async function fetchData() {
       try {
         const data = await getUserProfile(userId, db);
@@ -46,6 +45,16 @@ export default function ProfilePage({ userId, db }) {
     fetchData();
   }, [userId]);
 
+
+/**
+ * Handles a successful profile update.
+ * Updates the user state with the updated user data,
+ * sets editMode to false, and displays a success message.
+ * Resets the message after 3 seconds.
+ * @param {Object} updatedUser - The updated user data
+ * @function
+ * @private
+ */
   const handleUpdateSuccess = (updatedUser) => {
     setUser(updatedUser);
     setEditMode(false);
