@@ -88,6 +88,10 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
     setTagInput(e.target.value);
   };
 
+  /**
+   * Adds the current tag input to the list of selected tags. If the tag input is not already in the
+   * list of selected tags, it is added to the end of the list. Then, the tag input is cleared.
+   */
   const addTag = () => {
     if (tagInput && !selectedTags.includes(tagInput)) {
       setSelectedTags([...selectedTags, tagInput]);
@@ -95,6 +99,11 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
     setTagInput('');
   };
 
+  /**
+   * Removes the given tag from the list of selected tags. If the tag is not in the list of
+   * selected tags, this function does nothing.
+   * @param {string} tagToRemove - The tag to remove from the list of selected tags.
+   */
   const removeTag = (tagToRemove) => {
     setSelectedTags(selectedTags.filter(tag => tag !== tagToRemove));
   };
