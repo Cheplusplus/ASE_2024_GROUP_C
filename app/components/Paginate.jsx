@@ -5,6 +5,15 @@ import { useRouter,useSearchParams  } from 'next/navigation';
 
 const RECIPES_PER_PAGE = 50; // Recipes per page
 
+/**
+ * Paginate renders a pagination component for the RecipeGrid component.
+ *
+ * @param {object} props - The component props.
+ * @param {number} props.skip - The current skip value, used to calculate the next and previous page URLs.
+ * @param {number} props.totalRecipes - The total number of recipes available for pagination.
+ * @returns {ReactElement} A ReactElement representing the Paginate component.
+ * 
+ */
 const Paginate = ({ skip, totalRecipes }) => {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1); // Track current page
