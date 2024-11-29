@@ -57,6 +57,11 @@ export const useNotification = () => {
 const NotificationContainer = () => {
   const { notifications, removeNotification } = useNotification();
 
+  /**
+   * Returns a notification icon based on the given type.
+   * @param {NOTIFICATION_TYPES} type The type of the notification.
+   * @returns {React.ReactElement} The icon.
+   */
   const getNotificationIcon = (type) => {
     switch(type) {
       case NOTIFICATION_TYPES.SUCCESS:
@@ -72,6 +77,11 @@ const NotificationContainer = () => {
     }
   };
 
+  /**
+   * Returns the tailwindcss background color class based on the given notification type.
+   * @param {NOTIFICATION_TYPES} type The type of the notification.
+   * @returns {string} The tailwindcss background color class.
+   */
   const getTypeStyles = (type) => {
     switch(type) {
       case NOTIFICATION_TYPES.SUCCESS:
