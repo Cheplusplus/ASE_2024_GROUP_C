@@ -2,6 +2,16 @@ import { useState } from "react";
 import { updateUserProfile } from "@/lib/api";
 import { useSession } from "next-auth/react";
 
+/**
+ * EditProfileForm component allows users to edit their profile information,
+ * specifically their name and email. It handles form submission and user input changes.
+ * If the user is authenticated via Google, updates are not allowed.
+ * 
+ * @param {Object} props - Component props
+ * @param {Object} props.user - Object containing user details
+ * @param {function} props.onComplete - Callback function invoked after a successful profile update
+ * @param {function} props.onError - Callback function invoked when there is an error updating the profile
+ */
 export default function EditProfileForm({ user, onComplete, onError }) {
   const [formData, setFormData] = useState({
     name: user.name,
