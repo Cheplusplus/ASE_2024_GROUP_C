@@ -7,8 +7,8 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-full bg-secondary hover:bg-secondary/80 transition-all duration-200 
-                focus:outline-none focus:ring-2 focus:ring-primary"
+      className="p-2 rounded-full hover:bg-secondary/80 transition-all duration-200 
+                focus:outline-none "
       aria-label="Toggle theme"
     >
       <div className="relative w-5 h-5">
