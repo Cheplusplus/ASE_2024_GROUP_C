@@ -19,6 +19,14 @@ export default function EditProfileForm({ user, onComplete, onError }) {
   });
   const { data: session, status } = useSession();
 
+  /**
+   * Handles form submission. Prevents default form submission, determines the
+   * authentication provider for the user, and prevents updates to Google
+   * accounts. If the user is authenticated via a different provider, updates
+   * the user's profile information and triggers the onComplete callback if
+   * successful. If there is an error, it triggers the onError callback.
+   * @param {Event} e - Form submission event
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     const provider = session.user.provider;
