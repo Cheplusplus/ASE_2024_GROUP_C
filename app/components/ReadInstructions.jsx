@@ -105,6 +105,18 @@ const InstructionReader = ({ instructions }) => {
     }
   };
 
+
+/**
+ * Handles voice commands from the user.
+ * @param {string} command - The voice command given by the user.
+ * @example
+ * Currently supports the following commands:
+ * - pause: pause the current instruction audio
+ * - resume: resume the current instruction audio
+ * - next step: stop the current instruction audio and play the next instruction
+ * - go back: stop the current instruction audio and play the previous instruction
+
+ */
   const handleVoiceCommand = (command) => {
     console.log(currentInstructionRef.current,'command:',command);
     if (command.includes('pause')) {
