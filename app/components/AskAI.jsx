@@ -94,6 +94,10 @@ const RecipeTips = ({ recipe }) => {
     }
   };
 
+/**
+ * Closes the modal and resets all states to their initial values.
+ */
+
   const handleClose = () => {
     setIsOpen(false);
     setQuestion("");
