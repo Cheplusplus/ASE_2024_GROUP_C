@@ -245,6 +245,11 @@ const readInstructionAtIndex = async (index, continueReading = false) => {
   };
   
 
+/**
+ * Toggles speech recognition on or off. If speech recognition is currently
+ * active, this stops it. If it is not active, this starts it.
+ * @returns {void}
+ */
   const toggleListening = () => {
     if (isListening) {
       recognition.stop();
