@@ -26,10 +26,10 @@ export default function MobileBar() {
               <p className="text-[12px]">Favourite</p>
             </div>
             <div className="text-center flex flex-col items-center">
-              <Link href="/profile">
-                <Image width={10} height={10}  className=" w-6" src={"/user.svg"} alt="" />
+              <Link href="/downloads">
+                <Image width={10} height={10}  className=" w-6" src={"/download.svg"} alt="" />
               </Link>
-              <p className="text-[12px]">Account</p>
+              <p className="text-[12px]">Downloads</p>
             </div>
           </div>
         </div>

@@ -21,8 +21,27 @@ export async function GET(req) {
     // Fetch reviews for the given recipeId
     const reviews = await Review.find({ recipeId });
 
-    // Return reviews in response
-    return NextResponse.json(reviews, { status: 200 });
+    // Calculate statistics
+    const calculateStats = (reviews) => {
+      if (!reviews.length) {
+        return { averageRating: 0, numberOfComments: 0 };
+      }
+
+      const numberOfComments = reviews.length;
+      const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+      const averageRating = Math.round(totalRating / numberOfComments);
+
+      return { averageRating, numberOfComments };
+    };
+
+    const stats = calculateStats(reviews);
+
+    // Set appropriate CORS headers
+    const response = NextResponse.json({ reviews, stats }, { status: 200 });
+    response.headers.set("Access-Control-Allow-Origin", "https://staging-ase-2024-group-c.vercel.app");
+    response.headers.set("Access-Control-Allow-Methods", "GET, OPTIONS");
+    response.headers.set("Access-Control-Allow-Headers", "Content-Type");
+    return response;
   } catch (error) {
     console.error("Error fetching reviews:", error);
 
@@ -32,4 +51,13 @@ export async function GET(req) {
       { status: 500 }
     );
   }
+}
+
+// Handle OPTIONS requests for CORS preflight
+export async function OPTIONS() {
+  const response = NextResponse.json(null, { status: 204 });
+  response.headers.set("Access-Control-Allow-Origin", "https://staging-ase-2024-group-c.vercel.app");
+  response.headers.set("Access-Control-Allow-Methods", "GET, OPTIONS");
+  response.headers.set("Access-Control-Allow-Headers", "Content-Type");
+  return response;
 }
