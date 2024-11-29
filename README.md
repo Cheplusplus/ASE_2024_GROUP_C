@@ -136,8 +136,6 @@ Download recipes for offline access (Planned)
 
 3. Install Dependencies
 - npm install
- or
-- yarn install
 
 4. Configure Environment Variables
 cp .env.example .env.local
@@ -152,14 +150,10 @@ cp .env.example .env.local
 6. Start Development Server: (Ensure that it's running on https://localhost:3000)
 
     - npm run dev
-    or
-    - yarn dev
 
 7. Build for Production:
 
     - npm run build
-    or
-    - yarn build
 
 8. Troubleshooting
 
