@@ -6,6 +6,8 @@ import AddReview from "./Addreview";
 import { FaStar } from "react-icons/fa"; // Importing the star icon from Font Awesome
 import { useRouter } from "next/navigation";
 import RecipeReviews from "./Reviews";
+import InstructionReader from "./ReadInstructions";
+import RecipeTips from './AskAI';
 import ShoppingListButton from "./ShoppingListButton";
 
 const formatTime = (minutes) => {
@@ -22,30 +24,17 @@ const RecipeDetailCard = ({ recipe, id }) => {
   const [message, setMessage] = useState("");
   const router = useRouter();
   const [reviewUpdateKey, setReviewUpdateKey] = useState(0);
-  const [voiceCommandsEnabled, setVoiceCommandsEnabled] = useState(false);
-  let stopVoiceCommands;
 
-
-  const [speechRecognitionEnabled, setSpeechRecognitionEnabled] = useState(false);
-  const [speaking, setSpeaking] = useState(false);
-  const [paused, setPaused] = useState(false);
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [instructions, setInstructions] = useState([]); // Hold the recipe instructions
 
   const totalTime = (recipe.prep || 0) + (recipe.cook || 0);
   const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
 
   // Set document title
   useEffect(() => {
     document.title = `${recipe.title} | Recipe Details`;
   }, [recipe.title]);
 
-  // Enable Speech Recognition
-  useEffect(() => {
-    if ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) {
-      setSpeechRecognitionEnabled(true);
-    }
-  }, []);
 
   const handleReviewAdded = () => {
     console.log("rerender");
@@ -82,124 +71,6 @@ const RecipeDetailCard = ({ recipe, id }) => {
       }, 2000);
     }
   };
-
-  const readInstructions = () => {
-    if (!("speechSynthesis" in window)) {
-      alert("Speech synthesis is not supported in this browser.");
-      return;
-    }
-  
-    if (!recipe.instructions || recipe.instructions.length === 0) {
-      alert("No instructions available to read.");
-      return;
-    }
-  
-    setInstructions(recipe.instructions); // Set the recipe instructions in state
-    setVoiceCommandsEnabled(true);
-    setCurrentStepIndex(0); // Start reading from the first step
-  };
-  
-  const handleVoiceCommands = () => {
-    if (!speechRecognitionEnabled) return;
-  
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-  
-    recognition.continuous = true;
-    recognition.lang = "en-US";
-  
-    recognition.onresult = (event) => {
-      const command = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
-      console.log("Voice Command:", command);
-  
-      if (command.includes("pause")) {
-        if (window.speechSynthesis.speaking && !paused) {
-          window.speechSynthesis.pause();
-          setSpeaking(false);
-          setPaused(true);
-        }
-      }
-  
-      if (command.includes("resume")) {
-        console.log('resume')
-        if (!paused) {
-          window.speechSynthesis.resume();
-          setSpeaking(true);
-          setPaused(false);
-        }
-      }
-  
-      if (command.includes("next step")) {
-        setCurrentStepIndex((prevIndex) => Math.min(prevIndex + 1, instructions.length - 1));
-      }
-  
-      if (command.includes("repeat step")) {
-        setCurrentStepIndex((prevIndex) => prevIndex); // Re-read the current step
-      }
-  
-      if (command.includes("go back")) {
-        setCurrentStepIndex((prevIndex) => Math.max(prevIndex - 1, 0));
-      }
-  
-      if (command.includes("skip this step")) {
-        setCurrentStepIndex((prevIndex) => Math.min(prevIndex + 1, instructions.length - 1));
-      }
-    };
-  
-    recognition.onerror = (event) => {
-      console.error("Speech recognition error:", event.error);
-    };
-  
-    recognition.start();
-  
-    // Store a reference to stop the recognition
-    stopVoiceCommands = () => {
-      recognition.stop();
-      console.log("Voice commands stopped");
-    };
-  };
-  
-  const readStep = (stepIndex) => {
-    if (stepIndex < 0 || stepIndex >= instructions.length) {
-      alert("Invalid step index.");
-      return;
-    }
-  
-    const stepText = instructions[stepIndex];
-    const utterance = new SpeechSynthesisUtterance(stepText);
-    utterance.lang = "en-US";
-    utterance.rate = 1;
-    utterance.pitch = 1;
-  
-    utterance.onstart = () => setSpeaking(true);
-    utterance.onend = () => {
-      setSpeaking(false);
-      // Automatically proceed to the next step if not paused
-      if (!paused && voiceCommandsEnabled && stepIndex < instructions.length - 1) {
-        setCurrentStepIndex((prevIndex) => prevIndex + 1);
-      }
-    };
-  
-    window.speechSynthesis.speak(utterance);
-  };
-  
-  // Effect to handle voice commands and dynamic step reading
-  useEffect(() => {
-    if (voiceCommandsEnabled) {
-      if (currentStepIndex >= 0 && currentStepIndex < instructions.length) {
-        readStep(currentStepIndex);
-      }
-  
-      handleVoiceCommands();
-    }
-  
-    return () => {
-      if (stopVoiceCommands) stopVoiceCommands(); // Stop voice recognition
-      window.speechSynthesis.cancel(); // Stop any ongoing speech
-    };
-  }, [voiceCommandsEnabled, currentStepIndex]);
-  
   
   return (
     <div className="grid items-start grid-cols-1 md:grid-cols-2 gap-6">
@@ -354,11 +225,9 @@ const RecipeDetailCard = ({ recipe, id }) => {
                   <li key={index}>{instruction}</li>
                 ))}
               </ul>
-              <button
-                  onClick={readInstructions}
-                  className="w-2fit p-2 bg-green-400 rounded hover:bg-green-500 text-black font-bold m-2"   >
-                       {speaking || paused ? "Reading..." : "Read Instructions"}
-             </button>
+              <div className="p-4">
+      <InstructionReader instructions={recipe.instructions} />
+    </div>
 
 
             </div>
@@ -389,6 +258,7 @@ const RecipeDetailCard = ({ recipe, id }) => {
           <RecipeReviews recipeId={id} reviewUpdateKey={reviewUpdateKey} />
 
           <AddReview recipeId={id} onAdd={handleReviewAdded} />
+          <RecipeTips recipe={recipe.ingredients}/>
         </div>
       </div>
     </div>
@@ -396,3 +266,5 @@ const RecipeDetailCard = ({ recipe, id }) => {
 };
 
 export default RecipeDetailCard;
+
+
