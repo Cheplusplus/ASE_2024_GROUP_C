@@ -89,6 +89,10 @@ Download recipes for offline access (Planned)
 - Enhances accessibility for visually impaired users or those who prefer hands-free operation
 
 
+#### 🧭 SEO Optimization
+- Implements meta tags and dynamic metadata for better search engine visibility.
+
+
 ### Technology Stack
 #### Frontend
 
