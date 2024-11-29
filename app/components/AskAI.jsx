@@ -59,6 +59,14 @@ const RecipeTips = ({ recipe }) => {
     }
   };
 
+  /**
+   * Handles asking a question and fetching tips from Whisper API.
+   * @async
+   * @function
+   * @param {string} question The question to ask Whisper.
+   * @param {Object} recipe The recipe object to use for generating tips.
+   * @returns {Promise<void>}
+   */
   const handleAskQuestion = async () => {
     setLoading(true);
     setAnswer("");
