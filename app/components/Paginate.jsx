@@ -26,6 +26,12 @@ const Paginate = ({ skip, totalRecipes }) => {
   const ingredients = searchParams.get('ingredients') || '';
   const sortOption = searchParams.get('sortOption') || '';
 
+  /**
+   * Handles the "Next" button click by updating the current page and pushing a new URL
+   * with the updated skip value.
+   *
+   * @param {number} newPage - The new page number to navigate to.
+   */
   const handleNext = (newPage) => {
     const newSkip = skip + RECIPES_PER_PAGE;
     setCurrentPage(newPage);
@@ -33,6 +39,12 @@ const Paginate = ({ skip, totalRecipes }) => {
     router.push(newUrl); // Update the URL with the new skip value
   };
 
+  /**
+   * Handles the "Previous" button click by updating the current page and pushing a new URL
+   * with the updated skip value.
+   *
+   * @param {number} newPage - The new page number to navigate to.
+   */
   const handlePrevious = (newPage) => {
     const newSkip = skip > RECIPES_PER_PAGE ? skip - RECIPES_PER_PAGE : 0;
     setCurrentPage(newPage);
