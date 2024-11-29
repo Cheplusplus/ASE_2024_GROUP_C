@@ -158,8 +158,7 @@ const InstructionReader = ({ instructions }) => {
  *        automatically after the current one finishes playing.
  * @returns {Promise<void>} 
  */
-
-  const readInstructionAtIndex = async (index, continueReading = false) => {
+const readInstructionAtIndex = async (index, continueReading = false) => {
     // Stop any existing playback
     if (audioRef.current) {
       audioRef.current.pause();
@@ -185,8 +184,17 @@ const InstructionReader = ({ instructions }) => {
     }
   };
   
-  
 
+/**
+ * Reads all instructions sequentially using AWS Polly for text-to-speech.
+ * Marks the reading process as active and updates the current instruction index
+ * as each instruction is read aloud. If the reading process is interrupted,
+ * it stops reading further instructions. Waits for each instruction's audio
+ * to finish playing before proceeding to the next.
+ *
+ * @async
+ * @returns {Promise<void>}
+ */
   const readAllInstructions = async () => {
     isReadingRef.current = true; // Mark as reading
     for (let i = currentInstructionRef.current; i < instructions.length; i++) {
@@ -299,3 +307,5 @@ const InstructionReader = ({ instructions }) => {
 };
 
 export default InstructionReader;
+
+
