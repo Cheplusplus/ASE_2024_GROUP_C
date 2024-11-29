@@ -69,6 +69,12 @@ const InstructionReader = ({ instructions }) => {
       handleVoiceCommand(transcript.toLowerCase());
     };
 
+/**
+ * Handles errors from the speech recognition process.
+ * Logs the error to the console for debugging purposes.
+ *
+ * @param {SpeechRecognitionErrorEvent} error - The error event emitted by the speech recognition process.
+ */
     speechRecognition.onerror = (error) => {
       console.error('Speech Recognition Error:', error);
     };
