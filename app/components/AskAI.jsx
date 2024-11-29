@@ -23,6 +23,11 @@ const RecipeTips = ({ recipe }) => {
     secretAccessKey: process.env.NEXT_PUBLIC_SECRET_ACCESS_KEY,
   });
 
+  /**
+   * Synthesizes speech using AWS Polly given a text.
+   * @param {string} text The text to synthesize into speech.
+   * @returns {Promise<void>}
+   */
   const synthesizeSpeech = async (text) => {
     const params = {
       Text: text,
