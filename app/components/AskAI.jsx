@@ -1,6 +1,12 @@
 import { useState } from "react";
 import AWS from "aws-sdk";
 
+/**
+ * A modal component that pops up when the user clicks on the colorful
+ * animated button. It allows the user to ask a question and gets an
+ * answer from Whisper API. The answer is displayed in a modal and there
+ * is an option to read the answer aloud using AWS Polly.
+ */
 const RecipeTips = ({ recipe }) => {
   const [isOpen, setIsOpen] = useState(false); // Controls the modal
   const [question, setQuestion] = useState("");
