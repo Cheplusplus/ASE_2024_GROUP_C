@@ -46,6 +46,11 @@ const RecipeTips = ({ recipe }) => {
 
       setIsPlaying(true);
 
+/**
+ * Event handler for when the audio playback ends.
+ * Sets the isPlaying state to false to indicate that
+ * text-to-speech playback has stopped.
+ */
       audio.onended = () => {
         setIsPlaying(false);
       };
