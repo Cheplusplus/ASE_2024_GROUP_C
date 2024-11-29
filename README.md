@@ -84,6 +84,10 @@ Download recipes for offline access (Planned)
 - Enables offline functionality, allowing users to access the app without an internet connection
 - Provides a seamless user experience, even on low-bandwidth networks
 
+#### 🧭 Text-to-Voice Feature
+- Converts recipe instructions and content into spoken audio.
+- Enhances accessibility for visually impaired users or those who prefer hands-free operation
+
 
 ### Technology Stack
 #### Frontend
