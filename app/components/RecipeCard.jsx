@@ -32,6 +32,19 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
   const [favourites, setFavourites] = useState([]);
   const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
+
+  const fetchFavourites = async () => {
+    try {
+      const response = await fetch(`${url}/api/favourites`);
+      if (!response.ok) throw new Error('Failed to fetch favourites');
+      const data = await response.json();
+      // console.log(data,_id)
+      setFavourites(data.favourites);
+    } catch (error) {
+      console.error('Error fetching favourites:', error);
+    }
+  };
+
   useEffect(() => {
     const fetchReviews = async () => {
       try {
@@ -51,17 +64,6 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
     };
 
     fetchReviews();
-    const fetchFavourites = async () => {
-      try {
-        const response = await fetch(`${url}/api/favourites`);
-        if (!response.ok) throw new Error('Failed to fetch favourites');
-        const data = await response.json();
-        console.log(data,_id)
-        setFavourites(data.favourites);
-      } catch (error) {
-        console.error('Error fetching favourites:', error);
-      }
-    };
     fetchFavourites();
 
   },[]); // Dependency array
@@ -86,25 +88,27 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
   };
 
   const handleFavouriteClick = async (e) => {
-     console.log('clicked',_id)
     e.preventDefault(); // Prevent link navigation
     try {
       const response = await fetch(`${url}/api/favourites`, {
-        method: isFavourited ? 'DELETE' : 'POST',
+        method: favourites.some((fav) => fav._id === _id) ? 'DELETE' : 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ recipeId: _id })
+        body: JSON.stringify({ recipeId: _id }),
       });
-
+  
       if (!response.ok) throw new Error('Failed to update favourites');
-      if (isFavourited) {
-        onRemoveFromFavourites && onRemoveFromFavourites();
+  
+      // Update the favourites state
+      if (favourites.some((fav) => fav._id === _id)) {
+        setFavourites(favourites.filter((fav) => fav._id !== _id)); // Remove from favourites
       } else {
-        onAddToFavourites && onAddToFavourites();
+        setFavourites([...favourites, { _id }]); // Add to favourites
       }
     } catch (error) {
       console.error('Error updating favourites:', error);
     }
   };
+  
 
   return (
     <Link href={`/recipes/${_id}`} className="block">
