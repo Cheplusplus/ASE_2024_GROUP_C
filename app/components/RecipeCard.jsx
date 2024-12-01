@@ -2,6 +2,8 @@
 import React, { useState,useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useNotification, NOTIFICATION_TYPES } from './NotificationContext';
+import { Heart, HeartOff } from 'lucide-react';
 
 const MAX_VISIBLE_TAGS = 1;
 
@@ -48,6 +50,7 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
   useEffect(() => {
     const fetchReviews = async () => {
       try {
+        console.log('123')
         const response2 = await fetch(`${url}/api/getReviews?recipeId=${_id}`,{cache:'force-cache'});
 
         if (!response2.ok) {
@@ -55,6 +58,7 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
         }
 
         const reviewsData = await response2.json();
+        console.log(reviewsData)
         setStats(reviewsData.stats);
       } catch (error) {
         setError(error.message);
@@ -73,7 +77,10 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [intervalId, setIntervalId] = useState(null);
+  const [isCurrentlyFavourited, setIsCurrentlyFavourited] = useState(isFavourited);
   const remainingTags = tags.length - MAX_VISIBLE_TAGS;
+  const { addNotification } = useNotification();
+
   const handleMouseEnter = () => {
     const id = setInterval(() => {
       setCurrentImageIndex(prevIndex => (prevIndex + 1) % images.length);
@@ -88,24 +95,41 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
   };
 
   const handleFavouriteClick = async (e) => {
+    console.log("clicked", _id);
     e.preventDefault(); // Prevent link navigation
+
     try {
       const response = await fetch(`${url}/api/favourites`, {
-        method: favourites.some((fav) => fav._id === _id) ? 'DELETE' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: isCurrentlyFavourited ? "DELETE" : "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ recipeId: _id }),
       });
-  
-      if (!response.ok) throw new Error('Failed to update favourites');
-  
-      // Update the favourites state
-      if (favourites.some((fav) => fav._id === _id)) {
-        setFavourites(favourites.filter((fav) => fav._id !== _id)); // Remove from favourites
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to update favourites");
+      }
+
+      // Update local favourited state
+      setIsCurrentlyFavourited(!isCurrentlyFavourited);
+
+      // Trigger parent component callbacks if provided
+      if (isCurrentlyFavourited) {
+        onRemoveFromFavourites && onRemoveFromFavourites();
+        addNotification(
+          `Removed "${title}" from favourites`,
+          NOTIFICATION_TYPES.WARNING
+        );
       } else {
-        setFavourites([...favourites, { _id }]); // Add to favourites
+        onAddToFavourites && onAddToFavourites();
+        addNotification(
+          `Added "${title}" to favourites`,
+          NOTIFICATION_TYPES.SUCCESS
+        );
       }
     } catch (error) {
-      console.error('Error updating favourites:', error);
+      addNotification(error.message, NOTIFICATION_TYPES.ERROR);
     }
   };
   
@@ -183,38 +207,17 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
               {`★`.repeat(5 - stats.averageRating)}
             </span>
           </p>
-
           <p className="bold">
             {stats.numberOfComments} <i>reviews</i>{" "}
           </p>
           <button
             onClick={handleFavouriteClick}
-            className="relative group focus:outline-none"
+            className="bg-white/50 p-2 rounded-full hover:bg-white/75 transition-all"
           >
-            {favourites.some((fav) => fav._id === _id)? (
-              // Filled Heart
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="w-7 h-7 text-red-500 transition-all duration-200 transform scale-100 group-hover:scale-110"
-              >
-                <path d="M12.1 18.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.4 10.05z" />
-              </svg>
+            {isCurrentlyFavourited ? (
+              <HeartOff className="text-red-500 w-6 h-6" fill="currentColor" />
             ) : (
-              // Outlined Heart
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="w-7 h-7 text-gray-600 transition-all duration-200 transform scale-100 group-hover:scale-110"
-              >
-                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 20.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-              </svg>
+              <Heart className="text-gray-500 w-6 h-6" />
             )}
           </button>
         </div>
