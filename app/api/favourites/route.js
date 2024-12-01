@@ -9,8 +9,8 @@ import { setCORSHeaders } from '@/app/lib/corsMiddleware';
 
 // Add a recipe to favourites
 export async function POST(req) {
-  const res = new NextResponse();
-  setCORSHeaders(res);
+  // const res = new NextResponse();
+  // setCORSHeaders(res);
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -67,8 +67,8 @@ export async function POST(req) {
 
 // Get user's favourites
 export async function GET(req) {
-  const res = new NextResponse();
-  setCORSHeaders(res);
+  // const res = new NextResponse();
+  // setCORSHeaders(res);
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
