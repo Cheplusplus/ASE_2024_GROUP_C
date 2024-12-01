@@ -2,6 +2,8 @@
 import React, { useState,useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useNotification, NOTIFICATION_TYPES } from './NotificationContext';
+import { Heart, HeartOff } from 'lucide-react';
 
 const MAX_VISIBLE_TAGS = 2;
 
@@ -34,6 +36,7 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
   useEffect(() => {
     const fetchReviews = async () => {
       try {
+        console.log('123')
         const response2 = await fetch(`${url}/api/getReviews?recipeId=${_id}`,{cache:'force-cache'});
 
         if (!response2.ok) {
@@ -41,6 +44,7 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
         }
 
         const reviewsData = await response2.json();
+        console.log(reviewsData)
         setStats(reviewsData.stats);
       } catch (error) {
         setError(error.message);
@@ -57,7 +61,9 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [intervalId, setIntervalId] = useState(null);
+  const [isCurrentlyFavourited, setIsCurrentlyFavourited] = useState(isFavourited);
   const remainingTags = tags.length - MAX_VISIBLE_TAGS;
+  const { addNotification } = useNotification();
 
   const handleMouseEnter = () => {
     const id = setInterval(() => {
@@ -75,24 +81,44 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
   const handleFavouriteClick = async (e) => {
      console.log('clicked',_id)
     e.preventDefault(); // Prevent link navigation
+
     try {
       const response = await fetch(`${url}/api/favourites`, {
-        method: isFavourited ? 'DELETE' : 'POST',
+        method: isCurrentlyFavourited ? 'DELETE' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ recipeId: _id })
       });
 
-      if (!response.ok) throw new Error('Failed to update favourites');
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to update favourites');
+      }
       
-      if (isFavourited) {
+      // Update local favourited state
+      setIsCurrentlyFavourited(!isCurrentlyFavourited);
+
+      // Trigger parent component callbacks if provided
+      if (isCurrentlyFavourited) {
         onRemoveFromFavourites && onRemoveFromFavourites();
+        addNotification(
+          `Removed "${title}" from favourites`, 
+          NOTIFICATION_TYPES.WARNING
+        );
       } else {
         onAddToFavourites && onAddToFavourites();
+        addNotification(
+          `Added "${title}" to favourites`, 
+          NOTIFICATION_TYPES.SUCCESS
+        );
       }
     } catch (error) {
-      console.error('Error updating favourites:', error);
+      addNotification(
+        error.message, 
+        NOTIFICATION_TYPES.ERROR
+      );
     }
-  };
+  };  
 
   return (
     <Link href={`/recipes/${_id}`} className="block">
@@ -160,13 +186,13 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
           <p className='bold'>{stats.numberOfComments} <i>reviews</i> </p>
             <button
               onClick={handleFavouriteClick}
-              className={`mt-2 px-3 py-1 rounded ${
-                isFavourited 
-                  ? 'bg-red-500 hover:bg-red-600' 
-                  : 'bg-blue-500 hover:bg-blue-600'
-              } text-white`}
+              className="bg-white/50 p-2 rounded-full hover:bg-white/75 transition-all"
             >
-              {isFavourited ? 'Remove from Favourites' : 'Add to Favourites'}
+              {isCurrentlyFavourited ? (
+                <HeartOff className="text-red-500 w-6 h-6" fill="currentColor" />
+              ) : (
+                <Heart className="text-gray-500 w-6 h-6" />
+              )}
             </button>
         </div>
       </div>
