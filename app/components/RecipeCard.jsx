@@ -205,9 +205,11 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
               {`★`.repeat(5 - stats.averageRating)}
             </span>
           </p>
-          <p className="bold">
-            {stats.numberOfComments} <i>reviews</i>{" "}
+          <p className="text-sm font-medium text-gray-700 mt-2 flex items-center gap-1">
+            <span className="text-green-600">{stats.numberOfComments}</span>
+            <i className="text-gray-500">reviews</i>
           </p>
+
           <button
             onClick={handleFavouriteClick}
             className="bg-white/50 p-2 rounded-full hover:bg-white/75 transition-all"
