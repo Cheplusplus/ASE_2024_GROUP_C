@@ -3,7 +3,7 @@ import React, { useState,useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const MAX_VISIBLE_TAGS = 2;
+const MAX_VISIBLE_TAGS = 1;
 
 
 // SVG Icons as constants for reusability and improved readability
@@ -119,7 +119,7 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
         {/* Content Container */}
         <div className="p-1">
           {/* Title */}
-          <h2 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2">
+          <h2 className="text-xl font-bold text-gray-800 mb-3 line-clamp-1">
             {title}
           </h2>
           
@@ -140,22 +140,21 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
           </div>
           {/* Tags with "more" indicator */}
           {tags.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2">
-              {tags.slice(0, MAX_VISIBLE_TAGS).map((tag, index) => (
-                <span
-                  key={index}
-                  className="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full"
-                >
-                  {tag}
-                </span>
-              ))}
-              {remainingTags > 0 && (
-                <span className="px-3 py-1 text-xs font-medium text-gray-500 bg-gray-50 rounded-full hover:bg-gray-100 transition-colors">
-                  +{remainingTags} more
-                </span>
-              )}
-            </div>
-          )}
+  <div className="flex items-center gap-2">
+    {/* Find the shortest tag */}
+    <span
+      key="shortest-tag"
+      className="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full"
+    >
+      {tags.reduce((shortest, tag) => (tag.length < shortest.length ? tag : shortest), tags[0])}
+    </span>
+    {remainingTags > 0 && (
+      <span className="px-3 py-1 text-xs font-medium text-gray-500 bg-gray-50 rounded-full hover:bg-gray-100 transition-colors">
+        +{remainingTags} more
+      </span>
+    )}
+  </div>
+)}
           <p className="text-yellow-500">{`★`.repeat(stats.averageRating)}</p>
           <p className='bold'>{stats.numberOfComments} <i>reviews</i> </p>
             <button
