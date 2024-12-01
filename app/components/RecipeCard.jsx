@@ -35,13 +35,21 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
   const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [intervalId, setIntervalId] = useState(null);
+  const [isCurrentlyFavourited, setIsCurrentlyFavourited] = useState(isFavourited);
+  const remainingTags = tags.length - MAX_VISIBLE_TAGS;
+  const { addNotification } = useNotification();
+
+
   const fetchFavourites = async () => {
     try {
       const response = await fetch(`${url}/api/favourites`);
       if (!response.ok) throw new Error('Failed to fetch favourites');
       const data = await response.json();
-      // console.log(data,_id)
+     data.favourites.some((fav) => fav._id === _id) ? setIsCurrentlyFavourited(true):null
       setFavourites(data.favourites);
+
     } catch (error) {
       console.error('Error fetching favourites:', error);
     }
@@ -58,7 +66,6 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
         }
 
         const reviewsData = await response2.json();
-        console.log(reviewsData)
         setStats(reviewsData.stats);
       } catch (error) {
         setError(error.message);
@@ -71,15 +78,6 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
     fetchFavourites();
 
   },[]); // Dependency array
-
-  
-
-
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [intervalId, setIntervalId] = useState(null);
-  const [isCurrentlyFavourited, setIsCurrentlyFavourited] = useState(isFavourited);
-  const remainingTags = tags.length - MAX_VISIBLE_TAGS;
-  const { addNotification } = useNotification();
 
   const handleMouseEnter = () => {
     const id = setInterval(() => {
