@@ -1,58 +1,67 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import {
-  ShoppingCartIcon,
-  PlusIcon,
-  TrashIcon,
-  ShareIcon,
-  CheckIcon,
-} from "lucide-react";
+import {ShoppingCartIcon, PlusIcon, TrashIcon, ShareIcon, CheckIcon,} from "lucide-react";
 import { useSession } from "next-auth/react";
-import {
-  useNotification,
-  NOTIFICATION_TYPES,
-} from "../components/NotificationContext";
+import {useNotification, NOTIFICATION_TYPES,} from "../components/NotificationContext";
 
 const ShoppingList = () => {
   const [items, setItems] = useState([]);
   const [newItem, setNewItem] = useState("");
   const { data: session } = useSession();
   const { addNotification } = useNotification();
-
+  const [isLoading, setIsLoading] = useState(true);
+  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+  
   // Fetch shopping list from backend
   useEffect(() => {
     const fetchShoppingList = async () => {
+      console.log(session.user.id)
       try {
-        const response = await fetch('/api/shopping-list');
+        const response = await fetch(`${url}/api/shoppingList/item?user=${session.user.id}`);
         if (response.ok) {
           const data = await response.json();
-          setItems(data);
+          setItems(data.length > 0 ? data : []);
         } else {
+          console.log('123fail')
           throw new Error('Failed to fetch shopping list');
         }
       } catch (error) {
-        addNotification(error.message, NOTIFICATION_TYPES.ERROR);
+        // Only add notification if it's not an empty list
+        if (error.message !== 'Failed to fetch shopping list') {
+          addNotification(error.message, NOTIFICATION_TYPES.ERROR);
       }
+      setItems([]);
+    } finally {
+      setIsLoading(false)
+    }
     };
 
     if (session) {
       fetchShoppingList();
     }
-  }, [session]);
+  }, [session, url, addNotification]);
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-4 mt-20 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>);
+  }
 
   const addItem = async () => {
     if (!newItem.trim()) return;
-
+    
     try {
-      const response = await fetch('/api/shopping-list/item', {
+      const response = await fetch(`${url}/api/shoppingList/item`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          item: {
+          items: [{
             name: newItem,
             quantity: 1,
-            purchased: false
-          }
+            purchased: false,
+            source: `${session.user.name}`
+          }],user:session.user 
         })
       });
 
@@ -73,17 +82,17 @@ const ShoppingList = () => {
 
   const removeItem = async (itemId) => {
     try {
-      const response = await fetch('/api/shopping-list/item', {
+      const response = await fetch(`${url}/api/shoppingList/item?user=${session.user.id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ itemId })
       });
-
+  
       if (!response.ok) throw new Error('Failed to remove item');
-
+  
       const updatedItems = await response.json();
       setItems(updatedItems);
-
+  
       addNotification(
         'Item removed from shopping list', 
         NOTIFICATION_TYPES.WARNING
@@ -94,9 +103,19 @@ const ShoppingList = () => {
   };
 
   const togglePurchased = async (itemId) => {
+    const itemToUpdate = items.find(item => item._id === itemId);
+
+     // Optimistically update the local state first
+    const updatedItems = items.map(item => 
+      item._id === itemId 
+        ? { ...item, purchased: !item.purchased }
+        : item
+    );
+
+    setItems(updatedItems)
+
     try {
-      const itemToUpdate = items.find(item => item._id === itemId);
-      const response = await fetch('/api/shopping-list/item', {
+      const response = await fetch(`${url}/api/shoppingList/item?user=${session.user.id}`,{
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -105,23 +124,39 @@ const ShoppingList = () => {
         })
       });
 
-      if (!response.ok) throw new Error('Failed to update item');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update item');
+      };
 
-      const updatedItems = await response.json();
-      setItems(updatedItems);
+      const serverUpdatedItems = await response.json();
+      setItems(serverUpdatedItems);
 
       addNotification(
         `Marked item as ${itemToUpdate.purchased ? 'not purchased' : 'purchased'}`,
         NOTIFICATION_TYPES.SUCCESS
       );
     } catch (error) {
+      setItems(items)
       addNotification(error.message, NOTIFICATION_TYPES.ERROR);
     }
   };
 
   const updateQuantity = async (itemId, quantity) => {
+
+    if (quantity < 1) return;
+
+  // Optimistically update the local state first
+  const updatedQuantity = items.map(item => 
+    item._id === itemId 
+      ? { ...item, quantity: quantity }
+      : item
+  );
+
+  setItems(updatedQuantity)
+
     try {
-      const response = await fetch('/api/shopping-list/item', {
+      const response = await fetch(`${url}/api/shoppingList/item?user=${session.user.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -130,23 +165,27 @@ const ShoppingList = () => {
         })
       });
 
-      if (!response.ok) throw new Error('Failed to update quantity');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update quantity');
+      };
 
-      const updatedItems = await response.json();
-      setItems(updatedItems);
+      const serverUpdatedItems = await response.json();
+      setItems(serverUpdatedItems);
 
       addNotification(
         'Quantity updated',
         NOTIFICATION_TYPES.SUCCESS
       );
     } catch (error) {
+      setItems(items)
       addNotification(error.message, NOTIFICATION_TYPES.ERROR);
     }
   };
 
   const clearList = async () => {
     try {
-      const response = await fetch('/api/shopping-list', { method: 'DELETE' });
+      const response = await fetch(`${url}/api/shoppingList/deleteShoppingList?user=${session.user.id}`, { method: 'DELETE' });
       if (!response.ok) throw new Error('Failed to clear list');
 
       setItems([]);
@@ -168,7 +207,7 @@ const ShoppingList = () => {
     window.open(whatsappUrl, "_blank");
   };
 
-  if (!session) {
+  if (!session?.user?.id) {
     return (
       <div className="container mx-auto p-4 text-center">
         <p>Please log in to view your shopping list</p>
@@ -217,9 +256,9 @@ const ShoppingList = () => {
         </button>
       </div>
 
-      {items.map((item, index) => (
+      {items.map((item) => (
         <div
-          key={index}
+          key={item._id}
           className={`flex items-center mb-2 p-2 rounded ${
             item.purchased ? "bg-gray-100 line-through" : "bg-white"
           }`}
@@ -227,7 +266,7 @@ const ShoppingList = () => {
           <input
             type="number"
             value={item.quantity}
-            onChange={(e) => updateQuantity(index, parseInt(e.target.value))}
+            onChange={(e) => updateQuantity(item._id, parseInt(e.target.value))}
             min="1"
             className="w-16 mr-2 p-1 border rounded"
           />
@@ -240,7 +279,7 @@ const ShoppingList = () => {
             )}
           </div>
           <button
-            onClick={() => togglePurchased(index)}
+            onClick={() => togglePurchased(item._id)}
             className={`mr-2 p-1 rounded ${
               item.purchased ? "bg-green-500 text-white" : "bg-gray-200"
             }`}
@@ -248,7 +287,7 @@ const ShoppingList = () => {
             <CheckIcon />
           </button>
           <button
-            onClick={() => removeItem(index)}
+            onClick={() => removeItem(item._id)}
             className="p-1 bg-red-500 text-white rounded"
           >
             <TrashIcon />

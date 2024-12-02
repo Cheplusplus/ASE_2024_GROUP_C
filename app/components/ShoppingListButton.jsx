@@ -2,9 +2,11 @@
 import React from 'react';
 import { ShoppingCartIcon } from 'lucide-react';
 import { useNotification, NOTIFICATION_TYPES } from './NotificationContext';
+import { useSession } from "next-auth/react";
 
 const ShoppingListButton = ({ ingredients, recipeName }) => {
   const { addNotification } = useNotification();
+  const { data: session, status } = useSession();
 
   const handleAddToShoppingList = async () => {
     try {
@@ -15,13 +17,13 @@ const ShoppingListButton = ({ ingredients, recipeName }) => {
         purchased: false,
         source: recipeName
       }));
-
-      const response = await fetch('/api/shopping-list/item', {
+      console.log(ingredientsToAdd)
+      const response = await fetch('/api/shoppingList/item', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ items: ingredientsToAdd })
+        body: JSON.stringify({ items: ingredientsToAdd,user:session.user })
       });
 
       if (!response.ok) {
@@ -47,7 +49,7 @@ const ShoppingListButton = ({ ingredients, recipeName }) => {
       title="Add ingredients to shopping list"
     >
       <ShoppingCartIcon className="mr-2" />
-      Add to List
+     +
     </button>
   );
 };
