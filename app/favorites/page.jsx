@@ -59,6 +59,19 @@ const FavouritesPage = () => {
     }
   };
 
+  /**
+   * Removes a recipe from the user's favourites list.
+   *
+   * Sends a DELETE request to the API endpoint for removing favourite recipes.
+   * If the request is successful, it updates the state by removing the recipe
+   * from the list of favourites. If the request fails, it logs an error to the
+   * console. The global favourites count is also updated via a custom event.
+   *
+   * @param {string} recipeId - The ID of the recipe to remove from favourites.
+   * @throws Will log an error to the console if the fetch request fails.
+   * 
+   * 
+   */
   const handleRemoveFavourite = async (recipeId) => {
     try {
       const response = await fetch("/api/favourites", {
