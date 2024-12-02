@@ -5,7 +5,7 @@ import React, { createContext, useState, useContext } from "react";
 const MyContext = createContext();
 
 export const MyContextProvider = ({ children }) => {
-  const [isTrue, setIsTrue] = useState(true);
+  const [isTrue, setIsTrue] = useState(false);
 
   const toggleValue = () => {
     setIsTrue((prevState) => !prevState);
@@ -18,4 +18,4 @@ export const MyContextProvider = ({ children }) => {
   );
 };
 
-export const useMyContext = () => useContext(MyContext);
+export const useMyContext = () =>{ return useContext(MyContext)};

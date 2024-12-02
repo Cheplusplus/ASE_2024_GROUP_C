@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useMyContext } from "./searchContext";
 
 /**
  * A search bar component for searching recipes by title with highlighted matches.
@@ -17,8 +18,71 @@ const SearchBar = ({ isOpen, onClose }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const { isTrue} = useMyContext();
+  const [recognition, setRecognition] = useState(null);
+  const [voice,setVoice] = useState('');
+  
 
   const router = useRouter();
+
+
+    // Initialize Web Speech Recognition API
+    useEffect(() => {
+      if (!('webkitSpeechRecognition' in window)) {
+        alert('Web Speech Recognition is not supported in this browser.');
+        return;
+      }
+  
+      const speechRecognition = new window.webkitSpeechRecognition();
+      speechRecognition.continuous = true;
+      speechRecognition.interimResults = false;
+      speechRecognition.lang = 'en-US';
+  
+      speechRecognition.onresult = (event) => {
+        const transcript = event.results[event.results.length - 1][0].transcript.trim();
+        setVoice(transcript.toLowerCase());
+        
+      };
+  
+      speechRecognition.onerror = (error) => {
+        console.error('Speech Recognition Error:', error);
+        setError(`Speech Recognition Error: ${error.error || 'Unknown error'}`);
+      };
+  
+      setRecognition(speechRecognition);
+
+      if(isTrue){
+        console.log('slide123')
+        recognition.start();
+      }
+
+    }, [isTrue]);
+
+    useEffect(() => {
+      if (voice !== "") {
+        setSearchQuery(voice[0]);  // Reset displayedText when a new answer is set
+        let index = 0;
+        const typingInterval = setInterval(() => {
+          setSearchQuery((prev) => prev + voice[index]);
+          index += 1;
+          if (index === voice.length-1) {
+            clearInterval(typingInterval); // Stop typing when all characters are displayed
+          }
+        }, 35); // Adjust typing speed here
+  
+        return () => clearInterval(typingInterval); // Clean up interval when component unmounts
+      }
+    }, [voice]); // Trigger typing effect when the answer changes
+
+
+    // useEffect(()=>{
+    //   if(isTrue){
+    //     recognition.start();
+    //   }
+    //   else{
+    //     recognition.stop();
+    //   }
+    // },[isTrue])
 
   // Clear search when closing search overlay
   useEffect(() => {
@@ -26,6 +90,9 @@ const SearchBar = ({ isOpen, onClose }) => {
       const debounceTimeout = setTimeout(()=> {
         fetchSuggestions(searchQuery);
         // Auto-submit search after 300ms of no typing
+      
+          recognition.stop()?recognition.stop():null;
+        
         router.push(`/all?search=${encodeURIComponent(searchQuery)}`);
         setHasSearched(true);
       }, 300);
@@ -107,7 +174,7 @@ const SearchBar = ({ isOpen, onClose }) => {
   return (
     <div 
       className={`fixed top-16 left-0 right-0 z-40 backdrop-blur-md bg-white/30 shadow-lg transition-all duration-300 ease-in-out ${
-        isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'
+        isOpen || isTrue ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -119,7 +186,7 @@ const SearchBar = ({ isOpen, onClose }) => {
               onChange={handleSearchChange}
               placeholder="Search recipes by title..."
               className="w-full px-4 py-2 rounded-md bg-white/50 focus:outline-none focus:ring-2 focus:ring-purple-300 text-black"
-              autoFocus={isOpen}
+              autoFocus={isOpen || isTrue}
             />
             <button
               onClick={()=>handleSuggestionClick(searchQuery)}

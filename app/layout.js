@@ -49,19 +49,19 @@ export default function RootLayout({ children }) {
     <html lang="en" >
       <body className="bg-background text-foreground transition-colors duration-300">
        <SessionProvider>
+       <MyContextProvider>
         <ThemeProvider >
           <ClientNavWrapper>
             <Navbar />
           </ClientNavWrapper>
           <NotificationProvider>
-          <MyContextProvider>
           <main className="min-h-screen pt-16">{children}</main>
-          </MyContextProvider>
           </NotificationProvider>
           <Footer />
           <MobileBar/>
           <ServiceWorkerRegistration/>
           </ThemeProvider>
+          </MyContextProvider>
         </SessionProvider>
       </body>
     </html>

@@ -1,10 +1,11 @@
+'use client'
 import Link from "next/link";
 import Image from "next/image";
 import { useMyContext } from "./searchContext";
 
 
 export default function MobileBar() {
-  const { toggleValue } = useMyContext();
+   const { toggleValue } = useMyContext();
 
     return (
       <div className="sticky bottom-4 mx-6 ">
