@@ -48,6 +48,25 @@ const Navbar = () => {
     };
   }, []);
 
+  //  favourites counter 
+  const fetchFavouritesCount = async () => {
+    if (status === 'authenticated') {
+      try {
+        const response = await fetch('/api/favourites');
+        if (response.ok) {
+          const data = await response.json();
+          setFavouritesCount(data.count);
+        }
+      } catch (error) {
+        console.error('Error fetching favourites count:', error);
+      }
+    } else {
+      setFavouritesCount(0);
+    }
+  };
+
+
+
   useEffect(() => {
     // Check if user is logged in, for example, by checking a token in localStorage
     const token = localStorage.getItem("authToken");
