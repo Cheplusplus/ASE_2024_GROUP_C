@@ -7,7 +7,7 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import MobileBar from "./components/MobileBar";
 import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
 import { NotificationProvider } from "./components/NotificationContext";
-
+import { MyContextProvider } from "./components/searchContext";
 // metadata for the RootLayout
 export const metadata = {
   metadataBase: new URL('https://ase-2024-group-c.vercel.app/'),
@@ -54,7 +54,9 @@ export default function RootLayout({ children }) {
             <Navbar />
           </ClientNavWrapper>
           <NotificationProvider>
+          <MyContextProvider>
           <main className="min-h-screen pt-16">{children}</main>
+          </MyContextProvider>
           </NotificationProvider>
           <Footer />
           <MobileBar/>

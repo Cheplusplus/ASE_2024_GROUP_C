@@ -178,6 +178,7 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
                   step={1}
                   className="mt-2"
                 />
+                {numSteps}
               </div>
 
               {/* Ingredients filter */}
@@ -202,9 +203,9 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
         <Button variant="primary" onClick={applyFilters} className="mt-4 w-full">
           Apply Filters
         </Button>
-        <Button variant="outline" onClick={() => setIsOpen(false)} className="mt-2 bg-red-600 hover:bg-red-700 w-full text-white">
+        <button onClick={() => setIsOpen(false)} className="mt-2 bg-red-600 hover:bg-red-700 w-full text-white">
           Close
-        </Button>
+        </button>
       </div>
     </div>
   </div>
