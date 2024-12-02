@@ -35,6 +35,17 @@ const FavouritesPage = () => {
     }
   }, [status]);
 
+/**
+ * Fetches the user's favourite recipes from the API.
+ *
+ * This asynchronous function sends a GET request to the API endpoint for 
+ * retrieving favourite recipes. If the request is successful, it updates 
+ * the state with the list of favourites. If the request fails, it logs an 
+ * error to the console. The loading state is set to false after the fetch 
+ * completes, regardless of success or failure.
+ *
+ * @throws Will log an error to the console if the fetch request fails.
+ */
   const fetchFavourites = async () => {
     try {
       const response = await fetch(`${url}/api/favourites`);
