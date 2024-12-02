@@ -18,17 +18,25 @@ export default function RecipeDetail({ params }) {
   useEffect(() => {
     const downloadedRecipes =
       JSON.parse(localStorage.getItem("downloadedRecipes")) || [];
-    setIsDownloaded(downloadedRecipes.some((r) => r.id === id));
+    setIsDownloaded(downloadedRecipes.some((r) => r._id === id));
   }, [id]);
 
   const downloadRecipe = async () => {
+    const downloadedRecipes =
+      JSON.parse(localStorage.getItem("downloadedRecipes")) || [];
+
+    // Check if the recipe is already downloaded
+    if (downloadedRecipes.some((r) => r._id === id)) {
+      alert("This recipe is already downloaded.");
+      return;
+    }
+
+    // Proceed to download if not already downloaded
     if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
       const messageChannel = new MessageChannel();
 
       messageChannel.port1.onmessage = (event) => {
         if (event.data.success) {
-          const downloadedRecipes =
-            JSON.parse(localStorage.getItem("downloadedRecipes")) || [];
           downloadedRecipes.push(recipe);
           localStorage.setItem(
             "downloadedRecipes",
@@ -128,13 +136,13 @@ export default function RecipeDetail({ params }) {
           })}
         </script>
       </Head>
-      <div className="p-6 max-w-6xl mx-auto font-sans pt-16">
+      <div className="p-6 max-w-6xl mx-auto font-sans pt-8">
         <button
           onClick={(e) => {
             e.preventDefault();
             router.back();
           }}
-          className="text-gray-200 hover:text-gray-500 mb-4 flex items-center"
+          className="text-gray-600 hover:text-gray-800 mb-4 flex items-center"
         >
           ← Back
         </button>

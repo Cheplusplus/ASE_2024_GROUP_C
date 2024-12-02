@@ -114,12 +114,22 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
           />
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <button
+              onClick={handleFavouriteClick}
+              className={`mt-2 px-3 py-1 rounded absolute ${
+                isFavourited 
+                  ? 'bg-red-500 hover:bg-red-600' 
+                  : 'bg-blue-500 hover:bg-blue-600'
+              } text-white`}
+            >
+              {isFavourited ? 'Remove from Favourites' : 'Add to Favourites'}
+            </button>
         </div>
         
         {/* Content Container */}
         <div className="p-1">
           {/* Title */}
-          <h2 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2">
+          <h2 className="md:text-xl text-md font-bold text-gray-800 mb-3 line-clamp-2">
             {title}
           </h2>
           
@@ -158,16 +168,7 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
           )}
           <p className="text-yellow-500">{`★`.repeat(stats.averageRating)}</p>
           <p className='bold'>{stats.numberOfComments} <i>reviews</i> </p>
-            <button
-              onClick={handleFavouriteClick}
-              className={`mt-2 px-3 py-1 rounded ${
-                isFavourited 
-                  ? 'bg-red-500 hover:bg-red-600' 
-                  : 'bg-blue-500 hover:bg-blue-600'
-              } text-white`}
-            >
-              {isFavourited ? 'Remove from Favourites' : 'Add to Favourites'}
-            </button>
+            
         </div>
       </div>
     </Link>
