@@ -21,6 +21,7 @@ const Navbar = () => {
   const [shoppingListCount, setShoppingListCount] = useState(0);
   const pathname = usePathname();
   const router = useRouter(); 
+  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
   const { data: session } = useSession();
   const [favouritesCount, setFavouritesCount] = useState(0);
@@ -52,7 +53,7 @@ const Navbar = () => {
   const fetchFavouritesCount = async () => {
     if (status === 'authenticated') {
       try {
-        const response = await fetch('/api/favourites');
+        const response = await fetch(`${url}/api/favourites`);
         if (response.ok) {
           const data = await response.json();
           setFavouritesCount(data.count);
@@ -74,9 +75,9 @@ const Navbar = () => {
   
 
   const fetchInitialFavouritesCount = async () => {
-    if (status === 'authenticated') {
+    
       try {
-        const response = await fetch('/api/favourites');
+        const response = await fetch(`${url}/api/favourites`);
         if (response.ok) {
           const data = await response.json();
           setFavouritesCount(data.count);
@@ -84,11 +85,11 @@ const Navbar = () => {
       } catch (error) {
         console.error('Error fetching favourites count:', error);
       }
-    }
+    
   };
 
   fetchInitialFavouritesCount();
-}, [status]);
+}, []);
 
 // Update favourites count dynamically
 useEffect(() => {
@@ -123,7 +124,7 @@ useEffect(() => {
   // Fetch favourites count when session changes
   useEffect(() => {
     const fetchFavouritesCount = async () => {
-      if (status === 'authenticated') {
+      
         try {
           const response = await fetch('/api/favourites');
           if (response.ok) {
@@ -133,13 +134,11 @@ useEffect(() => {
         } catch (error) {
           console.error('Error fetching favourites count:', error);
         }
-      } else {
-        setFavouritesCount(0);
-      }
+      
     };
 
     fetchFavouritesCount();
-  }, [status]);
+  }, []);
 
   // Listen for favourites updates from other components
   useEffect(() => {
