@@ -3,6 +3,13 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
+/**
+ * @function Downloads
+ * @description The Downloads component displays a list of recipes that have been downloaded for offline use.
+ * It retrieves the downloaded recipes from the local storage and sets them in the component state.
+ * If no recipes are downloaded, it displays a message indicating that no recipes are available.
+ * Each downloaded recipe is displayed as a link to its detail page.
+ */
 const Downloads = () => {
   const [downloadedRecipes, setDownloadedRecipes] = useState([]);
 
