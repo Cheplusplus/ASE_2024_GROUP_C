@@ -117,9 +117,9 @@ const Paginate = ({ skip, }) => {
       Showing recipes {skip + 1} - {Math.min(skip + RECIPES_PER_PAGE, totalRecipes)} of {totalRecipes}
     </div>
 
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div className="flex flex-col items-center gap-4">
       {/* Pagination Controls */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center justify-center gap-1">
         {/* First Page */}
         <button
           onClick={() => handlePageChange(1)}
@@ -151,7 +151,7 @@ const Paginate = ({ skip, }) => {
                   onClick={() => handlePageChange(page)}
                   className={`px-3 py-2 rounded-lg ${
                     currentPage === page
-                      ? 'bg-blue-500 text-white'
+                      ? 'bg-green-600 text-white'
                       : 'hover:bg-gray-100'
                   }`}
                 >
@@ -183,7 +183,7 @@ const Paginate = ({ skip, }) => {
       </div>
 
       {/* Jump to Page Form */}
-      <form onSubmit={handleJumpToPage} className="flex items-center gap-2">
+      <form onSubmit={handleJumpToPage} className="flex items-center gap-2 mt-4">
         <input
           type="number"
           value={searchPage}
@@ -191,11 +191,11 @@ const Paginate = ({ skip, }) => {
           min="1"
           max={totalPages}
           placeholder="Page #"
-          className="w-20 px-2 py-1 border rounded-lg"
+          className="w-25 px-2 py-1 border rounded-lg"
         />
         <button
           type="submit"
-          className="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          className="px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700"
         >
           Go
         </button>
