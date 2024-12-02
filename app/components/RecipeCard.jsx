@@ -153,21 +153,21 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           <button
-              onClick={handleFavouriteClick}
-              className={`mt-2 px-3 py-1 rounded absolute ${
-                isFavourited 
-                  ? 'bg-red-500 hover:bg-red-600' 
-                  : 'bg-blue-500 hover:bg-blue-600'
-              } text-white`}
-            >
-              {isFavourited ? 'Remove from Favourites' : 'Add to Favourites'}
-            </button>
+            onClick={handleFavouriteClick}
+            className="bg-white/50 p-1 right-2 top-1 rounded-full absolute hover:bg-white/75 transition-all"
+          >
+            {isCurrentlyFavourited ? (
+              <HeartOff className="text-red-500 w-5 h-5" fill="currentColor" />
+            ) : (
+              <Heart className="text-gray-600 w-5 h-5" />
+            )}
+          </button>
         </div>
 
         {/* Content Container */}
         <div className="p-1">
           {/* Title */}
-          <h2 className="md:text-xl text-md font-bold text-gray-800 mb-3 line-clamp-2">
+          <h2 className="md:text-xl  text-md font-bold text-gray-800 mb-2 line-clamp-1">
             {title}
           </h2>
 
@@ -220,16 +220,7 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
             <i className="text-gray-500">reviews</i>
           </p>
 
-          <button
-            onClick={handleFavouriteClick}
-            className="bg-white/50 p-2 rounded-full hover:bg-white/75 transition-all"
-          >
-            {isCurrentlyFavourited ? (
-              <HeartOff className="text-red-500 w-6 h-6" fill="currentColor" />
-            ) : (
-              <Heart className="text-gray-500 w-6 h-6" />
-            )}
-          </button>
+          
         </div>
       </div>
     </Link>
