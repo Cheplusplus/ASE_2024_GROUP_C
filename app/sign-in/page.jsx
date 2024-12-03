@@ -58,6 +58,18 @@ const SignIn = () => {
     }
   };
 
+/**
+ * Handles sign-in using Google provider.
+ *
+ * Redirects to the current page after successful sign-in
+ *
+ * @remarks
+ * This function is a wrapper around Next-Auth's signIn function and
+ * is used to handle sign-in using Google provider.This function is invoked when the user clicks the sign-in button and
+   * redirects to the Google authentication page. It sets the callback
+ * URL to the current page so that the user is redirected back to the
+ * current page after successful sign-in.
+ */
   const handleSignIn = () => {
     // Redirect to the current page after successful sign-in
     const callbackUrl = router.asPath;
