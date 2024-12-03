@@ -265,6 +265,18 @@ const ShoppingList = () => {
     }
   };
 
+  /**
+   * Clears the user's entire shopping list.
+   *
+   * This asynchronous function sends a DELETE request to clear the user's
+   * shopping list. It uses the current user's session information to
+   * identify the user's shopping list. If the request is successful, it
+   * updates the local items state to an empty array and shows a warning
+   * notification. If there's an error, it shows an error notification.
+   *
+   * @async
+   * @throws Will add an error notification if the request fails.
+   */
   const clearList = async () => {
     try {
       const response = await fetch(`${url}/api/shoppingList/deleteShoppingList?user=${session.user.id}`, { method: 'DELETE' });
