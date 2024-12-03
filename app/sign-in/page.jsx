@@ -25,6 +25,17 @@ const SignIn = () => {
   const [error, setError] = useState("");
   const { theme } = useTheme();
 
+/**
+ * Handles user login using credentials.
+ *
+ * This asynchronous function prevents the default form submission,
+ * sets a loading state, and authenticates the user using Next-Auth's
+ * signIn function with email and password credentials. If authentication
+ * fails, it sets an error message temporarily. On successful authentication,
+ * it redirects the user to the homepage.
+ *
+ * @param {Event} e - The DOM event triggered by form submission.
+ */
   const login = async (e) => {
     e.preventDefault();
     setLoading(true);
