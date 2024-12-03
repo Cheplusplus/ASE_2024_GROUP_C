@@ -1,5 +1,17 @@
 'use client';
 
+/**
+ * @description
+ * GlobalError is a Next.js error boundary component that displays
+ * an error message and a reload button when an error occurs in the
+ * application.
+ *
+ * @param {Object} error - The error object that was thrown.
+ * @param {function} reset - A function to reset the error boundary.
+ * @returns {JSX.Element} The GlobalError component.
+ * @example
+ * <GlobalError error={error} reset={reset} />
+ */
 export default function GlobalError({ error, reset }) {
   return (
         <div className="text-center bg-white p-8 rounded-lg mx-auto my-[10%] shadow-lg max-w-md">
