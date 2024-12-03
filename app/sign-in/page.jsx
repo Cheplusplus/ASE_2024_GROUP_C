@@ -6,6 +6,17 @@ import { useSession, signIn } from "next-auth/react";
 import { useTheme } from "../components/ThemeProvider";
 import Image from "next/image";
 
+/**
+ * SignIn component that handles user authentication using Next-Auth
+ *
+ * @remarks
+ * This component renders a sign-in form and handles the authentication flow
+ * using Next-Auth. It uses the `useSession` hook to get the current session and
+ * the `signIn` function to authenticate the user.
+ *
+ * @param {Object} props - The component props
+ * @returns {ReactElement} The SignIn component
+ */
 const SignIn = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
