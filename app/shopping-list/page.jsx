@@ -167,8 +167,6 @@ const ShoppingList = () => {
  * @param {string} itemId - The ID of the item to be toggled.
  * @throws Will add an error notification if the request fails.
  */
-
-
   const togglePurchased = async (itemId) => {
     const itemToUpdate = items.find(item => item._id === itemId);
 
@@ -209,6 +207,23 @@ const ShoppingList = () => {
     }
   };
 
+/**
+ * Updates the quantity of a specific item in the shopping list.
+ *
+ * This asynchronous function sends a PUT request to update the quantity
+ * of a specified item in the user's shopping list using the item's ID.
+ * It uses the current user's session information to identify the user's
+ * shopping list. The function optimistically updates the local state 
+ * before sending the request. If the request is successful, it updates
+ * the local items state with the response from the server and shows a 
+ * success notification. If there's an error, it reverts the local state 
+ * to its previous state and shows an error notification.
+ *
+ * @async
+ * @param {string} itemId - The ID of the item to update.
+ * @param {number} quantity - The new quantity for the item.
+ * @throws Will add an error notification if the request fails.
+ */
   const updateQuantity = async (itemId, quantity) => {
 
     if (quantity < 1) return;
