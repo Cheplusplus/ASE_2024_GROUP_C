@@ -23,6 +23,13 @@ const SignUp = () => {
   const [error, setError] = useState(null);
   const router = useRouter();
 
+/**
+ * Handles form submission. Prevents default form submission, sends a POST request
+ * to the `/api/auth/register` endpoint with the user's email, password, and name.
+ * If the registration is successful, redirects the user to the sign-in page.
+ * If registration fails, it displays an error message temporarily.
+ * @param {Event} e - Form submission event
+ */
  const handleSubmit =async (e) => {
   e.preventDefault();
   try {
