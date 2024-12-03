@@ -68,7 +68,21 @@ const ShoppingList = () => {
       </div>);
   }
 
-
+/**
+ * Adds a new item to the shopping list.
+ *
+ * This function sends a POST request to add a new item to the user's
+ * shopping list. It uses the current user's session information to
+ * associate the item with the user. The item is initially marked as
+ * not purchased and has a default quantity of 1.
+ *
+ * If the request is successful, it updates the local items state with
+ * the response from the server and shows a success notification. If
+ * there's an error, it shows an error notification.
+ *
+ * @async
+ * @throws Will add an error notification if the request fails.
+ */
   const addItem = async () => {
     if (!newItem.trim()) return;
     
