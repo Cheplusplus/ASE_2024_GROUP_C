@@ -115,6 +115,20 @@ const ShoppingList = () => {
     }
   };
 
+/**
+ * Removes an item from the shopping list.
+ *
+ * This function sends a DELETE request to remove a specified item from the
+ * user's shopping list using the item's ID. It uses the current user's session
+ * information to identify the user's shopping list. If the request is
+ * successful, it updates the local items state with the response from the
+ * server and shows a warning notification. If there's an error, it shows an
+ * error notification.
+ *
+ * @async
+ * @param {string} itemId - The ID of the item to be removed.
+ * @throws Will add an error notification if the request fails.
+ */
   const removeItem = async (itemId) => {
     try {
       const response = await fetch(`${url}/api/shoppingList/item?user=${session.user.id}`, {
