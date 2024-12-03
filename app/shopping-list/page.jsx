@@ -4,6 +4,13 @@ import {ShoppingCartIcon, PlusIcon, TrashIcon, ShareIcon, CheckIcon,} from "luci
 import { useSession } from "next-auth/react";
 import {useNotification, NOTIFICATION_TYPES,} from "../components/NotificationContext";
 
+/**
+ * The ShoppingList component displays a shopping list and allows users to
+ * add, remove, and update items on the list. It also allows users to clear
+ * the entire list and share it with others.
+ * 
+ * @returns A React component that renders a shopping list
+ */
 const ShoppingList = () => {
   const [items, setItems] = useState([]);
   const [newItem, setNewItem] = useState("");
@@ -14,6 +21,19 @@ const ShoppingList = () => {
   
   // Fetch shopping list from backend
   useEffect(() => {
+/**
+ * Fetches the user's shopping list from the backend.
+ *
+ * This asynchronous function sends a GET request to the API endpoint 
+ * for retrieving the shopping list based on the authenticated user's ID.
+ * If the request is successful and the list is not empty, it updates the 
+ * state with the list of items. If the request fails, it logs an error and 
+ * sets the items to an empty array. Regardless of the outcome, it sets the 
+ * loading state to false after the fetch completes.
+ *
+ * @throws Will add an error notification if the fetch request fails for 
+ * reasons other than an empty list.
+ */
     const fetchShoppingList = async () => {
       console.log(session.user.id)
       try {
@@ -47,6 +67,7 @@ const ShoppingList = () => {
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
       </div>);
   }
+
 
   const addItem = async () => {
     if (!newItem.trim()) return;
