@@ -292,6 +292,18 @@ const ShoppingList = () => {
     }
   };
 
+  /**
+   * Opens a new window with a URL that allows the user to share their shopping
+   * list on WhatsApp. The list is formatted as a string with each item on a
+   * separate line, with the name and quantity in parentheses (e.g. "Apples (3)\nBananas (2)\nCarrots (1)").
+   * The URL is built using the WhatsApp web client's URL scheme, which allows
+   * the user to share the list without having to copy and paste it.
+   * 
+   * @function
+   * @returns {void}
+   * @example
+   * shareList();
+   */
   const shareList = () => {
     const listText = items
       .map((item) => `${item.name} (${item.quantity})`)
