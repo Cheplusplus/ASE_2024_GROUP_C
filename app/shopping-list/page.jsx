@@ -151,6 +151,23 @@ const ShoppingList = () => {
     }
   };
 
+  /**
+   * Toggles the purchased status of an item in the shopping list.
+   *
+   * This function sends a PUT request to update the purchased status of a
+   * specified item in the user's shopping list using the item's ID. It uses
+   * the current user's session information to identify the user's shopping
+   * list. If the request is successful, it updates the local items state with
+   * the response from the server and shows a success notification. If there's
+   * an error, it shows an error notification and reverts the local state to
+   * its previous state.
+   *
+   * @async
+   * @param {string} itemId - The ID of the item to be toggled.
+   * @throws Will add an error notification if the request fails.
+   */
+
+  
   const togglePurchased = async (itemId) => {
     const itemToUpdate = items.find(item => item._id === itemId);
 
