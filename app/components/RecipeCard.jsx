@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useNotification, NOTIFICATION_TYPES } from './NotificationContext';
 import { Heart, HeartOff } from 'lucide-react';
+import { useMyContext2 } from "./favCountContext"
 
 const MAX_VISIBLE_TAGS = 1;
 
@@ -33,6 +34,7 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
   const [loading, setLoading] = useState(true);
   const [favourites, setFavourites] = useState([]);
   const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+  const { updateFavCount} = useMyContext2();
 
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -111,7 +113,7 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
 
       // Update local favourited state
       setIsCurrentlyFavourited(!isCurrentlyFavourited);
-
+      updateFavCount();
       // Trigger parent component callbacks if provided
       if (isCurrentlyFavourited) {
         onRemoveFromFavourites && onRemoveFromFavourites();
