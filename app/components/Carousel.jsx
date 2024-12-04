@@ -18,7 +18,7 @@ const Carousel = ({ heading, autoSlide = true, slideInterval = 3000 }) => {
       try {
         const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
         const res = await fetch(`${url}/api/10Recipes`, {
-          cache: "force-cache",
+          cache: "no-cache",
         });
         if (!res.ok) {
           throw new Error("Failed to fetch recipes");
