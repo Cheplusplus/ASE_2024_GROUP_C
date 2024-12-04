@@ -325,7 +325,7 @@ export default function About() {
               Join Our Culinary Journey
             </h2>
             <p className="text-base sm:text-xl text-gray-600 dark:text-gray-300 mb-6 sm:mb-8 max-w-2xl mx-auto">
-              Whether you're a home cook, professional chef, or food enthusiast, 
+              Whether you&#39;re a home cook, professional chef, or food enthusiast, 
               Recipe Rush is your platform to explore, create, and share amazing recipes.
             </p>
             <Link 
