@@ -26,7 +26,6 @@ const Navbar = () => {
   const { updateCount} = useMyContext2();
 
   const { data: session } = useSession();
-  // const [favouritesCount, setFavouritesCount] = useState(0);
 
   // Update shopping list count
   useEffect(() => {
@@ -206,7 +205,6 @@ const Navbar = () => {
                 )}
               </Link>
               <ThemeToggle />
-
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 className={`p-2 rounded-md relative text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none ${
