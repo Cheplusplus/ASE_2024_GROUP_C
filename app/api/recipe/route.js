@@ -2,11 +2,7 @@
 import connectToDatabase from "@/app/lib/connectMongoose";
 import Recipe from "@/app/models/Recipe";
 import { NextResponse } from "next/server";
-/**
- *
- * @param {searchParams} req - This will get
- * @returns
- */
+
 
 export const dynamic = 'force-dynamic';  // Add this line to handle dynamic rendering
 
