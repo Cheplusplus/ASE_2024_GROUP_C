@@ -92,7 +92,6 @@ export async function GET(req) {
       .populate('recipe')
       .sort({ addedAt: -1 });
 
-    //  console.log(favourites[0])
 
     const favouritesCount = await Favourite.countDocuments({ user: user._id });
 

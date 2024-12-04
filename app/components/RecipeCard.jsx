@@ -44,19 +44,18 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
   const { addNotification } = useNotification();
 
 
-  const fetchFavourites = async () => {
-    try {
-      const response = await fetch(`${url}/api/favourites`);
-      console.log(response.ok,'client')
-      if (!response.ok) throw new Error('Failed to fetch favourites');
-      const data = await response.json();
-     data.favourites.some((fav) => fav._id === _id) ? setIsCurrentlyFavourited(true):null
-      setFavourites(data.favourites);
+  // const fetchFavourites = async () => {
+  //   try {
+  //     const response = await fetch(`${url}/api/favourites`);
+  //     if (!response.ok) throw new Error('Failed to fetch favourites');
+  //     const data = await response.json();
+  //    data.favourites.some((fav) => fav._id === _id) ? setIsCurrentlyFavourited(true):null
+  //     setFavourites(data.favourites);
 
-    } catch (error) {
-      console.error('Error fetching favourites:', error);
-    }
-  };
+  //   } catch (error) {
+  //     console.error('Error fetching favourites:', error);
+  //   }
+  // };
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -78,7 +77,9 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
     };
 
     fetchReviews();
-    fetchFavourites();
+   // fetchFavourites();
+   fav.some((fav) => fav._id === _id) ? setIsCurrentlyFavourited(true):null
+
 
   },[]); // Dependency array
 
