@@ -1,3 +1,4 @@
+// app/layout.js
 import Navbar from "./components/Navbar";
 import ClientNavWrapper from "./components/ClientNavWrapper";
 import Footer from "./components/Footer";
@@ -7,10 +8,10 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import MobileBar from "./components/MobileBar";
 import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
 import { NotificationProvider } from "./components/NotificationContext";
+import ConnectionStatus from "./components/ConnectionStatus"; // Import ConnectionStatus
 
-// metadata for the RootLayout
 export const metadata = {
-  metadataBase: new URL('https://ase-2024-group-c.vercel.app/'),
+  metadataBase: new URL("https://ase-2024-group-c.vercel.app/"),
   title: "Recipe Rush - The Source for Culinary Inspiration",
   description: "Discover delicious recipes and cooking tips to elevate your culinary skills.",
   category: "website",
@@ -46,19 +47,20 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" >
+    <html lang="en">
       <body className="bg-background text-foreground transition-colors duration-300">
-       <SessionProvider>
-        <ThemeProvider >
-          <ClientNavWrapper>
-            <Navbar />
-          </ClientNavWrapper>
-          <NotificationProvider>
-          <main className="min-h-screen pt-16">{children}</main>
-          </NotificationProvider>
-          <Footer />
-          <MobileBar/>
-          <ServiceWorkerRegistration/>
+        <SessionProvider>
+          <ThemeProvider>
+            <ClientNavWrapper>
+              <Navbar />
+            </ClientNavWrapper>
+            <NotificationProvider>
+              <ConnectionStatus /> {/* Add ConnectionStatus here */}
+              <main className="min-h-screen pt-16">{children}</main>
+            </NotificationProvider>
+            <Footer />
+            <MobileBar />
+            <ServiceWorkerRegistration />
           </ThemeProvider>
         </SessionProvider>
       </body>
