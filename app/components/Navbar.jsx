@@ -1,12 +1,13 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import SearchBar from './SearchBar';
-import { signOut } from 'next-auth/react';
-import { ThemeToggle } from './ThemeToggle';
-import { useSession } from 'next-auth/react';
-import { Heart } from "lucide-react" 
+"use client";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import SearchBar from "./SearchBar";
+import { signOut } from "next-auth/react";
+import { ThemeToggle } from "./ThemeToggle";
+import { useSession } from "next-auth/react";
+import { Heart } from "lucide-react";
+import { Download } from "lucide-react";
 import { ShoppingCartIcon } from "lucide-react";
 import Image from "next/image";
 import { useMyContext2 } from "./favCountContext"
@@ -27,8 +28,8 @@ const Navbar = () => {
   const { data: session } = useSession();
   // const [favouritesCount, setFavouritesCount] = useState(0);
 
-   // Update shopping list count
-   useEffect(() => {
+  // Update shopping list count
+  useEffect(() => {
     const updateShoppingListCount = () => {
       const storedItems = localStorage.getItem("shoppingList");
       const items = storedItems ? JSON.parse(storedItems) : [];
@@ -39,14 +40,17 @@ const Navbar = () => {
     updateShoppingListCount();
 
     // Listen for storage changes
-    window.addEventListener('storage', updateShoppingListCount);
+    window.addEventListener("storage", updateShoppingListCount);
 
     // Add custom event listener
-    window.addEventListener('shopping-list-updated', updateShoppingListCount);
+    window.addEventListener("shopping-list-updated", updateShoppingListCount);
 
     return () => {
-      window.removeEventListener('storage', updateShoppingListCount);
-      window.removeEventListener('shopping-list-updated', updateShoppingListCount);
+      window.removeEventListener("storage", updateShoppingListCount);
+      window.removeEventListener(
+        "shopping-list-updated",
+        updateShoppingListCount
+      );
     };
   }, []);
 
@@ -80,9 +84,13 @@ const Navbar = () => {
       name: "Recipes",
       href: "/recipes",
     },
-    { name: 'Favourites', href: '/favourites', badge: status === 'authenticated' ? favouritesCount : null},
-    { name: 'About', href: '/about' },
-    { name: 'Contact', href: '/contact' },
+    {
+      name: "Favourites",
+      href: "/favourites",
+      badge: status === "authenticated" ? favouritesCount : null,
+    },
+    { name: "About", href: "/about" },
+    { name: "Contact", href: "/contact" },
     {
       name: "Account",
       href: "/account",
@@ -95,8 +103,8 @@ const Navbar = () => {
     {
       name: "Shopping List",
       href: "/shopping-list",
-      icon: <ShoppingCartIcon className="inline-block mr-2" />
-    }
+      icon: <ShoppingCartIcon className="inline-block mr-2" />,
+    },
   ];
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -105,8 +113,8 @@ const Navbar = () => {
     setMenuOpen((prev) => !prev);
   };
 
-  const favouritesLink = navLinks.find(link => link.name === 'Favourites');
-  if (favouritesLink && status === 'authenticated') {
+  const favouritesLink = navLinks.find((link) => link.name === "Favourites");
+  if (favouritesLink && status === "authenticated") {
     favouritesLink.badge = favouritesCount;
   }
 
@@ -152,7 +160,7 @@ const Navbar = () => {
                 >
                   <Image
                     style={{
-                      objectFit:"cover",
+                      objectFit: "cover",
                       width: "auto",
                       height: "auto",
                     }}
@@ -169,24 +177,36 @@ const Navbar = () => {
 
             {/* Shopping cart, Theme Toggle and Search */}
             <div className="flex items-center ">
-            <Link href="/favorites" className=" hidden md:block relative p-2 rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700" >
+              <Link
+                href="/favourites"
+                className=" hidden md:block relative p-2 rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
                 <Heart />
                 {updateCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
                     {updateCount}
                   </span>
                 )}
-            </Link>
-             <Link href="/shopping-list" className="hidden md:block relative p-2 rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
-            <ShoppingCartIcon />
-            {shoppingListCount > 0 && (
+              </Link>
+              <Link
+                href={"/downloads"}
+                className=" hidden md:block relative p-2 rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <Download />
+              </Link>
+              <Link
+                href="/shopping-list"
+                className="hidden md:block relative p-2 rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <ShoppingCartIcon />
+                {shoppingListCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                     {shoppingListCount}
                   </span>
                 )}
-          </Link> 
-          <ThemeToggle />
-              
+              </Link>
+              <ThemeToggle />
+
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 className={`p-2 rounded-md relative text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none ${
@@ -248,7 +268,7 @@ const Navbar = () => {
                   </div>
                 </div>
               )}
-              
+
               {/**Drop Down Menu */}
               {menuOpen && (
                 <ul className="space-y-1 absolute top-14  right-4 md:right-auto bg-white mt-2">
