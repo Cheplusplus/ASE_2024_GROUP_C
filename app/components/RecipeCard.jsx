@@ -1,65 +1,101 @@
 "use client";
-import React, { useState,useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { useNotification, NOTIFICATION_TYPES } from './NotificationContext';
-import { Heart, HeartOff } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useNotification, NOTIFICATION_TYPES } from "./NotificationContext";
+import { Heart, HeartOff } from "lucide-react";
+import DownloadRecipeBtn from "./DownloadRecipeBtn";
 
 const MAX_VISIBLE_TAGS = 1;
 
-
 // SVG Icons as constants for reusability and improved readability
 const ClockIcon = (
-  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+  <svg
+    className="w-4 h-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+    />
   </svg>
 );
 const LightningIcon = (
-  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+  <svg
+    className="w-4 h-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M13 10V3L4 14h7v7l9-11h-7z"
+    />
   </svg>
 );
 const PeopleIcon = (
-  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+  <svg
+    className="w-4 h-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+    />
   </svg>
 );
 
-const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags = [] },  onAddToFavourites, onRemoveFromFavourites, isFavourited = false}) => {
-
+const RecipeCard = ({
+  recipe: { _id, title, images, prep, cook, servings, tags = [] },
+  onAddToFavourites,
+  onRemoveFromFavourites,
+  isFavourited = false,
+}) => {
   const [stats, setStats] = useState([]);
-  const [aveRating,setAveRating] = useState(0);
+  const [aveRating, setAveRating] = useState(0);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [favourites, setFavourites] = useState([]);
-  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-
+  const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [intervalId, setIntervalId] = useState(null);
-  const [isCurrentlyFavourited, setIsCurrentlyFavourited] = useState(isFavourited);
+  const [isCurrentlyFavourited, setIsCurrentlyFavourited] =
+    useState(isFavourited);
   const remainingTags = tags.length - MAX_VISIBLE_TAGS;
   const { addNotification } = useNotification();
-
 
   const fetchFavourites = async () => {
     try {
       const response = await fetch(`${url}/api/favourites`);
-      if (!response.ok) throw new Error('Failed to fetch favourites');
+      if (!response.ok) throw new Error("Failed to fetch favourites");
       const data = await response.json();
-     data.favourites.some((fav) => fav._id === _id) ? setIsCurrentlyFavourited(true):null
+      data.favourites.some((fav) => fav._id === _id)
+        ? setIsCurrentlyFavourited(true)
+        : null;
       setFavourites(data.favourites);
-
     } catch (error) {
-      console.error('Error fetching favourites:', error);
+      console.error("Error fetching favourites:", error);
     }
   };
 
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        console.log('123')
-        const response2 = await fetch(`${url}/api/getReviews?recipeId=${_id}`,{cache:'force-cache'});
+        console.log("123");
+        const response2 = await fetch(`${url}/api/getReviews?recipeId=${_id}`, {
+          cache: "force-cache",
+        });
 
         if (!response2.ok) {
           throw new Error(`HTTP error! Status: ${response2.status}`);
@@ -76,12 +112,11 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
 
     fetchReviews();
     fetchFavourites();
-
-  },[]); // Dependency array
+  }, []); // Dependency array
 
   const handleMouseEnter = () => {
     const id = setInterval(() => {
-      setCurrentImageIndex(prevIndex => (prevIndex + 1) % images.length);
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
     }, 1000); // Change image every 1 second
     setIntervalId(id);
   };
@@ -130,7 +165,6 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
       addNotification(error.message, NOTIFICATION_TYPES.ERROR);
     }
   };
-  
 
   return (
     <Link href={`/recipes/${_id}`} className="block">
@@ -162,6 +196,10 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
               <Heart className="text-gray-600 w-5 h-5" />
             )}
           </button>
+
+          
+            <DownloadRecipeBtn id={_id} />
+          
         </div>
 
         {/* Content Container */}
@@ -219,8 +257,6 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
             <span className="text-green-600">{stats.numberOfComments}</span>
             <i className="text-gray-500">reviews</i>
           </p>
-
-          
         </div>
       </div>
     </Link>
