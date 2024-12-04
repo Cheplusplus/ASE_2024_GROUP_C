@@ -72,7 +72,7 @@ const Navbar = () => {
   const fetchInitialFavouritesCount = async () => {
     if (session) {
       try {
-        const response = await fetch('/api/favourites/fav');
+        const response = await fetch(`${url}/api/favourites/fav`);
         if (response.ok) {
           const data = await response.json();
           setFavouritesCount(data.count);
@@ -102,7 +102,7 @@ const Navbar = () => {
     const updateShoppingListCount = async () => {
       if (session) {
         try {
-          const response = await fetch('/api/shoppingList/item')
+          const response = await fetch(`${url}/api/shoppingList/item`)
           if (response.ok) {
             const data = await response.json();
             setShoppingListCount(data.count)
@@ -128,7 +128,7 @@ const Navbar = () => {
   const fetchFavouritesCount = async () => {
     if (session) {
       try {
-        const response = await fetch('/api/favourites/fav');
+        const response = await fetch(`${url}/api/favourites/fav`);
         if (response.ok) {
           const data = await response.json();
           setFavouritesCount(data.count);
@@ -243,20 +243,10 @@ useEffect(() => {
             <Link href="/favorites" className=" hidden md:block relative p-2 rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700" >
                 <Heart />
                 <Badge count ={favouritesCount}/>
-                {/* {favouritesCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
-                    {favouritesCount}
-                  </span>
-                )} */}
             </Link>
              <Link href="/shopping-list" className="hidden md:block relative p-2 rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
                 <ShoppingCartIcon />
                 <Badge count={shoppingListCount} />
-                {/* {shoppingListCount > 0 && (
-                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                        {shoppingListCount}
-                      </span>
-                    )} */}
              </Link> 
           <ThemeToggle />
               
