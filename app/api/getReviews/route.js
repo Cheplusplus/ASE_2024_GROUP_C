@@ -38,7 +38,7 @@ export async function GET(req) {
 
     // Set appropriate CORS headers
     const response = NextResponse.json({ reviews, stats }, { status: 200 });
-    response.headers.set("Access-Control-Allow-Origin", "https://staging-ase-2024-group-c.vercel.app");
+    response.headers.set("Access-Control-Allow-Origin", "https://ase-2024-group-c.vercel.app");
     response.headers.set("Access-Control-Allow-Methods", "GET, OPTIONS");
     response.headers.set("Access-Control-Allow-Headers", "Content-Type");
     return response;
@@ -56,7 +56,7 @@ export async function GET(req) {
 // Handle OPTIONS requests for CORS preflight
 export async function OPTIONS() {
   const response = NextResponse.json(null, { status: 204 });
-  response.headers.set("Access-Control-Allow-Origin", "https://staging-ase-2024-group-c.vercel.app");
+  response.headers.set("Access-Control-Allow-Origin", "https://ase-2024-group-c.vercel.app");
   response.headers.set("Access-Control-Allow-Methods", "GET, OPTIONS");
   response.headers.set("Access-Control-Allow-Headers", "Content-Type");
   return response;

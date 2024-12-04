@@ -67,8 +67,8 @@ export async function POST(req) {
 
 // Get user's favourites
 export async function GET(req) {
-  // const res = new NextResponse();
-  // setCORSHeaders(res);
+  const res = new NextResponse();
+  setCORSHeaders(res);
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -106,8 +106,8 @@ export async function GET(req) {
 
 // Remove a recipe from favourites
 export async function DELETE(req) {
-  // const res = new NextResponse();
-  // setCORSHeaders(res);
+  const res = new NextResponse();
+  setCORSHeaders(res);
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
