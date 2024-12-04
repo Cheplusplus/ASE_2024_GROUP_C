@@ -26,23 +26,14 @@ export const MyContextProvider2 = ({ children }) => {
         fetchFavouritesCount();
       }, []);
 
-  const updateFavCount = () => {
+  const updateFavCount = (increment) => {
     
-  const fetchInitialFavouritesCount = async () => {
-   
-    try {
-      const response = await fetch('/api/favourites');
-      if (response.ok) {
-        const data = await response.json();
-        setUpdateCount(data.count);
-      }
-    } catch (error) {
-      console.error('Error fetching favourites count:', error);
-    }
-  
-};
-
-fetchInitialFavouritesCount();
+       if(increment){
+          setUpdateCount(prev=>prev-1)
+       }
+       else{
+        setUpdateCount(prev=>prev+1)
+       }
   };
 
   return (

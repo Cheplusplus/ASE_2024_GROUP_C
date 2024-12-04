@@ -110,10 +110,10 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
       if (!response.ok) {
         throw new Error(data.message || "Failed to update favourites");
       }
-
+      updateFavCount(isCurrentlyFavourited);
       // Update local favourited state
       setIsCurrentlyFavourited(!isCurrentlyFavourited);
-      updateFavCount();
+      
       // Trigger parent component callbacks if provided
       if (isCurrentlyFavourited) {
         onRemoveFromFavourites && onRemoveFromFavourites();
