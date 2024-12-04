@@ -1,3 +1,4 @@
+'server only'
 import Navbar from "./components/Navbar";
 import ClientNavWrapper from "./components/ClientNavWrapper";
 import Footer from "./components/Footer";
@@ -7,7 +8,8 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import MobileBar from "./components/MobileBar";
 import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
 import { NotificationProvider } from "./components/NotificationContext";
-
+import { MyContextProvider } from "./components/searchContext";
+import { MyContextProvider2 } from "./components/favCountContext";
 // metadata for the RootLayout
 export const metadata = {
   metadataBase: new URL('https://ase-2024-group-c.vercel.app/'),
@@ -49,6 +51,8 @@ export default function RootLayout({ children }) {
     <html lang="en" >
       <body className="bg-background text-foreground transition-colors duration-300">
        <SessionProvider>
+       <MyContextProvider>
+       <MyContextProvider2>
         <ThemeProvider >
           <ClientNavWrapper>
             <Navbar />
@@ -60,6 +64,8 @@ export default function RootLayout({ children }) {
           <MobileBar/>
           <ServiceWorkerRegistration/>
           </ThemeProvider>
+          </MyContextProvider2>
+          </MyContextProvider>
         </SessionProvider>
       </body>
     </html>

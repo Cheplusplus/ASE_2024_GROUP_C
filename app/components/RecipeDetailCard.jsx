@@ -113,6 +113,7 @@ const RecipeDetailCard = ({ recipe, id }) => {
             ingredients={recipe.ingredients}
             recipeName={recipe.title}
           />
+          
         </div>
 
         <div className="flex flex-wrap gap-2 my-4">

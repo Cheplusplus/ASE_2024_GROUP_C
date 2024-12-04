@@ -1,14 +1,16 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import SearchBar from './SearchBar';
-import { signOut } from 'next-auth/react';
-import { ThemeToggle } from './ThemeToggle';
-import { useSession } from 'next-auth/react';
-
+"use client";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import SearchBar from "./SearchBar";
+import { signOut } from "next-auth/react";
+import { ThemeToggle } from "./ThemeToggle";
+import { useSession } from "next-auth/react";
+import { Heart } from "lucide-react";
+import { Download } from "lucide-react";
 import { ShoppingCartIcon } from "lucide-react";
 import Image from "next/image";
+import { useMyContext2 } from "./favCountContext"
 /**
  * The main navigation component for the app.
  * @returns {JSX.Element} The rendered navbar component.
@@ -21,12 +23,13 @@ const Navbar = () => {
   const [shoppingListCount, setShoppingListCount] = useState(0);
   const pathname = usePathname();
   const router = useRouter(); 
+  const { updateCount} = useMyContext2();
 
   const { data: session } = useSession();
-  const [favouritesCount, setFavouritesCount] = useState(0);
+  // const [favouritesCount, setFavouritesCount] = useState(0);
 
-   // Update shopping list count
-   useEffect(() => {
+  // Update shopping list count
+  useEffect(() => {
     const updateShoppingListCount = () => {
       const storedItems = localStorage.getItem("shoppingList");
       const items = storedItems ? JSON.parse(storedItems) : [];
@@ -37,22 +40,25 @@ const Navbar = () => {
     updateShoppingListCount();
 
     // Listen for storage changes
-    window.addEventListener('storage', updateShoppingListCount);
+    window.addEventListener("storage", updateShoppingListCount);
 
     // Add custom event listener
-    window.addEventListener('shopping-list-updated', updateShoppingListCount);
+    window.addEventListener("shopping-list-updated", updateShoppingListCount);
 
     return () => {
-      window.removeEventListener('storage', updateShoppingListCount);
-      window.removeEventListener('shopping-list-updated', updateShoppingListCount);
+      window.removeEventListener("storage", updateShoppingListCount);
+      window.removeEventListener(
+        "shopping-list-updated",
+        updateShoppingListCount
+      );
     };
   }, []);
 
-  useEffect(() => {
-    // Check if user is logged in, for example, by checking a token in localStorage
-    const token = localStorage.getItem("authToken");
-    setIsLoggedIn(!!token);
-  }, []);
+//   useEffect(() => {
+//     // Check if user is logged in, for example, by checking a token in localStorage
+//     const token = localStorage.getItem("authToken");
+//     setIsLoggedIn(!!token);
+  
 
   const handleSublinkToggle = (linkName) => {
     setOpenSublinks((prev) => ({
@@ -71,39 +77,6 @@ const Navbar = () => {
     router.push("/"); // Redirect to sign-in page
   };
 
-  // Fetch favourites count when session changes
-  useEffect(() => {
-    const fetchFavouritesCount = async () => {
-      if (status === 'authenticated') {
-        try {
-          const response = await fetch('/api/favourites');
-          if (response.ok) {
-            const data = await response.json();
-            setFavouritesCount(data.count);
-          }
-        } catch (error) {
-          console.error('Error fetching favourites count:', error);
-        }
-      } else {
-        setFavouritesCount(0);
-      }
-    };
-
-    fetchFavouritesCount();
-  }, [status]);
-
-  // Listen for favourites updates from other components
-  useEffect(() => {
-    const handleFavouritesUpdate = (e) => {
-      setFavouritesCount(e.detail.count);
-    };
-
-    document.addEventListener('favouritesUpdated', handleFavouritesUpdate);
-
-    return () => {
-      document.removeEventListener('favouritesUpdated', handleFavouritesUpdate);
-    };
-  }, []);
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -111,9 +84,13 @@ const Navbar = () => {
       name: "Recipes",
       href: "/recipes",
     },
-    { name: 'Favourites', href: '/favourites', badge: status === 'authenticated' ? favouritesCount : null},
-    { name: 'About', href: '/about' },
-    { name: 'Contact', href: '/contact' },
+    {
+      name: "Favourites",
+      href: "/favourites",
+      badge: status === "authenticated" ? favouritesCount : null,
+    },
+    { name: "About", href: "/about" },
+    { name: "Contact", href: "/contact" },
     {
       name: "Account",
       href: "/account",
@@ -126,8 +103,8 @@ const Navbar = () => {
     {
       name: "Shopping List",
       href: "/shopping-list",
-      icon: <ShoppingCartIcon className="inline-block mr-2" />
-    }
+      icon: <ShoppingCartIcon className="inline-block mr-2" />,
+    },
   ];
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -136,8 +113,8 @@ const Navbar = () => {
     setMenuOpen((prev) => !prev);
   };
 
-  const favouritesLink = navLinks.find(link => link.name === 'Favourites');
-  if (favouritesLink && status === 'authenticated') {
+  const favouritesLink = navLinks.find((link) => link.name === "Favourites");
+  if (favouritesLink && status === "authenticated") {
     favouritesLink.badge = favouritesCount;
   }
 
@@ -183,7 +160,7 @@ const Navbar = () => {
                 >
                   <Image
                     style={{
-                      objectFit:"cover",
+                      objectFit: "cover",
                       width: "auto",
                       height: "auto",
                     }}
@@ -200,26 +177,36 @@ const Navbar = () => {
 
             {/* Shopping cart, Theme Toggle and Search */}
             <div className="flex items-center ">
-            <Link href="/favorites" className=" hidden md:block relative" >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
-                  <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
-                </svg>
-                {favouritesCount > 0 && (
+              <Link
+                href="/favourites"
+                className=" hidden md:block relative p-2 rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <Heart />
+                {updateCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
-                    {favouritesCount}
+                    {updateCount}
                   </span>
                 )}
-            </Link>
-             <Link href="/shopping-list" className="hidden md:block relative p-2 rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
-            <ShoppingCartIcon />
-            {shoppingListCount > 0 && (
+              </Link>
+              <Link
+                href={"/downloads"}
+                className=" hidden md:block relative p-2 rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <Download />
+              </Link>
+              <Link
+                href="/shopping-list"
+                className="hidden md:block relative p-2 rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <ShoppingCartIcon />
+                {shoppingListCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                     {shoppingListCount}
                   </span>
                 )}
-          </Link> 
-          <ThemeToggle />
-              
+              </Link>
+              <ThemeToggle />
+
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 className={`p-2 rounded-md relative text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none ${
@@ -281,7 +268,7 @@ const Navbar = () => {
                   </div>
                 </div>
               )}
-              
+
               {/**Drop Down Menu */}
               {menuOpen && (
                 <ul className="space-y-1 absolute top-14  right-4 md:right-auto bg-white mt-2">
