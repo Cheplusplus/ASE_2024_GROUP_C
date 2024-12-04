@@ -12,9 +12,10 @@ const RecipeGrid = async ({ searchParams }) => {
   const sortOption = searchParams?.sortOption || "";
   const skip = parseInt(searchParams.skip, 10) || 0;
   const search = searchParams.search || "";
+  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
   try {
-    const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    
     const res = await fetch(`${url}/api/recipe?search=${search}&skip=${skip}&category=${category}&tags=${tags.join(',')}&numSteps=${numSteps}&ingredients=${ingredients}&sortOption=${sortOption}`,{cache:'force-cache'},{
     headers: { 'Content-Type': 'application/json' }
   });
@@ -23,12 +24,14 @@ const RecipeGrid = async ({ searchParams }) => {
     const recipes = await res.json();
    // console.log(recipes)
     let categories;
+    let fav;
 
       const response = await fetch(`${url}/api/categories`, {cache: 'force-cache'});
       console.log(response.status,'status')
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     
        categories = await response.json();
+
    
      
     return (

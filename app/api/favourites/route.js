@@ -76,13 +76,13 @@ export async function GET(req) {
 
   try {
     const session = await getServerSession(authOptions);
-
+    console.log(session.user)
     if (!session || !session.user) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     await connectToDatabase();
-
+   console.log('slide123456')
     const user = await User.findOne({ email: session.user.email });
     if (!user) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
@@ -91,6 +91,8 @@ export async function GET(req) {
     const favourites = await Favourite.find({ user: user._id })
       .populate('recipe')
       .sort({ addedAt: -1 });
+
+    //  console.log(favourites[0])
 
     const favouritesCount = await Favourite.countDocuments({ user: user._id });
 

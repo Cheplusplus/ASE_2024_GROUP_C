@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useNotification, NOTIFICATION_TYPES } from './NotificationContext';
 import { Heart, HeartOff } from 'lucide-react';
 import { useMyContext2 } from "./favCountContext"
+import { useMyContext3 } from './favContext';
 
 const MAX_VISIBLE_TAGS = 1;
 
@@ -32,9 +33,9 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
   const [aveRating,setAveRating] = useState(0);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [favourites, setFavourites] = useState([]);
   const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
   const { updateFavCount} = useMyContext2();
+  const { favourites} = useMyContext3();
 
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -42,20 +43,6 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
   const [isCurrentlyFavourited, setIsCurrentlyFavourited] = useState(isFavourited);
   const remainingTags = tags.length - MAX_VISIBLE_TAGS;
   const { addNotification } = useNotification();
-
-
-  const fetchFavourites = async () => {
-    try {
-      const response = await fetch(`${url}/api/favourites`);
-      if (!response.ok) throw new Error('Failed to fetch favourites');
-      const data = await response.json();
-     data.favourites.some((fav) => fav._id === _id) ? setIsCurrentlyFavourited(true):null
-      setFavourites(data.favourites);
-
-    } catch (error) {
-      console.error('Error fetching favourites:', error);
-    }
-  };
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -77,7 +64,7 @@ const RecipeCard = ({ recipe: { _id, title, images, prep, cook, servings, tags =
     };
 
     fetchReviews();
-    fetchFavourites();
+    favourites.some((fav) => fav._id === _id) ? setIsCurrentlyFavourited(true):null
 
   },[]); // Dependency array
 

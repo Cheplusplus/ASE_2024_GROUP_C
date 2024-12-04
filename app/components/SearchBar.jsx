@@ -26,53 +26,53 @@ const SearchBar = ({ isOpen, onClose }) => {
   const router = useRouter();
 
 
-    // Initialize Web Speech Recognition API
-    useEffect(() => {
-      if (!('webkitSpeechRecognition' in window)) {
-        alert('Web Speech Recognition is not supported in this browser.');
-        return;
-      }
-  
-      const speechRecognition = new window.webkitSpeechRecognition();
-      speechRecognition.continuous = true;
-      speechRecognition.interimResults = false;
-      speechRecognition.lang = 'en-US';
-  
-      speechRecognition.onresult = (event) => {
-        const transcript = event.results[event.results.length - 1][0].transcript.trim();
-        setVoice(transcript.toLowerCase());
-        
-      };
-  
-      speechRecognition.onerror = (error) => {
-        console.error('Speech Recognition Error:', error);
-        setError(`Speech Recognition Error: ${error.error || 'Unknown error'}`);
-      };
-  
-      setRecognition(speechRecognition);
+  useEffect(() => {
+    if (!("webkitSpeechRecognition" in window)) {
+      console.warn("Web Speech Recognition is not supported in this browser.");
+      return;
+    }
 
-      if(isTrue){
-        console.log('slide123')
-        recognition.start();
-      }
+    const speechRecognition = new window.webkitSpeechRecognition();
+    speechRecognition.continuous = false; // Single session for 3 seconds
+    speechRecognition.interimResults = false;
+    speechRecognition.lang = "en-US";
 
-    }, [isTrue]);
+    speechRecognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript.trim();
+      setVoice(transcript.toLowerCase());
+    };
 
-    useEffect(() => {
-      if (voice !== "") {
-        setSearchQuery(voice[0]);  // Reset displayedText when a new answer is set
-        let index = 0;
-        const typingInterval = setInterval(() => {
-          setSearchQuery((prev) => prev + voice[index]);
-          index += 1;
-          if (index === voice.length-1) {
-            clearInterval(typingInterval); // Stop typing when all characters are displayed
-          }
-        }, 35); // Adjust typing speed here
-  
-        return () => clearInterval(typingInterval); // Clean up interval when component unmounts
-      }
-    }, [voice]); // Trigger typing effect when the answer changes
+    speechRecognition.onerror = (error) => {
+      console.error("Speech Recognition Error:", error);
+    };
+
+    setRecognition(speechRecognition);
+  }, []);
+
+  useEffect(() => {
+    if (isTrue && recognition) {
+      console.log("Starting voice recognition...");
+      recognition.start();
+
+      const stopTimeout = setTimeout(() => {
+        recognition.stop();
+        console.log("Voice recognition stopped.");
+      }, 3000); // Stop after 3 seconds
+
+      return () => clearTimeout(stopTimeout);
+    }
+  }, [isTrue, recognition]);
+
+  useEffect(() => {
+    if (voice) {
+      setSearchQuery(voice); // Populate search query
+      setTimeout(() => {
+        router.push(`/all?search=${encodeURIComponent(voice)}`);
+      }, 30); // Delay for better UX
+    }
+  }, [voice, router]);
+
+
 
 
   // Clear search when closing search overlay
