@@ -2,6 +2,17 @@ import connectToDatabase from "@/app/lib/connectMongoose";
 import Review from "@/app/models/reviews";
 import { NextResponse } from "next/server";
 
+/**
+ * Handles PATCH requests to update an existing review.
+ *
+ * @param {import('next/server').NextRequest} req - The request object containing the review details in the body.
+ * @returns {Promise<import('next/server').NextResponse>} - The response object containing the updated review or an error message.
+ *
+ * This function connects to the database, validates the request data, and updates the specified review.
+ * If any required fields are missing, it returns a 400 error response.
+ * If the update is successful, it returns the updated review.
+ * If there's an error during the process, it returns a 500 error response.
+ */
 export async function PATCH(req) {
   await connectToDatabase();
 
