@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { User } from "lucide-react";
+import Link from "next/link";
 
 // Team Members Data
 const teamMembers = [
@@ -89,6 +90,7 @@ const TeamCarousel = ({ heading = "Meet Our Team" }) => {
               key={index} 
               className="flex-shrink-0 w-[150x] text-center"
             >
+              <Link href="/about" className="block">
               <div className="relative w-[150px] h-[150px] mx-auto mb-2">
                 {imageErrors[index] || !member.image ? (
                   <div className="w-full h-full bg-gray-200 rounded-full flex items-center justify-center">
@@ -105,6 +107,7 @@ const TeamCarousel = ({ heading = "Meet Our Team" }) => {
                   />
                 )}
               </div>
+              </Link>
               <div>
                 <p className="font-semibold text-md">{member.name}</p>
                 <p className="text-sm text-gray-500">{member.role}</p>
