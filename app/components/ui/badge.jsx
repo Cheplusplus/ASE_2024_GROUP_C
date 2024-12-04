@@ -1,19 +1,21 @@
 import React from 'react';
 
-const Badge = ({ variant = 'default', className = '', children, onClick }) => {
+const Badge = ({ count, className = '', variant = 'default'}) => {
+  if (count <= 0) return null;
+
   const variants = {
-    default: 'bg-gray-200 text-gray-800',
-    outline: 'border border-gray-300 text-gray-700 bg-white',
+    default: 'bg-green-600 text-white',
     primary: 'bg-blue-500 text-white',
-    danger: 'bg-red-500 text-white',
-    success: 'bg-green-500 text-white',
+    secondary: 'bg-gray-500 text-white',
   };
 
-  const badgeClasses = `${variants[variant]} inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${className}`;
-
   return (
-    <span className={badgeClasses} onClick={onClick}>
-      {children}
+    <span 
+      className={`absolute -top-2 -right-1 text-xs rounded-full px-1.5 py-0.5 
+        ${variants[variant] || variants.default} 
+        ${className}`}
+    >
+      {count}
     </span>
   );
 };
