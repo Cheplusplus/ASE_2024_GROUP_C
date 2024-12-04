@@ -112,8 +112,6 @@ const Navbar = () => {
       href: "/recipes",
     },
     { name: 'Favourites', href: '/favourites', badge: status === 'authenticated' ? favouritesCount : null},
-    { name: 'About', href: '/about' },
-    { name: 'Contact', href: '/contact' },
     {
       name: "Account",
       href: "/account",
