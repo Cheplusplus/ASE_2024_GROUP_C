@@ -9,7 +9,7 @@ export async function GET(req) {
     const recipes = await Recipe.aggregate([
       {
         $lookup: {
-          from: "reviews",
+          from: "reviews", // Assuming the reviews collection
           localField: "_id",
           foreignField: "recipeId",
           as: "reviews",
@@ -17,14 +17,14 @@ export async function GET(req) {
       },
       {
         $addFields: {
-          averageRating: { $avg: "$reviews.rating" },
+          comment: { $size: "$reviews" }, // Count the number of comments
         },
       },
       {
-        $sort: { averageRating: -1 },
+        $sort: { comment: -1 }, // Sort by number of comments, descending
       },
       {
-        $limit: 10,
+        $limit: 10, // Limit to the top 10 recipes
       },
     ]);
 
