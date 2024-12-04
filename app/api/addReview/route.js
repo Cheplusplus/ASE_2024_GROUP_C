@@ -12,7 +12,7 @@ export async function POST(req) {
     return res.status(200).end();
   }
 
-  await connectToDatabase();
+  await connectToDatabase();npn
 
   try {
     const { recipeId, comment, rating, reviewerName } = await req.json();

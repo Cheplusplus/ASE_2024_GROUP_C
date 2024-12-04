@@ -1,40 +1,53 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 
-export default function RecipeReviews({ recipeId,reviewUpdateKey}) {
+export default function RecipeReviews({ recipeId, reviewUpdateKey }) {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [editComment, setEditComment] = useState("");
   const [editRating, setEditRating] = useState(0);
+  const [error, setError] = useState(null); // For user-friendly error messages
   const { data: session } = useSession();
   const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
   // Fetch reviews
   const fetchReviews = async () => {
+    setLoading(true);
+    setError(null);
     try {
       const response = await fetch(`${url}/api/getReviews?recipeId=${recipeId}`);
-      if (!response.ok) throw new Error("Failed to fetch reviews");
+      if (!response.ok) {
+        const errorDetails = await response.json();
+        throw new Error(errorDetails.message || "Failed to fetch reviews");
+      }
       const data = await response.json();
-      setReviews(data.reviews);
+      setReviews(data.reviews || []);
     } catch (error) {
       console.error("Error fetching reviews:", error);
+      setError("Failed to load reviews. Please try again later.");
     } finally {
       setLoading(false);
     }
   };
+
   // Delete a review (authenticated user)
   const deleteReview = async (id) => {
+    setError(null);
     try {
       const response = await fetch(`${url}/api/deleteReview`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
       });
-      if (!response.ok) throw new Error("Failed to delete review");
+      if (!response.ok) {
+        const errorDetails = await response.json();
+        throw new Error(errorDetails.message || "Failed to delete review");
+      }
       setReviews(reviews.filter((review) => review._id !== id));
     } catch (error) {
       console.error("Error deleting review:", error);
+      setError("Failed to delete review. Please try again later.");
     }
   };
 
@@ -47,36 +60,45 @@ export default function RecipeReviews({ recipeId,reviewUpdateKey}) {
 
   // Submit edited review (authenticated user)
   const submitEditReview = async () => {
+    setError(null);
     try {
       const response = await fetch(`${url}/api/editReview`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: editingReviewId, comment: editComment, rating: editRating }),
+        body: JSON.stringify({
+          id: editingReviewId,
+          comment: editComment,
+          rating: editRating,
+        }),
       });
-      if (!response.ok) throw new Error("Failed to edit review");
-
+      if (!response.ok) {
+        const errorDetails = await response.json();
+        throw new Error(errorDetails.message || "Failed to edit review");
+      }
       const updatedReview = await response.json();
       setReviews(
         reviews.map((review) =>
           review._id === updatedReview._id ? updatedReview : review
         )
       );
-
       setEditingReviewId(null);
       setEditComment("");
       setEditRating(0);
     } catch (error) {
       console.error("Error editing review:", error);
+      setError("Failed to submit your changes. Please try again.");
     }
   };
 
+  // Fetch reviews on component mount or when dependencies change
   useEffect(() => {
     fetchReviews();
-  }, [recipeId,reviewUpdateKey]);
+  }, [recipeId, reviewUpdateKey]);
 
   return (
     <div className="p-4 bg-gray-50 rounded-md shadow-md">
       <h2 className="text-lg font-bold mb-4">Reviews</h2>
+      {error && <p className="text-red-500">{error}</p>} {/* Error display */}
       {loading ? (
         <p>Loading reviews...</p>
       ) : reviews.length === 0 ? (
