@@ -10,6 +10,7 @@ import { Heart } from "lucide-react";
 import { Download } from "lucide-react";
 import { ShoppingCartIcon } from "lucide-react";
 import Image from "next/image";
+import { useMyContext2 } from "./favCountContext"
 /**
  * The main navigation component for the app.
  * @returns {JSX.Element} The rendered navbar component.
@@ -21,10 +22,11 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [shoppingListCount, setShoppingListCount] = useState(0);
   const pathname = usePathname();
-  const router = useRouter();
+  const router = useRouter(); 
+  const { updateCount} = useMyContext2();
 
   const { data: session } = useSession();
-  const [favouritesCount, setFavouritesCount] = useState(0);
+  // const [favouritesCount, setFavouritesCount] = useState(0);
 
   // Update shopping list count
   useEffect(() => {
@@ -52,40 +54,11 @@ const Navbar = () => {
     };
   }, []);
 
-  useEffect(() => {
-    // Check if user is logged in, for example, by checking a token in localStorage
-    const token = localStorage.getItem("authToken");
-    setIsLoggedIn(!!token);
-
-    const fetchInitialFavouritesCount = async () => {
-      if (status === "authenticated") {
-        try {
-          const response = await fetch("/api/favourites");
-          if (response.ok) {
-            const data = await response.json();
-            setFavouritesCount(data.count);
-          }
-        } catch (error) {
-          console.error("Error fetching favourites count:", error);
-        }
-      }
-    };
-
-    fetchInitialFavouritesCount();
-  }, [status]);
-
-  // Update favourites count dynamically
-  useEffect(() => {
-    const handleFavouritesUpdate = (e) => {
-      setFavouritesCount(e.detail.count);
-    };
-
-    document.addEventListener("favouritesUpdated", handleFavouritesUpdate);
-
-    return () => {
-      document.removeEventListener("favouritesUpdated", handleFavouritesUpdate);
-    };
-  }, []);
+//   useEffect(() => {
+//     // Check if user is logged in, for example, by checking a token in localStorage
+//     const token = localStorage.getItem("authToken");
+//     setIsLoggedIn(!!token);
+  
 
   const handleSublinkToggle = (linkName) => {
     setOpenSublinks((prev) => ({
@@ -104,39 +77,6 @@ const Navbar = () => {
     router.push("/"); // Redirect to sign-in page
   };
 
-  // Fetch favourites count when session changes
-  useEffect(() => {
-    const fetchFavouritesCount = async () => {
-      if (status === "authenticated") {
-        try {
-          const response = await fetch("/api/favourites");
-          if (response.ok) {
-            const data = await response.json();
-            setFavouritesCount(data.count);
-          }
-        } catch (error) {
-          console.error("Error fetching favourites count:", error);
-        }
-      } else {
-        setFavouritesCount(0);
-      }
-    };
-
-    fetchFavouritesCount();
-  }, [status]);
-
-  // Listen for favourites updates from other components
-  useEffect(() => {
-    const handleFavouritesUpdate = (e) => {
-      setFavouritesCount(e.detail.count);
-    };
-
-    document.addEventListener("favouritesUpdated", handleFavouritesUpdate);
-
-    return () => {
-      document.removeEventListener("favouritesUpdated", handleFavouritesUpdate);
-    };
-  }, []);
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -242,9 +182,9 @@ const Navbar = () => {
                 className=" hidden md:block relative p-2 rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <Heart />
-                {favouritesCount > 0 && (
+                {updateCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
-                    {favouritesCount}
+                    {updateCount}
                   </span>
                 )}
               </Link>
