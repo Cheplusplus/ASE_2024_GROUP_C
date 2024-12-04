@@ -14,13 +14,19 @@ const DownloadRecipeBtn = ({ id }) => {
   }, [id]);
 
   const downloadRecipe = async (e) => {
-    e.stopPropagation()
+    e.preventDefault()
+   
     const downloadedRecipes =
       JSON.parse(localStorage.getItem("downloadedRecipes")) || [];
 
     // Check if the recipe is already downloaded
-    if (downloadedRecipes.some((r) => r._id === id)) {
-      alert("This recipe is already downloaded.");
+    if (isDownloaded) {
+      const updatedRecipes = downloadedRecipes.filter(
+        (r) => r._id !== recipe._id
+      );
+      localStorage.setItem("downloadedRecipes", JSON.stringify(updatedRecipes));
+      setIsDownloaded(false);
+      alert("Recipe removed from offline downloads.");
       return;
     }
 
@@ -77,17 +83,17 @@ const DownloadRecipeBtn = ({ id }) => {
     }
   }, [id]);
   return (
-    <button
+    <div
       className="bg-white/50 p-1 right-2 top-12 rounded-full absolute z-10 hover:bg-white/75 transition-all"
       onClick={downloadRecipe}
     //   disabled={isDownloaded}
     >
      {isDownloaded ? (
-              <Download className="text-green-600 w-5 h-5"  />
+              <Download className="text-red-600 w-5 h-5"  />
             ) : (
               <Download className="text-gray-600 w-5 h-5" />
             )}
-    </button>
+    </div>
   );
 };
 

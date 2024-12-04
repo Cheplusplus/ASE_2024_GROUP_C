@@ -170,6 +170,7 @@ const RecipeCard = ({
     }
   };
 
+  
   return (
     <Link href={`/recipes/${_id}`} className="block">
       <div
