@@ -3,15 +3,26 @@ import ShoppingList from "@/app/models/shoppingList";
 import User from "@/app/models/user";
 import connectToDatabase from "@/app/lib/connectMongoose";
 import { authOptions } from "../../auth/[...nextauth]/route";
+import { NextResponse } from "next/server";
 
 
 // POST method handler
 export async function POST(req) {
   try {
     await connectToDatabase();
+
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    const user = await User.findOne({ email: session.user.email });
+    if (!user) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
     
     // Parse request body
-    const { items, user } = await req.json();
+    const { items } = await req.json();
 
     // Validate input
     if (!Array.isArray(items) || items.length === 0) {
@@ -44,11 +55,14 @@ export async function POST(req) {
     // Save the shopping list
     await shoppingList.save();
 
-    return new Response(JSON.stringify(shoppingList.items), { status: 201 });
-  } catch (error) {
+    return NextResponse.json({
+      items: shoppingList.items,
+      count: shoppingList.items.length
+    }, { status: 201 });
+    } catch (error) {
     console.error("Error processing POST request:", error);
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
-  }
+    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
+    }
 }
 
 

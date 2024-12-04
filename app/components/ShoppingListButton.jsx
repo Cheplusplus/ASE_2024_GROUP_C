@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 const ShoppingListButton = ({ ingredients, recipeName }) => {
   const { addNotification } = useNotification();
   const { data: session, status } = useSession();
+  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
   const handleAddToShoppingList = async () => {
     try {
@@ -18,17 +19,26 @@ const ShoppingListButton = ({ ingredients, recipeName }) => {
         source: recipeName
       }));
       console.log(ingredientsToAdd)
-      const response = await fetch('/api/shoppingList/item', {
+      const response = await fetch(`${url}/api/shoppingList/item`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ items: ingredientsToAdd,user:session.user })
+        body: JSON.stringify({ items: ingredientsToAdd})
       });
 
       if (!response.ok) {
-        throw new Error('Failed to add items to shopping list');
+        const errorData = await response.json();
+        throw new Error(errorData.message ||'Failed to add items to shopping list');
       }
+
+      const { count } = await response.json();
+    
+      // Dispatch an event to update global shopping list count
+      document.dispatchEvent(new CustomEvent('shoppingListUpdated', { 
+        detail: { count } 
+      }));
+      console.log(shoppingList.count)
 
       addNotification(
         `Added ingredients from "${recipeName}" to your shopping list!`, 
