@@ -32,6 +32,7 @@ const RecipeGrid = async ({ searchParams }) => {
     
        categories = await response.json();
 
+
    
      
     return (

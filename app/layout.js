@@ -9,7 +9,6 @@ import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
 import { NotificationProvider } from "./components/NotificationContext";
 import { MyContextProvider } from "./components/searchContext";
 import { MyContextProvider2 } from "./components/favCountContext";
-import { MyContextProvider3 } from "./components/favContext";
 // metadata for the RootLayout
 export const metadata = {
   metadataBase: new URL('https://ase-2024-group-c.vercel.app/'),
@@ -53,7 +52,6 @@ export default function RootLayout({ children }) {
        <SessionProvider>
        <MyContextProvider>
        <MyContextProvider2>
-       <MyContextProvider3>
         <ThemeProvider >
           <ClientNavWrapper>
             <Navbar />
@@ -65,7 +63,6 @@ export default function RootLayout({ children }) {
           <MobileBar/>
           <ServiceWorkerRegistration/>
           </ThemeProvider>
-          </MyContextProvider3>
           </MyContextProvider2>
           </MyContextProvider>
         </SessionProvider>
