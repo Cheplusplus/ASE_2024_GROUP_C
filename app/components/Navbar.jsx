@@ -21,6 +21,7 @@ const Navbar = () => {
   const [shoppingListCount, setShoppingListCount] = useState(0);
   const pathname = usePathname();
   const router = useRouter(); 
+  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
   const { data: session } = useSession();
   const [favouritesCount, setFavouritesCount] = useState(0);

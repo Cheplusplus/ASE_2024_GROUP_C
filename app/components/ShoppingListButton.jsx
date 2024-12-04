@@ -59,7 +59,7 @@ const ShoppingListButton = ({ ingredients, recipeName }) => {
       title="Add ingredients to shopping list"
     >
       <ShoppingCartIcon className="mr-2" />
-      Add to List
+     +
     </button>
   );
 };
