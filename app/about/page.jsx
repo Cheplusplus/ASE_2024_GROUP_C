@@ -218,7 +218,7 @@ export default function About() {
           </h2>
           
           <div className="relative max-w-6xl mx-auto">
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-6 sm:gap-12 relative z-10">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-6 sm:gap-12 relative">
               {teamMembers.map((member) => (
                 <div 
                   key={member.name} 
