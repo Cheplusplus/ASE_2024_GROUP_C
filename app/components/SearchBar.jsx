@@ -75,15 +75,6 @@ const SearchBar = ({ isOpen, onClose }) => {
     }, [voice]); // Trigger typing effect when the answer changes
 
 
-    // useEffect(()=>{
-    //   if(isTrue){
-    //     recognition.start();
-    //   }
-    //   else{
-    //     recognition.stop();
-    //   }
-    // },[isTrue])
-
   // Clear search when closing search overlay
   useEffect(() => {
     if(searchQuery.trim().length >= 3) {
