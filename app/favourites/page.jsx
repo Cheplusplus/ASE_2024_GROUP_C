@@ -13,16 +13,6 @@ const FavouritesPage = () => {
   const router = useRouter();
   const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/sign-in');
-      return;
-    }
-
-    if (status === 'authenticated') {
-      fetchFavourites();
-    }
-  }, [status]);
 
   const fetchFavourites = async () => {
     try {
@@ -36,6 +26,19 @@ const FavouritesPage = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/sign-in');
+      return;
+    }
+
+    if (status === 'authenticated') {
+      fetchFavourites();
+    }
+  }, [status]);
+
+
 
   const handleRemoveFavourite = async (recipeId) => {
     try {
