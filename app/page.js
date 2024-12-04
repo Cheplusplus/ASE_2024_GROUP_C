@@ -3,6 +3,7 @@ import Carousel from "./components/Carousel";
 import Link from "next/link";
 import LayoutRecipesGrid from "./components/LayoutRecipesGrid";
 import PWADownloadButton from "./components/PWADownloadButton";
+import TeamCarousel from "./components/TeamCarousel";
 
 export default function Home() {
   return (
@@ -76,6 +77,12 @@ export default function Home() {
             </Link>
           </div>
         </div>
+
+        {/* Team Carousel Section */}
+        <div className="mt-16">
+          <TeamCarousel />
+        </div>
+        
       </main>
     </div>
   );

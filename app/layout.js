@@ -7,7 +7,6 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import MobileBar from "./components/MobileBar";
 import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
 import { NotificationProvider } from "./components/NotificationContext";
-import { MyContextProvider } from "./components/searchContext";
 import { MyContextProvider2 } from "./components/favCountContext";
 // metadata for the RootLayout
 export const metadata = {
@@ -50,7 +49,6 @@ export default function RootLayout({ children }) {
     <html lang="en" >
       <body className="bg-background text-foreground transition-colors duration-300">
        <SessionProvider>
-       <MyContextProvider>
        <MyContextProvider2>
         <ThemeProvider >
           <ClientNavWrapper>
@@ -64,7 +62,6 @@ export default function RootLayout({ children }) {
           <ServiceWorkerRegistration/>
           </ThemeProvider>
           </MyContextProvider2>
-          </MyContextProvider>
         </SessionProvider>
       </body>
     </html>
