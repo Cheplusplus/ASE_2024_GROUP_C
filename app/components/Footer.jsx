@@ -47,7 +47,7 @@ const Footer = () => {
             <div className="space-y-4">
               <h3 className="text-xl font-semibold flex items-center">
                 <FaUtensils className="h-6 w-6 mr-2" />
-                RecipeApp
+                Recipe Rush
               </h3>
               <p className="text-gray-400">
                 Discover and share delicious recipes from around the world.
@@ -78,7 +78,7 @@ const Footer = () => {
               <ul className="space-y-2 text-gray-400">
                 <li className="flex items-center">
                   <FaEnvelope className="h-4 w-4 mr-2" />
-                  contact@recipeapp.com
+                  contact@reciperush.com
                 </li>
                 <li className="flex items-center">
                   <FaPhone className="h-4 w-4 mr-2" />
@@ -128,7 +128,7 @@ const Footer = () => {
                 ))}
               </div>
               <p className="text-gray-400">
-                &copy; {new Date().getFullYear()} RecipeApp. All rights reserved.
+                &copy; {new Date().getFullYear()} Recipe Rush. All rights reserved.
               </p>
             </div>
           </div>
