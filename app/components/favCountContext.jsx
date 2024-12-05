@@ -6,8 +6,6 @@ const MyContext2 = createContext();
 
 export const MyContextProvider2 = ({ children }) => {
   const [updateCount, setUpdateCount] = useState(false);
-  const [favourites,setFavourites] = useState([]);
-  const [fetchFavs,setFetchFavs] = useState(0);
 
     // Fetch favourites count when session changes
     useEffect(() => {
@@ -18,7 +16,6 @@ export const MyContextProvider2 = ({ children }) => {
               if (response.ok) {
                 const data = await response.json();
                 setUpdateCount(data.count);
-                setFavourites(data.favourites)
               }
             } catch (error) {
               console.error('Error fetching favourites count:', error);
@@ -27,12 +24,7 @@ export const MyContextProvider2 = ({ children }) => {
         };
     
         fetchFavouritesCount();
-      }, [fetchFavs]);
-
-
-   const fetchFavourites = ()=>{
-
-   }
+      }, []);
 
   const updateFavCount = (increment) => {
     
@@ -50,7 +42,7 @@ export const MyContextProvider2 = ({ children }) => {
   }
 
   return (
-    <MyContext2.Provider value={{ updateCount, updateFavCount,countZero,favourites }}>
+    <MyContext2.Provider value={{ updateCount, updateFavCount,countZero }}>
       {children}
     </MyContext2.Provider>
   );
