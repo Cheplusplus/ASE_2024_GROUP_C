@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import AWS from "aws-sdk";
 
+/**
+ * A modal component that pops up when the user clicks on the colorful
+ * animated button. It allows the user to ask a question and gets an
+ * answer from Whisper API. The answer is displayed in a modal and there
+ * is an option to read the answer aloud using AWS Polly.
+ */
 const RecipeTips = ({ recipe }) => {
   const [isOpen, setIsOpen] = useState(false); // Controls the modal
   const [question, setQuestion] = useState("");
@@ -34,6 +40,11 @@ const RecipeTips = ({ recipe }) => {
     secretAccessKey: process.env.NEXT_PUBLIC_SECRET_ACCESS_KEY,
   });
 
+  /**
+   * Synthesizes speech using AWS Polly given a text.
+   * @param {string} text The text to synthesize into speech.
+   * @returns {Promise<void>}
+   */
   const synthesizeSpeech = async (text) => {
     const params = {
       Text: text,
@@ -51,6 +62,11 @@ const RecipeTips = ({ recipe }) => {
       audio.play();
       setIsPlaying(true);
 
+/**
+ * Event handler for when the audio playback ends.
+ * Sets the isPlaying state to false to indicate that
+ * text-to-speech playback has stopped.
+ */
       audio.onended = () => {
         setIsPlaying(false);
       };
@@ -59,6 +75,14 @@ const RecipeTips = ({ recipe }) => {
     }
   };
 
+  /**
+   * Handles asking a question and fetching tips from Whisper API.
+   * @async
+   * @function
+   * @param {string} question The question to ask Whisper.
+   * @param {Object} recipe The recipe object to use for generating tips.
+   * @returns {Promise<void>}
+   */
   const handleAskQuestion = async () => {
     setLoading(true);
     setAnswer(""); // Reset previous answer
@@ -85,6 +109,13 @@ const RecipeTips = ({ recipe }) => {
     }
   };
 
+
+
+/**
+ * Closes the modal and resets the question and answer states.
+ * Sets the modal's open state to false, and clears the input
+ * fields for question and answer.
+ */
   const handleClose = () => {
     setIsOpen(false);
     setQuestion("");

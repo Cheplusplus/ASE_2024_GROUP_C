@@ -12,7 +12,7 @@ export const MyContextProvider2 = ({ children }) => {
         const fetchFavouritesCount = async () => {
          
             try {
-              const response = await fetch('/api/favourites');
+              const response = await fetch('/api/favourites/fav');
               if (response.ok) {
                 const data = await response.json();
                 setUpdateCount(data.count);
@@ -36,8 +36,13 @@ export const MyContextProvider2 = ({ children }) => {
        }
   };
 
+
+  const countZero =()=>{
+    setUpdateCount(0)
+  }
+
   return (
-    <MyContext2.Provider value={{ updateCount, updateFavCount }}>
+    <MyContext2.Provider value={{ updateCount, updateFavCount,countZero }}>
       {children}
     </MyContext2.Provider>
   );

@@ -2,14 +2,45 @@
 import connectToDatabase from "@/app/lib/connectMongoose";
 import Recipe from "@/app/models/Recipe";
 import { NextResponse } from "next/server";
-/**
- *
- * @param {searchParams} req - This will get
- * @returns
- */
+
 
 export const dynamic = 'force-dynamic';  // Add this line to handle dynamic rendering
 
+/**
+ * Handles GET requests to /api/recipe
+ *
+ * @param {import('next/server').NextApiRequest} req - The request object
+ * @returns {import('next/server').NextApiResponse} - The response object
+ *
+ * This API endpoint returns a list of recipes matching the search query, category, tags, ingredients, and number of steps.
+ * The response includes the count of matching recipes if a search query, category, tags, ingredients, or number of steps is provided.
+ * The response is paginated, with a default limit of 50 recipes per page.
+ * The response is sorted by the specified sort option, which can be one of the following:
+ * - "prep_asc" (ascending by prep time)
+ * - "prep_desc" (descending by prep time)
+ * - "cook_asc" (ascending by cook time)
+ * - "cook_desc" (descending by cook time)
+ * - "steps_asc" (ascending by number of steps)
+ * - "steps_desc" (descending by number of steps)
+ * - "newest" (newest recipes first)
+ * - "oldest" (oldest recipes first)
+ * 
+ * If the search parameter is provided, the query is built with a regex search on the title.
+ * If the category parameter is provided, the query is filtered by category.
+ * If the tags parameter is provided, the query is filtered by tags.
+ * If the ingredients parameter is provided, the query is filtered by ingredients.
+ * If the numSteps parameter is provided, the query is filtered by number of steps.
+ * If the sortOption parameter is provided, the recipes are sorted accordingly.
+ * 
+ * The response returns a JSON object with the following properties:
+ *   - success: a boolean indicating if the search was successful.
+ *   - recipes: an array of recipe objects matching the search criteria.
+ *   - count: the count of recipes matching the search criteria, only if the search parameter is provided.
+ *   - message: an error message if the search failed.
+ * 
+ * @example
+ * /api/recipe?search=chicken&category=Main+Course&tags=gluten-free&numSteps=5&sortOption=prep_asc
+ */
 export async function GET(req) {
   try {
     await connectToDatabase();

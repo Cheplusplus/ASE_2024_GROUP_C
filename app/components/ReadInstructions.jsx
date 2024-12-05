@@ -10,6 +10,35 @@ AWS.config.update({
 
 const polly = new AWS.Polly();
 
+/**
+ * InstructionReader is a React component that provides a voice-controlled
+ * interface for reading instructions aloud. It uses the Web Speech Recognition
+ * API to recognize voice commands and control the instruction reading
+ * experience.
+ *
+ * The component accepts an array of strings as a prop, where each string is an
+ * instruction to be read aloud. The component also renders a set of action
+ * buttons that allow the user to control the instruction reading experience.
+ *
+ * The component is designed to be used in a recipe or DIY tutorial context,
+ * where the user needs to follow a series of instructions to complete a task.
+ * 
+ * It renders a set of action buttons to read all instructions, stop reading, and
+ * toggle listening. It also displays the current instruction and transcription.
+ *
+ * Voice commands are supported to control the reading flow. The supported commands
+ * are:
+ *   - 'pause': Pause the current instruction playback.
+ *   - 'resume': Resume the current instruction playback.
+ *   - 'next step': Go to the next instruction and continue reading.
+ *   - 'go back': Go to the previous instruction and continue reading.
+ *
+ * @param {string[]} instructions - An array of strings, where each string is an
+ * instruction to be read aloud.
+ *
+ * @returns {React.ReactElement/JSX.Element} - A React component that renders the instruction
+ * reading interface.
+ */
 const InstructionReader = ({ instructions }) => {
   const [recognition, setRecognition] = useState(null);
   const [isListening, setIsListening] = useState(false);
@@ -38,6 +67,12 @@ const InstructionReader = ({ instructions }) => {
       handleVoiceCommand(transcript.toLowerCase());
     };
 
+/**
+ * Handles errors from the speech recognition process.
+ * Logs the error to the console for debugging purposes.
+ *
+ * @param {SpeechRecognitionErrorEvent} error - The error event emitted by the speech recognition process.
+ */
     speechRecognition.onerror = (error) => {
       console.error('Speech Recognition Error:', error);
       setError(`Speech Recognition Error: ${error.error || 'Unknown error'}`);
@@ -46,6 +81,11 @@ const InstructionReader = ({ instructions }) => {
     setRecognition(speechRecognition);
   }, []);
 
+/**
+ * Synthesizes speech using AWS Polly given a text.
+ * @param {string} text The text to synthesize into speech.
+ * @returns {Promise<Audio>} The audio object containing the synthesized speech.
+ */
   const synthesizeSpeech = async (text) => {
     const params = {
       Text: text,
@@ -66,6 +106,18 @@ const InstructionReader = ({ instructions }) => {
     }
   };
 
+
+/**
+ * Handles voice commands from the user.
+ * @param {string} command - The voice command given by the user.
+ * @example
+ * Currently supports the following commands:
+ * - pause: pause the current instruction audio
+ * - resume: resume the current instruction audio
+ * - next step: stop the current instruction audio and play the next instruction
+ * - go back: stop the current instruction audio and play the previous instruction
+
+ */
   const handleVoiceCommand = (command) => {
     if (!command) return;
 
@@ -97,8 +149,17 @@ const InstructionReader = ({ instructions }) => {
       }
     }
   };
-
-  const readInstructionAtIndex = async (index, continueReading = false) => {
+/**
+ * Reads and plays the instruction at the given index and plays it using AWS Polly..
+ * Stops any existing audio playback before starting the new instruction.
+ * Optionally continues reading the next instruction automatically if specified.
+ *
+ * @param {number} index - The index of the instruction to read.
+ * @param {boolean} [continueReading=false] - Whether to continue reading the next instruction
+ *        automatically after the current one finishes playing.
+ * @returns {Promise<void>} 
+ */
+const readInstructionAtIndex = async (index, continueReading = false) => {
     // Stop any existing playback
     if (audioRef.current) {
       audioRef.current.pause();
@@ -125,6 +186,18 @@ const InstructionReader = ({ instructions }) => {
       readInstructionAtIndex(index + 1, true); // Recursively read the next instruction
     }
   };
+  
+
+/**
+ * Reads all instructions sequentially using AWS Polly for text-to-speech.
+ * Marks the reading process as active and updates the current instruction index
+ * as each instruction is read aloud. If the reading process is interrupted,
+ * it stops reading further instructions. Waits for each instruction's audio
+ * to finish playing before proceeding to the next.
+ *
+ * @async
+ * @returns {Promise<void>}
+ */
 
   const readAllInstructions = async () => {
     isReadingRef.current = true; // Mark as reading
@@ -145,9 +218,19 @@ const InstructionReader = ({ instructions }) => {
         audio.onended = resolve;
       });
     }
-    stopReading('stop');
-  };
+    console.log('done')
+  stopReading('stop')
+  }
 
+/**
+ * Stops any existing audio playback and resets the reading process.
+ * If the `action` argument is 'stop', it fully resets the reading process
+ * by clearing the current instruction index and transcription state.
+ * If listening is active, it also stops listening.
+ * @param {string} [action=''] - The action to take when stopping the reading
+ *        process. If 'stop', fully resets the reading process.
+ * @returns {void}
+ */
   const stopReading = (action = '') => {
     if (audioRef.current) {
       audioRef.current.pause();
@@ -164,7 +247,13 @@ const InstructionReader = ({ instructions }) => {
       if (isListening) toggleListening(); // Stop listening if active
     }
   };
+  
 
+/**
+ * Toggles speech recognition on or off. If speech recognition is currently
+ * active, this stops it. If it is not active, this starts it.
+ * @returns {void}
+ */
   const toggleListening = () => {
     if (isListening) {
       recognition.stop();
@@ -237,3 +326,5 @@ const InstructionReader = ({ instructions }) => {
 };
 
 export default InstructionReader;
+
+

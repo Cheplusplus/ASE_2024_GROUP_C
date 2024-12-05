@@ -3,6 +3,18 @@ import { createContext, useContext, useEffect, useState } from 'react';
 
 const ThemeContext = createContext();
 
+/**
+ * ThemeProvider component provides theme context to its child components.
+ * It manages the current theme state ('light' or 'dark') and synchronizes
+ * it with localStorage and the system's color scheme preference.
+ * It also provides a function to toggle the theme between 'light' and 'dark'.
+ *
+ * @param {React.ReactNode} children - The child components that require access
+ * to the theme context.
+ *
+ * @returns {React.ReactElement|null} The rendered child components wrapped
+ * with the theme context provider, or null if the component is not mounted.
+ */
 export function ThemeProvider({ children }) {
     const [theme, setTheme] = useState('light'); // Default theme
     const [mounted, setMounted] = useState(false);
@@ -32,6 +44,11 @@ export function ThemeProvider({ children }) {
       }
     }, [theme, mounted]);
   
+    /**
+     * Toggles the theme between 'light' and 'dark'.
+     * The theme value is updated in the component state and
+     * also in localStorage.
+     */
     const toggleTheme = () => {
       const newTheme = theme === 'light' ? 'dark' : 'light';
       setTheme(newTheme);
@@ -51,6 +68,13 @@ export function ThemeProvider({ children }) {
     );
 }
 
+/**
+ * Hook to access the current theme and toggleTheme function.
+ *
+ * @returns {{ theme: 'light' | 'dark', toggleTheme: () => void }}
+ *
+ * @throws {Error} If useTheme is called outside of ThemeProvider
+ */
 export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (context === undefined) {
