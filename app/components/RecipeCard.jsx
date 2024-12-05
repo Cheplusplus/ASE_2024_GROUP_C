@@ -6,6 +6,7 @@ import { useNotification, NOTIFICATION_TYPES } from "./NotificationContext";
 import { Heart, HeartOff } from "lucide-react";
 import { useMyContext2 } from "./favCountContext";
 import DownloadRecipeBtn from "./DownloadRecipeBtn";
+import { useMyContext4 } from "./UpdatedNotify";
 
 const MAX_VISIBLE_TAGS = 1;
 
@@ -69,6 +70,7 @@ const RecipeCard = ({
   const [favourites, setFavourites] = useState([]);
   const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
   const { updateFavCount } = useMyContext2();
+  const {NotifyFunc} = useMyContext4();
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [intervalId, setIntervalId] = useState(null);
@@ -129,6 +131,7 @@ const RecipeCard = ({
 
               console.log("Recipe updated in downloadedRecipes.");
               setUpdateMessage("Successfully updated!");
+              NotifyFunc(true);
               setTimeout(() => {setLoadingUpdate(false); setUpdateMessage("")}, 8000); // Clear message after 3 seconds
               break; // Exit after updating
             }
