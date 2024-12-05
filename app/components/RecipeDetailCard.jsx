@@ -56,7 +56,6 @@ const RecipeDetailCard = ({ recipe, id }) => {
   },[]);
 
   const handleReviewAdded = () => {
-    console.log("rerender");
     setReviewUpdateKey((prevKey) => prevKey + 1);
   };
 
@@ -102,32 +101,41 @@ const RecipeDetailCard = ({ recipe, id }) => {
   return (
     <div className="grid items-start grid-cols-1 md:grid-cols-2 gap-6">
       <div className="w-full lg:sticky top-0 flex flex-col gap-3">
-        <div className="w-full">
-          <Image
-            src={selectedImage || "/fallback-image.jpg"}
-            alt={recipe.title || "Recipe Image"}
-            width={540}
-            height={403}
-            className="rounded-lg object-cover"
-          />
-        </div>
+  {/* Main Recipe Image */}
+  <div className="w-full relative h-[300px] md:h-[403px]">
+    <Image
+      src={selectedImage || "/fallback-image.jpg"}
+      alt={recipe.title || "Recipe Image"}
+      fill
+      priority="true"
+      sizes="(max-width: 1024px) 100vw, 50vw"
+      className="rounded-lg object-cover"
+    />
+  </div>
 
-        <div className="flex flex-wrap gap-2 mt-4">
-          {recipe.images?.map((image, index) => (
-            <Image
-              key={index}
-              src={image}
-              alt={`Thumbnail ${index}`}
-              width={64}
-              height={64}
-              className={`rounded-md cursor-pointer object-cover ${
-                selectedImage === image ? "border-2 border-gray-800" : ""
-              }`}
-              onClick={() => setSelectedImage(image)}
-            />
-          ))}
-        </div>
+  {/* Thumbnail Images */}
+  <div className="flex flex-wrap gap-2 mt-4">
+    {recipe.images?.map((image, index) => (
+      <div
+        key={index}
+        className={`relative w-16 h-16 rounded-md overflow-hidden cursor-pointer ${
+          selectedImage === image ? "border-2 border-gray-800" : ""
+        }`}
+        onClick={() => setSelectedImage(image)}
+      >
+        <Image
+          src={image}
+          alt={`Thumbnail ${index}`}
+          fill
+          property="true"
+          sizes="64px"
+          className="object-cover"
+        />
       </div>
+    ))}
+  </div>
+</div>
+
 
       <div>
         {/* New: Added flex container with ShoppingListButton */}
@@ -191,7 +199,7 @@ const RecipeDetailCard = ({ recipe, id }) => {
                 Close
               </button>
             </div>
-          ) : session.user ? (
+          ) : session? (
             <button
               onClick={() => setOpenTextArea(true)}
               className="w-12 mb-4 bg-blue-400 rounded hover:bg-blue-500 text-black font-bold"

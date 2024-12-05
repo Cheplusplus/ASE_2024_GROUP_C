@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useMyContext3 } from './pageNumberReset';
+import { useMyContext3 } from './PageNumberReset';
 
 /**
  * A search bar component for searching recipes by title with highlighted matches.
@@ -99,6 +99,17 @@ const SearchBar = ({ isOpen, onClose }) => {
     }
   };
 
+/**
+ * Handles the click event on a suggestion.
+ *
+ * This function initiates a navigation to the search results page
+ * for the clicked suggestion title. It also closes the search bar
+ * after a delay, providing a debounce effect to prevent multiple
+ * navigations in quick succession.
+ *
+ * @param {string} title - The title of the suggestion that was clicked.
+ * @returns {Function} A cleanup function to clear the debounce timeout.
+ */
   const handleSuggestionClick = (title) => {
     const debounceTimeout = setTimeout(()=> {
       router.push(`/all?search=${encodeURIComponent(title)}`);

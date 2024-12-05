@@ -2,7 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import RecipeCard from "../components/RecipeCard";
+import { DeleteIcon, TrashIcon } from "lucide-react";
 
+/**
+ * @function Downloads
+ * @description The Downloads component displays a list of recipes that have been downloaded for offline use.
+ * It retrieves the downloaded recipes from the local storage and sets them in the component state.
+ * If no recipes are downloaded, it displays a message indicating that no recipes are available.
+ * Each downloaded recipe is displayed as a link to its detail page.
+ */
 const Downloads = () => {
   const [downloadedRecipes, setDownloadedRecipes] = useState([]);
   const [filteredRecipes, setFilteredRecipes] = useState([]);
@@ -26,19 +34,36 @@ const Downloads = () => {
     setFilteredRecipes(filtered);
   };
 
-  return (
-    <div className="pt-8 mx-auto font-sans">
-      <h1 className="text-2xl font-bold mb-4">Downloaded Recipes</h1>
+  const HandleClearDownloads =()=> {
+    localStorage.removeItem('downloadedRecipes')
+    setDownloadedRecipes([])
+    setFilteredRecipes([])
 
-      {/* Search input */}
-      <div className="mb-4">
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={handleSearch}
-          placeholder="Search recipes by title..."
-          className="border border-gray-300 rounded-md px-4 py-2 w-full"
-        />
+  }
+
+  return (
+    <div className="pt-8  mx-auto font-sans">
+      <div className=" px-[8%] 2xl:px-[16%] pb-5">
+        <h1 className=" text-2xl font-bold mb-4">Downloaded Recipes</h1>
+        {/* Search input */}
+        <div className=" mb-4">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={handleSearch}
+            placeholder="Search recipes by title..."
+            className="border border-gray-300 rounded-md px-4 py-2 w-full"
+          />
+        </div>
+        <div className="flex justify-end">
+          <button
+          onClick={HandleClearDownloads}
+            className=" p-2 bg-red-500 text-white rounded hover:bg-red-600"
+            title="Clear Downloaded Recipes"
+          >
+            <TrashIcon />
+          </button>
+        </div>
       </div>
 
       {filteredRecipes.length === 0 ? (

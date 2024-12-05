@@ -1,8 +1,13 @@
 'use client'
 import Link from "next/link";
 import Image from "next/image";
-
-
+/**
+ * MobileBar component renders a sticky bottom navigation bar for mobile devices.
+ * It includes links to the shopping list, search, favorites, and downloads pages.
+ * Each link is represented by an icon and a label.
+ *
+ * @returns {JSX.Element} The MobileBar component.
+ */
 export default function MobileBar() {
 
     return (
@@ -22,7 +27,7 @@ export default function MobileBar() {
               <p className="text-[12px]">Search</p>
             </div>
             <div className="text-center flex flex-col items-center">
-              <Link href="/favorites">
+              <Link href="/favourites">
                 <Image width={10} height={10}  className=" w-6" src={"/wishlist.svg"} alt="" />
               </Link>
               <p className="text-[12px]">Favourite</p>

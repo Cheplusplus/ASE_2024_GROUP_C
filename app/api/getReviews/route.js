@@ -2,6 +2,17 @@ import connectToDatabase from "@/app/lib/connectMongoose";
 import Review from "@/app/models/reviews";
 import { NextResponse } from "next/server";
 
+/**
+ * Handles GET requests to fetch reviews for a specific recipe.
+ *
+ * @param {import('next/server').NextRequest} req - The request object containing the URL with query parameters.
+ * @returns {Promise<import('next/server').NextResponse>} - The response object containing either the reviews and stats or an error message.
+ *
+ * This function connects to the database and retrieves all reviews associated with a given recipeId from the query parameters.
+ * It calculates the average rating and the number of comments for the reviews.
+ * If the recipeId is not provided, it returns a 400 error response.
+ * If there's an error during the process, it returns a 500 error response.
+ */
 export async function GET(req) {
   await connectToDatabase();
 

@@ -1,9 +1,15 @@
-"use client"
+"use client";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import SkeletonGrid from "./SkeletonMain";
 
+/**
+ * A component that displays a list of recipes in a carousel.
+ * @param {Object} props Component props
+ * @param {string} props.heading The heading to display above the carousel
+ * @returns {JSX.Element} The component
+ */
 const Carousel = ({ heading, autoSlide = true, slideInterval = 3000 }) => {
   const [recipes, setRecipes] = useState([]);
   const [error, setError] = useState(null);
@@ -14,11 +20,16 @@ const Carousel = ({ heading, autoSlide = true, slideInterval = 3000 }) => {
 
   // Fetch recipes
   useEffect(() => {
+  /**
+   * Fetches 10 recipes from the API and updates the state with the data
+   * @throws {Error} If the request fails
+   * @returns {Promise<void>}
+   */
     const fetchRecipes = async () => {
       try {
         const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
         const res = await fetch(`${url}/api/10Recipes`, {
-          cache: "no-cache",
+          cache: "force-cache",
         });
         if (!res.ok) {
           throw new Error("Failed to fetch recipes");
@@ -39,17 +50,16 @@ const Carousel = ({ heading, autoSlide = true, slideInterval = 3000 }) => {
     if (!carouselRef.current || !isAutoSliding) return;
 
     const carousel = carouselRef.current;
-    const cardWidth = carousel.querySelector('div[data-carousel-item]')?.offsetWidth || 0;
+    const cardWidth =
+      carousel.querySelector("div[data-carousel-item]")?.offsetWidth || 0;
     const scrollAmount = cardWidth + 16; // Width + gap
 
-    carousel.scrollBy({ 
-      left: scrollAmount, 
-      behavior: 'smooth' 
+    carousel.scrollBy({
+      left: scrollAmount,
+      behavior: "smooth",
     });
 
-    setCurrentSlide(prev => 
-      prev < recipes.length - 1 ? prev + 1 : 0
-    );
+    setCurrentSlide((prev) => (prev < recipes.length - 1 ? prev + 1 : 0));
   }, [isAutoSliding, recipes.length]);
 
   // Setup auto-sliding interval
@@ -64,35 +74,32 @@ const Carousel = ({ heading, autoSlide = true, slideInterval = 3000 }) => {
   const handleManualNavigation = (direction) => {
     // Stop auto-sliding when user manually navigates
     setIsAutoSliding(false);
-    
+
     if (!carouselRef.current) return;
 
     const carousel = carouselRef.current;
-    const cardWidth = carousel.querySelector('div[data-carousel-item]')?.offsetWidth || 0;
+    const cardWidth =
+      carousel.querySelector("div[data-carousel-item]")?.offsetWidth || 0;
     const scrollAmount = cardWidth + 16;
 
-    if (direction === 'next') {
-      carousel.scrollBy({ 
-        left: scrollAmount, 
-        behavior: 'smooth' 
+    if (direction === "next") {
+      carousel.scrollBy({
+        left: scrollAmount,
+        behavior: "smooth",
       });
-      setCurrentSlide(prev => 
-        prev < recipes.length - 1 ? prev + 1 : 0
-      );
+      setCurrentSlide((prev) => (prev < recipes.length - 1 ? prev + 1 : 0));
     } else {
-      carousel.scrollBy({ 
-        left: -scrollAmount, 
-        behavior: 'smooth' 
+      carousel.scrollBy({
+        left: -scrollAmount,
+        behavior: "smooth",
       });
-      setCurrentSlide(prev => 
-        prev > 0 ? prev - 1 : recipes.length - 1
-      );
+      setCurrentSlide((prev) => (prev > 0 ? prev - 1 : recipes.length - 1));
     }
   };
 
   // Toggle auto-sliding
   const toggleAutoSliding = () => {
-    setIsAutoSliding(prev => !prev);
+    setIsAutoSliding((prev) => !prev);
   };
 
   if (error) {
@@ -109,33 +116,33 @@ const Carousel = ({ heading, autoSlide = true, slideInterval = 3000 }) => {
 
       <div className="relative flex items-center">
         {/* Previous Button */}
-        <button 
-          onClick={() => handleManualNavigation('prev')}
+        <button
+          onClick={() => handleManualNavigation("prev")}
           className="absolute left-0 z-10 bg-white/70 rounded-full p-2 shadow-md"
         >
           ←
         </button>
 
         {/* Carousel Scrollable Area */}
-        <div 
+        <div
           ref={carouselRef}
           className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth"
-          style={{ scrollSnapType: 'x mandatory' }}
+          style={{ scrollSnapType: "x mandatory" }}
         >
           {recipes.map((recipe, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               data-carousel-item
               className="flex-shrink-0 w-[250px] h-[187px]"
             >
               <Link href={`/recipes/${recipe._id}`} className="block">
                 <div className="relative w-full h-[160px]">
                   <Image
-                    priority={true}
                     src={recipe.images[0]}
                     alt={recipe.title}
                     fill
-                    sizes="(max-width: 768px) 250px, (max-width: 1024px) 250px, 250px"
+                    loading="lazy" // Defer loading for better performance
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 250px"
                     className="object-cover rounded-sm"
                   />
                 </div>
@@ -148,20 +155,20 @@ const Carousel = ({ heading, autoSlide = true, slideInterval = 3000 }) => {
         </div>
 
         {/* Next Button */}
-        <button 
-          onClick={() => handleManualNavigation('next')}
+        <button
+          onClick={() => handleManualNavigation("next")}
           className="absolute right-0 z-10 bg-white/70 rounded-full p-2 shadow-md"
         >
           →
         </button>
 
         {/* Auto-slide Toggle */}
-        <button 
+        <button
           onClick={toggleAutoSliding}
           className="absolute bottom-[-30px] left-1/2 transform -translate-x-1/2 
                      bg-gray-200 px-3 py-1 rounded-full text-xs"
         >
-          {isAutoSliding ? 'Pause Auto-Slide' : 'Resume Auto-Slide'}
+          {isAutoSliding ? "Pause Auto-Slide" : "Resume Auto-Slide"}
         </button>
       </div>
     </div>

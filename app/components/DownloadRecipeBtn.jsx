@@ -1,11 +1,13 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { Download } from "lucide-react";
+import { useNotification, NOTIFICATION_TYPES } from './NotificationContext';
 
-const DownloadRecipeBtn = ({ id }) => {
+const DownloadRecipeBtn = ({ id }, ) => {
   const [isDownloaded, setIsDownloaded] = useState(false);
   const [recipe, setRecipe] = useState(null)
   const [loading, setLoading] = useState(false)
+  const {addNotification} = useNotification()
  
   useEffect(() => {
     const downloadedRecipes =
@@ -26,7 +28,7 @@ const DownloadRecipeBtn = ({ id }) => {
       );
       localStorage.setItem("downloadedRecipes", JSON.stringify(updatedRecipes));
       setIsDownloaded(false);
-      alert("Recipe removed from offline downloads.");
+      addNotification('Recipe Removed from Offline Downloads.', NOTIFICATION_TYPES.WARNING)
       return;
     }
 
@@ -42,10 +44,10 @@ const DownloadRecipeBtn = ({ id }) => {
             JSON.stringify(downloadedRecipes)
           );
           setIsDownloaded(true);
-          alert("Recipe is now available offline!");
+          addNotification('Recipe is Available Offline', NOTIFICATION_TYPES.SUCCESS)
           return;
         } else {
-          alert("Failed to download recipe for offline use.");
+          addNotification('Failed to Download Recipe', NOTIFICATION_TYPES.ERROR)
         }
       };
 
@@ -57,7 +59,7 @@ const DownloadRecipeBtn = ({ id }) => {
         [messageChannel.port2]
       );
     } else {
-      alert("Offline functionality is not supported.");
+      addNotification('Offline Functionality is not Supported', NOTIFICATION_TYPES.ERROR)
     }
   };
 
