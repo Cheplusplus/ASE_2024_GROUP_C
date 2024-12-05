@@ -95,15 +95,19 @@ const ShoppingList = () => {
             name: newItem,
             quantity: 1,
             purchased: false,
-            source: `${session.user.name}`
-          }],user:session.user 
+            source: session.user.name
+          // }],user:session.user 
+          }]
         })
       });
 
-      if (!response.ok) throw new Error('Failed to add item');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to add item');
+      }
 
       const updatedItems = await response.json();
-      setItems(updatedItems);
+      setItems(updatedItems.items);
 
       addNotification(
         `Added ${newItem} to shopping list`,
