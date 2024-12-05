@@ -1,12 +1,23 @@
-import React from 'react';
+import React from "react";
 
-const Badge = ({ count, className = '', variant = 'default'}) => {
-  if (count <= 0) return null;
-
+/**
+ * Badge component
+ *
+ * @param {string} [variant='default'] - The variant to use. Options are 'default', 'outline', 'primary', 'danger', and 'success'.
+ * @param {string} [className=''] - Additional tailwind classes to apply to the badge.
+ * @param {*} children - The content to render inside the badge.
+ * @param {function} [onClick] - An optional click handler.
+ *
+ * @example
+ * <Badge variant="primary">Hello World</Badge>
+ */
+const Badge = ({ variant = "default", className = "", children, onClick }) => {
   const variants = {
-    default: 'bg-green-600 text-white',
-    primary: 'bg-blue-500 text-white',
-    secondary: 'bg-gray-500 text-white',
+    default: "bg-gray-200 text-gray-800",
+    outline: "border border-gray-300 text-gray-700 bg-white",
+    primary: "bg-blue-500 text-white",
+    danger: "bg-red-500 text-white",
+    success: "bg-green-500 text-white",
   };
 
   return (

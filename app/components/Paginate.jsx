@@ -3,6 +3,7 @@
 import React, {useEffect, useState} from 'react';
 import { useRouter,useSearchParams  } from 'next/navigation';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { useMyContext3 } from './pageNumberReset';
 
 const RECIPES_PER_PAGE = 50; // Recipes per page
 const totalRecipes = 150000;
@@ -80,6 +81,12 @@ const Paginate = ({ skip, }) => {
     router.push(newUrl); // Update the URL with the new skip value
   };
 
+  /**
+   * Handles the "Previous" button click by updating the current page and pushing a new URL
+   * with the updated skip value.
+   *
+   * @param {number} newPage - The new page number to navigate to.
+   */
   const handlePrevious = (newPage) => {
     const newSkip = skip > RECIPES_PER_PAGE ? skip - RECIPES_PER_PAGE : 0;
     const newUrl = search || category || numSteps || sortOption || tags 

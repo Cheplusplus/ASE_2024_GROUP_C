@@ -9,6 +9,15 @@ const ShoppingListButton = ({ ingredients, recipeName }) => {
   const { data: session, status } = useSession();
   const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
+  /**
+   * Handles adding ingredients from the recipe to the user's shopping list
+   * @async
+   * @function
+   * @param {Object} ingredients - An object with ingredient names as keys and quantities as values
+   * @param {String} recipeName - The name of the recipe
+   * @returns {Promise<void>}
+   * @throws {Error} If the request to add the items to the shopping list fails
+   */
   const handleAddToShoppingList = async () => {
     try {
       // Convert ingredients object to array of items

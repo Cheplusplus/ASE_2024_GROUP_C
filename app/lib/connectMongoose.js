@@ -41,6 +41,13 @@ if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
 }
 
+/**
+ * Establishes a connection to the MongoDB database using Mongoose.
+ * Utilizes a caching mechanism to reuse the connection in subsequent calls.
+ * Throws an error if the connection fails.
+ * 
+ * @returns {Promise<mongoose.Connection>} A promise that resolves to the Mongoose connection.
+ */
 async function connectToDatabase() {
   if (cached.conn) {
     return cached.conn;

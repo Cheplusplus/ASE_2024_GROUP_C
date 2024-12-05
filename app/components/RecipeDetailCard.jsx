@@ -3,12 +3,12 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import AddReview from "./Addreview";
-import { FaStar } from "react-icons/fa"; // Importing the star icon from Font Awesome
 import { useRouter } from "next/navigation";
 import RecipeReviews from "./Reviews";
 import InstructionReader from "./ReadInstructions";
 import RecipeTips from './AskAI';
 import ShoppingListButton from "./ShoppingListButton";
+import { useSession } from "next-auth/react";
 
 const formatTime = (minutes) => {
   const hours = Math.floor(minutes / 60);
@@ -24,6 +24,8 @@ const RecipeDetailCard = ({ recipe, id }) => {
   const [message, setMessage] = useState("");
   const router = useRouter();
   const [reviewUpdateKey, setReviewUpdateKey] = useState(0);
+  const { data: session } = useSession();
+  const [latest,setLatest] = useState(null)
 
 
   const totalTime = (recipe.prep || 0) + (recipe.cook || 0);
@@ -35,6 +37,23 @@ const RecipeDetailCard = ({ recipe, id }) => {
     document.title = `${recipe.title} | Recipe Details`;
   }, [recipe.title]);
 
+
+  useEffect(() => {
+    const handleUpdate = async () => {
+      const response = await fetch(`${url}/api/editDescLatest?recipeId=${id}`);
+        if (!response.ok) {
+          setLatest(null)
+        }
+        else{
+      const data = await response.json();
+      console.log(data,'dat1232')
+      setLatest(data);
+        }
+      }
+
+      handleUpdate()
+    
+  },[]);
 
   const handleReviewAdded = () => {
     console.log("rerender");
@@ -59,6 +78,14 @@ const RecipeDetailCard = ({ recipe, id }) => {
           setMessage("");
         }, 2000);
       }
+
+      const res = await fetch(`${url}/api/editDesc`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username:session.user.name,recipeId:id }),
+      });
 
       setOpenTextArea(false);
       router.refresh();
@@ -113,7 +140,6 @@ const RecipeDetailCard = ({ recipe, id }) => {
             ingredients={recipe.ingredients}
             recipeName={recipe.title}
           />
-          
         </div>
 
         <div className="flex flex-wrap gap-2 my-4">
@@ -131,6 +157,13 @@ const RecipeDetailCard = ({ recipe, id }) => {
           Discover how to make this delicious {recipe.title}.{" "}
           {recipe.description || "for any occasion"}.
         </p>
+        {latest && (
+          <p className="text-sm text-gray-500 mt-2">
+            Last edited by {latest.username} on{" "}
+            {new Date(latest.updatedAt).toLocaleDateString()}
+          </p>
+        )}
+
         <span className="text-lg italic text-gray-600 mb-6">
           {openTextArea ? (
             <div className="flex-1">
@@ -158,14 +191,14 @@ const RecipeDetailCard = ({ recipe, id }) => {
                 Close
               </button>
             </div>
-          ) : (
+          ) : session.user ? (
             <button
               onClick={() => setOpenTextArea(true)}
               className="w-12 mb-4 bg-blue-400 rounded hover:bg-blue-500 text-black font-bold"
             >
               Edit
             </button>
-          )}
+          ) : null}
         </span>
 
         <div className="text-lg text-gray-800 space-y-2">
@@ -227,10 +260,8 @@ const RecipeDetailCard = ({ recipe, id }) => {
                 ))}
               </ul>
               <div className="p-4">
-      <InstructionReader instructions={recipe.instructions} />
-    </div>
-
-
+                <InstructionReader instructions={recipe.instructions} />
+              </div>
             </div>
           )}
           {activeTab === "nutrition" && (
@@ -259,7 +290,7 @@ const RecipeDetailCard = ({ recipe, id }) => {
           <RecipeReviews recipeId={id} reviewUpdateKey={reviewUpdateKey} />
 
           <AddReview recipeId={id} onAdd={handleReviewAdded} />
-          <RecipeTips recipe={recipe.ingredients}/>
+          <RecipeTips recipe={recipe.ingredients} />
         </div>
       </div>
     </div>
