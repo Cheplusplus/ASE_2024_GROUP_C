@@ -5,6 +5,8 @@ import { getUserProfile } from "@/lib/api";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import loading from "../profile/loading";
+import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 /**
  * ProfilePage is a Next.js component that displays the user's profile and allows them to edit it.
@@ -22,6 +24,7 @@ export default function ProfilePage({ userId, db }) {
   const [editMode, setEditMode] = useState(false);
   const [message, setMessage] = useState({ type: "", content: "" });
   const { data: session } = useSession();
+  const router = useRouter();
 
   useEffect(() => {
  /**
@@ -73,10 +76,22 @@ export default function ProfilePage({ userId, db }) {
   };
 
   if (!user) return <loading />;
+  
 
   return (
-    <>
+    <div>
+      <button 
+          onClick={(e) => { e.preventDefault(); router.back(); }} 
+          className="mt-6 ml-6 flex items-center group text-gray-700 dark:text-gray-300 hover:text-[#26442a] dark:hover:text-[#26442a] transition-all duration-300 bg-white/10 dark:bg-gray-700/20 hover:bg-[#26442a]/10 px-4 py-2 rounded-full shadow-sm hover:shadow-md transform hover:-translate-x-2 hover:scale-105 mr-4"
+        >
+          <ArrowLeft 
+            className="mr-2 transition-transform group-hover:-translate-x-1 group-hover:scale-110 text-[#26442a] dark:text-green-500" 
+            strokeWidth={2.5} 
+          />
+          <span className="font-semibold text-sm uppercase tracking-wider">Back</span>
+        </button>
       <div className="max-w-3xl mx-auto p-6  bg-white shadow-lg rounded-lg mt-10">
+
         <h1 className="text-2xl font-bold  text-gray-800">Account & Profile</h1>
 
         {/* Success/Error Message */}
@@ -145,6 +160,6 @@ export default function ProfilePage({ userId, db }) {
           </>
         )}
       </div>
-    </>
+    </div>
   );
 }

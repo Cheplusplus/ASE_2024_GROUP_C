@@ -20,7 +20,7 @@ const Loading = () => {
               />
             </div>
           </div>
-          <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
+          <div className="absolute -bottom-20 left-1/2 transform -translate-x-1/2">
             <p className="mt-4 text-2xl font-bold text-[#26442a] dark:text-white">
               Loading Profile...
             </p>
