@@ -9,6 +9,7 @@ import MobileBar from "./components/MobileBar";
 import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
 import { NotificationProvider } from "./components/NotificationContext";
 import { MyContextProvider2 } from "./components/favCountContext";
+import { MyContextProvider3 } from "./components/pageNumberReset";
 import OnlineStatusNotifier from "./components/IsOnline";
 // metadata for the RootLayout
 export const metadata = {
@@ -52,6 +53,7 @@ export default function RootLayout({ children }) {
       <body className="bg-background text-foreground transition-colors duration-300">
        <SessionProvider>
        <MyContextProvider2>
+       <MyContextProvider3>
         <ThemeProvider >
           <ClientNavWrapper>
             <Navbar />
@@ -66,6 +68,7 @@ export default function RootLayout({ children }) {
           <MobileBar/>
           <ServiceWorkerRegistration/>
           </ThemeProvider>
+          </MyContextProvider3>
           </MyContextProvider2>
         </SessionProvider>
       </body>

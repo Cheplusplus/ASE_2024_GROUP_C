@@ -5,6 +5,7 @@ import { Filter } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Button } from "./ui/button";
 import { Slider } from "./ui/slider";
+import { useMyContext3 } from './pageNumberReset';
 
 const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
   const router = useRouter();
@@ -20,6 +21,7 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
   const [displayCount, setDisplayCount] = useState(false);
   const [count, setCount] = useState(count1);
   const params = new URLSearchParams();
+  const { update } = useMyContext3();
 
   // Apply the filters by updating the URL query parameters
   const applyFilters = (value, clear = false) => {
@@ -36,7 +38,7 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
 
       setIsOpen(false);
       router.push(`/all?${params.toString()}`);
-
+      update(true)
       if (count1) {
         setDisplayCount(true);
       } else {
@@ -57,6 +59,7 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
     setIngredients('');
     setSortOption('default');
     applyFilters({}, true);
+    update(true)
   };
 
   const handleTagInputChange = (e) => {

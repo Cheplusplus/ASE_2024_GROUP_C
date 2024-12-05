@@ -2,6 +2,7 @@
 "use client"
 import React, {useEffect, useState} from 'react';
 import { useRouter,useSearchParams  } from 'next/navigation';
+import { useMyContext3 } from './pageNumberReset';
 
 const RECIPES_PER_PAGE = 50; // Recipes per page
 
@@ -10,12 +11,22 @@ const Paginate = ({ skip, totalRecipes }) => {
   const [currentPage, setCurrentPage] = useState(1); // Track current page
   const searchParams = useSearchParams();
   const search = searchParams.get("search") || ""; 
+  const { reset,update } = useMyContext3();
 
   const category = searchParams.get('category') || '';
   const tags = searchParams.get('tags') ? searchParams.get('tags').split(',') : [];
   const numSteps = parseInt(searchParams.get('numSteps')) || '';
   const ingredients = searchParams.get('ingredients') || '';
   const sortOption = searchParams.get('sortOption') || '';
+
+
+  useEffect(()=>{
+      if(reset){
+        setCurrentPage(1);
+        update(false);
+        console.log('reset123')
+      }
+  },[reset])
 
   const handleNext = (newPage) => {
     const newSkip = skip + RECIPES_PER_PAGE;
