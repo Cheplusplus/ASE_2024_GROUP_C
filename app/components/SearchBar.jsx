@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useMyContext3 } from './pageNumberReset';
 
 /**
  * A search bar component for searching recipes by title with highlighted matches.
@@ -17,21 +18,28 @@ const SearchBar = ({ isOpen, onClose }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const { update } = useMyContext3();
 
-  const router = useRouter()
+  const router = useRouter();
 
   // Clear search when closing search overlay
   useEffect(() => {
-  
-
     if(searchQuery.trim().length >= 3) {
       const debounceTimeout = setTimeout(()=> {
-        fetchSuggestions(searchQuery)
-      }, 300)
-      return ()=> clearTimeout(debounceTimeout)
-    }else {
+        fetchSuggestions(searchQuery);
+        // Auto-submit search after 300ms of no typing
+        router.push(`/all?search=${encodeURIComponent(searchQuery)}`);
+        update(true)
+        setHasSearched(true);
+      }, 300);
+      return () => clearTimeout(debounceTimeout);
+    } else {
       setSearchResults([]);
-      
+      setHasSearched(false);
+      // Reset the URL when the search query is cleared
+      // if (searchQuery.trim().length === 0) {
+      //   router.push(`/` || , undefined, { shallow: true });
+      // }
     }
   }, [searchQuery]);
 
@@ -69,17 +77,12 @@ const SearchBar = ({ isOpen, onClose }) => {
 
   // Fetch search results
   const fetchSuggestions = async (query) => {
-   
-
     try {
       setIsLoading(true);
-      // setHasSearched(true);  // Mark that a search has been performed
       const response = await fetch(`/api/recipe/?search=${encodeURIComponent(query)}&limit=10`);
-      // router.push(`/?search=${encodeURIComponent(searchQuery)}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      // 
       const data = await response.json();
       
       if (data.success) {
@@ -96,17 +99,13 @@ const SearchBar = ({ isOpen, onClose }) => {
     }
   };
 
-  
-
-  // Handle Enter key press
   const handleSuggestionClick = (title) => {
-
     const debounceTimeout = setTimeout(()=> {
-      router.push(`/?search=${encodeURIComponent(title)}`);
-    onClose();
+      router.push(`/all?search=${encodeURIComponent(title)}`);
+      update(true);
+      onClose();
     }, 500)
     return ()=> clearTimeout(debounceTimeout)
-    
   };
 
   return (
@@ -122,7 +121,6 @@ const SearchBar = ({ isOpen, onClose }) => {
               type="text"
               value={searchQuery}
               onChange={handleSearchChange}
-              // onKeyPress={handleKeyPress}
               placeholder="Search recipes by title..."
               className="w-full px-4 py-2 rounded-md bg-white/50 focus:outline-none focus:ring-2 focus:ring-purple-300 text-black"
               autoFocus={isOpen}
@@ -145,19 +143,17 @@ const SearchBar = ({ isOpen, onClose }) => {
 
           {/* Search Results / Auto Suggestion */}
           {searchResults.length > 0 && (
-            <div className="absolute w-full mt-2 bg-white rounded-md shadow-lg max-h-96 overflow-y-auto">
+            <div className="absolute w-full mt-2 bg-white rounded-md shadow-lg max-h-32 overflow-y-auto">
               {searchResults.map((recipe) => (
                 <Link
                   key={recipe._id}
                   onClick={()=>handleSuggestionClick(recipe.title)}
                   href={`/`}
                   className="block px-4 py-2 hover:bg-gray-100 transition-colors duration-150"
-                  
                 >
                   <div className="text-gray-900 font-medium">
                     {highlightMatch(recipe.title, searchQuery)}
                   </div>
-                  
                 </Link>
               ))}
             </div>

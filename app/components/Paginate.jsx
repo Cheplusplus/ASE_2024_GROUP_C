@@ -2,6 +2,7 @@
 "use client"
 import React, {useEffect, useState} from 'react';
 import { useRouter,useSearchParams  } from 'next/navigation';
+import { useMyContext3 } from './pageNumberReset';
 
 const RECIPES_PER_PAGE = 50; // Recipes per page
 
@@ -10,6 +11,7 @@ const Paginate = ({ skip, totalRecipes }) => {
   const [currentPage, setCurrentPage] = useState(1); // Track current page
   const searchParams = useSearchParams();
   const search = searchParams.get("search") || ""; 
+  const { reset,update } = useMyContext3();
 
   const category = searchParams.get('category') || '';
   const tags = searchParams.get('tags') ? searchParams.get('tags').split(',') : [];
@@ -17,21 +19,29 @@ const Paginate = ({ skip, totalRecipes }) => {
   const ingredients = searchParams.get('ingredients') || '';
   const sortOption = searchParams.get('sortOption') || '';
 
+
+  useEffect(()=>{
+      if(reset){
+        setCurrentPage(1);
+        update(false);
+        console.log('reset123')
+      }
+  },[reset])
+
   const handleNext = (newPage) => {
     const newSkip = skip + RECIPES_PER_PAGE;
     setCurrentPage(newPage);
-    const newUrl = search || category || numSteps || sortOption || tags ? `/?search=${search}&skip=${newSkip}&category=${category}&tags=${tags.join(',')}&numSteps=${numSteps}&ingredients=${ingredients}&sortOption=${sortOption}` : `/?skip=${newSkip}`
+    const newUrl = search || category || numSteps || sortOption || tags ? `/all?search=${search}&skip=${newSkip}&category=${category}&tags=${tags.join(',')}&numSteps=${numSteps}&ingredients=${ingredients}&sortOption=${sortOption}` : `/all?skip=${newSkip}`
     router.push(newUrl); // Update the URL with the new skip value
   };
 
   const handlePrevious = (newPage) => {
     const newSkip = skip > RECIPES_PER_PAGE ? skip - RECIPES_PER_PAGE : 0;
     setCurrentPage(newPage);
-    const newUrl = search || category || numSteps || sortOption || tags ? `/?search=${search}&skip=${newSkip}&category=${category}&tags=${tags.join(',')}&numSteps=${numSteps}&ingredients=${ingredients}&sortOption=${sortOption}` : `/?skip=${newSkip}`
+    const newUrl = search || category || numSteps || sortOption || tags ? `/all?search=${search}&skip=${newSkip}&category=${category}&tags=${tags.join(',')}&numSteps=${numSteps}&ingredients=${ingredients}&sortOption=${sortOption}` : `/all?skip=${newSkip}`
     router.push(newUrl);
   };
-
-  const totalPages = Math.ceil(totalRecipes / RECIPES_PER_PAGE);
+  const totalPages = Math.ceil(150000 / RECIPES_PER_PAGE);
 
   return (
     <div className="flex justify-center mt-8">
