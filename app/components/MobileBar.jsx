@@ -27,7 +27,7 @@ export default function MobileBar() {
               <p className="text-[12px]">Search</p>
             </div>
             <div className="text-center flex flex-col items-center">
-              <Link href="/favorites">
+              <Link href="/favourites">
                 <Image width={10} height={10}  className=" w-6" src={"/wishlist.svg"} alt="" />
               </Link>
               <p className="text-[12px]">Favourite</p>
