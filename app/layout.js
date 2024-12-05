@@ -9,7 +9,7 @@ import MobileBar from "./components/MobileBar";
 import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
 import { NotificationProvider } from "./components/NotificationContext";
 import { MyContextProvider2 } from "./components/favCountContext";
-import { MyContextProvider3 } from "./components/pageNumberReset";
+import { MyContextProvider3 } from "./components/PageNumberReset";
 import OnlineStatusNotifier from "./components/IsOnline";
 // metadata for the RootLayout
 export const metadata = {

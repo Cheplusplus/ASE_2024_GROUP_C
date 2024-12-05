@@ -5,7 +5,7 @@ import { Filter } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Button } from "./ui/button";
 import { Slider } from "./ui/slider";
-import { useMyContext3 } from './pageNumberReset';
+import { useMyContext3 } from './PageNumberReset';
 
 /**
  * FilterSortComponent provides a UI for filtering and sorting recipes.

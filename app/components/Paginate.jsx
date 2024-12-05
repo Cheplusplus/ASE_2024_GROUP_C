@@ -3,7 +3,6 @@
 import React, {useEffect, useState} from 'react';
 import { useRouter,useSearchParams  } from 'next/navigation';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
-import { useMyContext3 } from './pageNumberReset';
 
 const RECIPES_PER_PAGE = 50; // Recipes per page
 const totalRecipes = 150000;
