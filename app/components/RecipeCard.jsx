@@ -81,8 +81,8 @@ const RecipeCard = ({
 
   const fetchFavourites = async () => {
     try {
-      const response = await fetch(`${url}/api/favourites/fav`);
-      if (!response.ok) throw new Error('Failed to fetch favourites');
+      const response = await fetch(`${url}/api/favourites`);
+      if (!response.ok) throw new Error("Failed to fetch favourites");
       const data = await response.json();
       data.favourites.some((fav) => fav._id === _id)
         ? setIsCurrentlyFavourited(true)
@@ -136,7 +136,7 @@ const RecipeCard = ({
     e.preventDefault(); // Prevent link navigation
 
     try {
-      const response = await fetch(`${url}/api/favourites/fav`, {
+      const response = await fetch(`${url}/api/favourites`, {
         method: isCurrentlyFavourited ? "DELETE" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ recipeId: _id }),

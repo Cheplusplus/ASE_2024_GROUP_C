@@ -10,7 +10,6 @@ import { Heart } from "lucide-react";
 import { Download } from "lucide-react";
 import { ShoppingCartIcon } from "lucide-react";
 import Image from "next/image";
-import Badge from './ui/badge';
 import { useMyContext2 } from "./favCountContext"
 /**
  * The main navigation component for the app.
@@ -24,16 +23,59 @@ const Navbar = () => {
   const [shoppingListCount, setShoppingListCount] = useState(0);
   const pathname = usePathname();
   const router = useRouter(); 
-  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
   const { updateCount} = useMyContext2();
 
   const { data: session } = useSession();
-  // const [favouritesCount, setFavouritesCount] = useState(0);
-  const [menuOpen, setMenuOpen] = useState(false);
 
-  const toggleMenu = () => {
-    setMenuOpen((prev) => !prev);
+  // Update shopping list count
+  useEffect(() => {
+    const updateShoppingListCount = () => {
+      const storedItems = localStorage.getItem("shoppingList");
+      const items = storedItems ? JSON.parse(storedItems) : [];
+      setShoppingListCount(items.length);
+    };
+
+    // Initial count
+    updateShoppingListCount();
+
+    // Listen for storage changes
+    window.addEventListener("storage", updateShoppingListCount);
+
+    // Add custom event listener
+    window.addEventListener("shopping-list-updated", updateShoppingListCount);
+
+    return () => {
+      window.removeEventListener("storage", updateShoppingListCount);
+      window.removeEventListener(
+        "shopping-list-updated",
+        updateShoppingListCount
+      );
+    };
+  }, []);
+
+//   useEffect(() => {
+//     // Check if user is logged in, for example, by checking a token in localStorage
+//     const token = localStorage.getItem("authToken");
+//     setIsLoggedIn(!!token);
+  
+
+  const handleSublinkToggle = (linkName) => {
+    setOpenSublinks((prev) => ({
+      ...prev,
+      [linkName]: !prev[linkName],
+    }));
   };
+
+  const handleSignOut = async (e) => {
+    e.preventDefault();
+    await signOut({ callbackUrl: "/" });
+    // Clear cookies manually to ensure no stale sessions
+    document.cookie = "next-auth.session-token=; Max-Age=0; path=/";
+    document.cookie = "next-auth.callback-url=; Max-Age=0; path=/";
+    document.cookie = "next-auth.csrf-token=; Max-Age=0; path=/";
+    router.push("/"); // Redirect to sign-in page
+  };
+
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -41,8 +83,13 @@ const Navbar = () => {
       name: "Recipes",
       href: "/recipes",
     },
-    { name: 'About', href: '/about' },
-    { name: 'Contact', href: '/contact' },
+    {
+      name: "Favourites",
+      href: "/favourites",
+      badge: status === "authenticated" ? favouritesCount : null,
+    },
+    { name: "About", href: "/about" },
+    { name: "Contact", href: "/contact" },
     {
       name: "Account",
       href: "/account",
@@ -56,134 +103,19 @@ const Navbar = () => {
       name: "Shopping List",
       href: "/shopping-list",
       icon: <ShoppingCartIcon className="inline-block mr-2" />,
-      badge: session ? shoppingListCount : null,
     },
-    { 
-      name: 'Favourites', 
-      href: '/favourites',
-      icon: <Heart className='inline-block mr-2'/>, 
-      badge: session ? favouritesCount : null
-    }
   ];
 
-  const handleSublinkToggle = (linkName) => {
-    setOpenSublinks((prev) => ({
-      ...prev,
-      [linkName]: !prev[linkName],
-    }));
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setMenuOpen((prev) => !prev);
   };
 
-  const fetchInitialFavouritesCount = async () => {
-    if (session) {
-      try {
-        const response = await fetch(`${url}/api/favourites/fav`);
-        if (response.ok) {
-          const data = await response.json();
-          setFavouritesCount(data.count);
-        }
-      } catch (error) {
-        console.error('Error fetching favourites count:', error);
-      }
-    } else {setFavouritesCount(0)}
-  };
-
-  useEffect(() => {
-    fetchInitialFavouritesCount();
-  }, [session]);
-
-  const favouritesLink = navLinks.find(link => link.name === 'Favourites');
-  if (favouritesLink && session) {
+  const favouritesLink = navLinks.find((link) => link.name === "Favourites");
+  if (favouritesLink && status === "authenticated") {
     favouritesLink.badge = favouritesCount;
   }
-
-  const shoppingListLink = navLinks.find(link => link.name === 'Shopping List');
-  if (shoppingListLink && session) {
-    shoppingListLink.badge = shoppingListCount;
-  }
-
-   // Update shopping list count
-   useEffect(() => {
-    const updateShoppingListCount = async () => {
-      if (session) {
-        try {
-          const response = await fetch(`${url}/api/shoppingList/item`)
-          if (response.ok) {
-            const data = await response.json();
-            setShoppingListCount(data.count)
-          }
-        } catch (error) {
-          console.error('Error fetching shoppingList count:', error)
-        }
-      } else {setShoppingListCount(0)}
-    };
-
-    // Initial count
-    updateShoppingListCount();
-  }, [session]);
-
-//   useEffect(() => {
-//     // Check if user is logged in, for example, by checking a token in localStorage
-//     const token = localStorage.getItem("authToken");
-//     setIsLoggedIn(!!token);
-//  })
-  
- // Fetch favourites count when session changes
- useEffect(() => {
-  const fetchFavouritesCount = async () => {
-    if (session) {
-      try {
-        const response = await fetch(`${url}/api/favourites/fav`);
-        if (response.ok) {
-          const data = await response.json();
-          setFavouritesCount(data.count);
-        }
-      } catch (error) {
-        console.error('Error fetching favourites count:', error);
-      }
-    } else {
-      setFavouritesCount(0);
-    }
-  };
-
-  fetchFavouritesCount();
-}, [session]);
-  
-
-// Update favourites count dynamically
-useEffect(() => {
-  const handleFavouritesUpdate = (e) => {
-    setFavouritesCount(e.detail.count);
-  };
-
-  document.addEventListener('favouritesUpdated', handleFavouritesUpdate);
-
-  return () => {
-    document.removeEventListener('favouritesUpdated', handleFavouritesUpdate);
-  };
-}, []);
-
-useEffect(() => {
-  const handleShoppingListUpdate = (e) => {
-    setShoppingListCount(e.detail.count);
-  };
-
-  document.addEventListener('shoppingListUpdated', handleShoppingListUpdate);
-
-  return () => {
-    document.removeEventListener('shoppingListUpdated', handleShoppingListUpdate);
-  }
-}) 
-
-  
-  const handleSignOut = async (e) => {
-    e.preventDefault();
-    await signOut({ callbackUrl: "/" });
-    // Clear cookies manually to ensure no stale sessions
-    document.cookie = "next-auth.session-token=; Max-Age=0; path=/";
-    document.cookie = "next-auth.callback-url=; Max-Age=0; path=/";
-    document.cookie = "next-auth.csrf-token=; Max-Age=0; path=/";
-    router.push("/"); // Redirect to sign-in page
-  };
 
   return (
     <>
@@ -249,14 +181,30 @@ useEffect(() => {
                 className=" hidden md:block relative p-2 rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <Heart />
-                <Badge count ={favouritesCount}/>
-            </Link>
-             <Link href="/shopping-list" className="hidden md:block relative p-2 rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                {updateCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
+                    {updateCount}
+                  </span>
+                )}
+              </Link>
+              <Link
+                href={"/downloads"}
+                className=" hidden md:block relative p-2 rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <Download />
+              </Link>
+              <Link
+                href="/shopping-list"
+                className="hidden md:block relative p-2 rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
                 <ShoppingCartIcon />
-                <Badge count={shoppingListCount} />
-             </Link> 
-          <ThemeToggle />
-              
+                {shoppingListCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {shoppingListCount}
+                  </span>
+                )}
+              </Link>
+              <ThemeToggle />
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 className={`p-2 rounded-md relative text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none ${
