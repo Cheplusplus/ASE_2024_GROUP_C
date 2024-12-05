@@ -136,7 +136,7 @@ const RecipeCard = ({
     e.preventDefault(); // Prevent link navigation
 
     try {
-      const response = await fetch(`${url}/api/favourites`, {
+      const response = await fetch(`${url}/api/favourites/fav`, {
         method: isCurrentlyFavourited ? "DELETE" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ recipeId: _id }),

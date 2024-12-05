@@ -4,11 +4,15 @@ import { authOptions } from '../../auth/[...nextauth]/route';
 import Favourite from '../../../models/Favourite';
 import User from '../../../models/user';
 import connectToDatabase from '@/app/lib/connectMongoose';
+import { setCORSHeaders } from '@/app/lib/corsMiddleware';
 
 // Clear all favourites for the logged-in user
 export async function DELETE(req) {
+  const res = new NextResponse();
+  setCORSHeaders(res);
+
   if (req.method === 'OPTIONS') {
-    return NextResponse.json({}, { status: 200 });
+    return res.status(200).end();
   }
 
   try {

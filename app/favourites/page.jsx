@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import RecipeCard from '../components/RecipeCard';
 import { TrashIcon } from 'lucide-react';
 import {useNotification, NOTIFICATION_TYPES,} from "../components/NotificationContext";
+import { useMyContext2 } from '../components/favCountContext';
 
 const FavouritesPage = () => {
   const [favourites, setFavourites] = useState([]);
@@ -13,6 +14,7 @@ const FavouritesPage = () => {
   const { addNotification } = useNotification();
   const router = useRouter();
   const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+  const { countZero} = useMyContext2();
 
 
   const fetchFavourites = async () => {
@@ -71,7 +73,7 @@ const FavouritesPage = () => {
       
       setFavourites([]);
       addNotification( 'Cleared entire Favourites list', NOTIFICATION_TYPES.INFO)
-      
+      countZero()
       // Update global favourites count
       document.dispatchEvent(new CustomEvent('favouritesUpdated', { 
         detail: { count: 0 } 
