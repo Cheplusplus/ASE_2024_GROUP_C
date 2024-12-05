@@ -18,7 +18,7 @@ export default function RecipeDetail({ params }) {
   useEffect(() => {
     const downloadedRecipes =
       JSON.parse(localStorage.getItem("downloadedRecipes")) || [];
-    setIsDownloaded(downloadedRecipes.some((r) => r.id === id));
+    setIsDownloaded(downloadedRecipes.some((r) => r._id === id));
   }, [id]);
 
   const downloadRecipe = async () => {
@@ -140,7 +140,7 @@ export default function RecipeDetail({ params }) {
         </button>
         <button
           onClick={downloadRecipe}
-          disabled={isDownloaded}
+          // disabled={isDownloaded}
           className="btn btn-primary"
         >
           {isDownloaded ? "Downloaded" : "Download for Offline Use"}

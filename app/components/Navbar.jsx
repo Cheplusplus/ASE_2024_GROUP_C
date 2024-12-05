@@ -1,14 +1,17 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import SearchBar from './SearchBar';
-import { signOut } from 'next-auth/react';
-import { ThemeToggle } from './ThemeToggle';
-import { useSession } from 'next-auth/react';
-import { Heart, ShoppingCartIcon } from "lucide-react" 
+"use client";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import SearchBar from "./SearchBar";
+import { signOut } from "next-auth/react";
+import { ThemeToggle } from "./ThemeToggle";
+import { useSession } from "next-auth/react";
+import { Heart } from "lucide-react";
+import { Download } from "lucide-react";
+import { ShoppingCartIcon } from "lucide-react";
 import Image from "next/image";
 import Badge from './ui/badge';
+import { useMyContext2 } from "./favCountContext"
 /**
  * The main navigation component for the app.
  * @returns {JSX.Element} The rendered navbar component.
@@ -22,9 +25,10 @@ const Navbar = () => {
   const pathname = usePathname();
   const router = useRouter(); 
   const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+  const { updateCount} = useMyContext2();
 
   const { data: session } = useSession();
-  const [favouritesCount, setFavouritesCount] = useState(0);
+  // const [favouritesCount, setFavouritesCount] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -117,10 +121,10 @@ const Navbar = () => {
     updateShoppingListCount();
   }, [session]);
 
-  useEffect(() => {
-    // Check if user is logged in, for example, by checking a token in localStorage
-    const token = localStorage.getItem("authToken");
-    setIsLoggedIn(!!token);
+//   useEffect(() => {
+//     // Check if user is logged in, for example, by checking a token in localStorage
+//     const token = localStorage.getItem("authToken");
+//     setIsLoggedIn(!!token);
   })
   
  // Fetch favourites count when session changes
@@ -181,6 +185,47 @@ useEffect(() => {
     router.push("/"); // Redirect to sign-in page
   };
 
+
+  const navLinks = [
+    { name: "Home", href: "/" },
+    {
+      name: "Recipes",
+      href: "/recipes",
+    },
+    {
+      name: "Favourites",
+      href: "/favourites",
+      badge: status === "authenticated" ? favouritesCount : null,
+    },
+    { name: "About", href: "/about" },
+    { name: "Contact", href: "/contact" },
+    {
+      name: "Account",
+      href: "/account",
+      sublinks: [
+        { name: "Sign Up", href: "/sign-up" },
+        { name: "Sign In", href: "/sign-in" },
+        { name: "Profile", href: "/profile" },
+      ],
+    },
+    {
+      name: "Shopping List",
+      href: "/shopping-list",
+      icon: <ShoppingCartIcon className="inline-block mr-2" />,
+    },
+  ];
+
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setMenuOpen((prev) => !prev);
+  };
+
+  const favouritesLink = navLinks.find((link) => link.name === "Favourites");
+  if (favouritesLink && status === "authenticated") {
+    favouritesLink.badge = favouritesCount;
+  }
+
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/30 dark:bg-gray-900/30 shadow-lg transition-colors duration-200">
@@ -223,7 +268,7 @@ useEffect(() => {
                 >
                   <Image
                     style={{
-                      objectFit:"cover",
+                      objectFit: "cover",
                       width: "auto",
                       height: "auto",
                     }}
@@ -240,7 +285,10 @@ useEffect(() => {
 
             {/* Shopping cart, Theme Toggle and Search */}
             <div className="flex items-center ">
-            <Link href="/favorites" className=" hidden md:block relative p-2 rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700" >
+              <Link
+                href="/favourites"
+                className=" hidden md:block relative p-2 rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
                 <Heart />
                 <Badge count ={favouritesCount}/>
             </Link>
@@ -311,7 +359,7 @@ useEffect(() => {
                   </div>
                 </div>
               )}
-              
+
               {/**Drop Down Menu */}
               {menuOpen && (
                 <ul className="space-y-1 absolute top-14  right-4 md:right-auto bg-white mt-2">
