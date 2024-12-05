@@ -7,6 +7,18 @@ import { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 
+/**
+ * The RecipeDetail component renders a page displaying the details of a recipe
+ * given the id of the recipe as a parameter. It fetches the recipe from the API
+ * and renders a RecipeDetailCard component with the recipe data. If the recipe
+ * is not found, it renders a message indicating so. It also renders a button
+ * allowing the user to download the recipe for offline use, if the browser
+ * supports service workers. If the recipe is already downloaded, the button is
+ * disabled and displays "Downloaded".
+ *
+ * @param {{ params: { id: string } }} props - The id of the recipe to fetch and
+ * display.
+ */
 export default function RecipeDetail({ params }) {
   const { id } = params;
   const router = useRouter();

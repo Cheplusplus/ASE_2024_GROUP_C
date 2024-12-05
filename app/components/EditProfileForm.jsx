@@ -2,6 +2,16 @@ import { useState } from "react";
 import { updateUserProfile } from "@/lib/api";
 import { useSession } from "next-auth/react";
 
+/**
+ * EditProfileForm component allows users to edit their profile information,
+ * specifically their name and email. It handles form submission and user input changes.
+ * If the user is authenticated via Google, updates are not allowed.
+ * 
+ * @param {Object} props - Component props
+ * @param {Object} props.user - Object containing user details
+ * @param {function} props.onComplete - Callback function invoked after a successful profile update
+ * @param {function} props.onError - Callback function invoked when there is an error updating the profile
+ */
 export default function EditProfileForm({ user, onComplete, onError }) {
   const [formData, setFormData] = useState({
     name: user.name,
@@ -9,6 +19,14 @@ export default function EditProfileForm({ user, onComplete, onError }) {
   });
   const { data: session, status } = useSession();
 
+  /**
+   * Handles form submission. Prevents default form submission, determines the
+   * authentication provider for the user, and prevents updates to Google
+   * accounts. If the user is authenticated via a different provider, updates
+   * the user's profile information and triggers the onComplete callback if
+   * successful. If there is an error, it triggers the onError callback.
+   * @param {Event} e - Form submission event
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     const provider = session.user.provider;
@@ -26,6 +44,13 @@ export default function EditProfileForm({ user, onComplete, onError }) {
     }
   };
 
+/**
+ * Handles changes to the input fields in the form.
+ * Updates the formData state with the new value for the
+ * corresponding input field.
+ * 
+ * @param {Event} e - The change event triggered by the form input.
+ */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({

@@ -1,7 +1,24 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 
+<<<<<<< HEAD
 export default function RecipeReviews({ recipeId, reviewUpdateKey }) {
+=======
+
+/**
+ * RecipeReviews component displays and manages user reviews for a specific recipe.
+ *
+ * @param {Object} props - Component properties.
+ * @param {string} props.recipeId - The ID of the recipe whose reviews are displayed.
+ * @param {string} props.reviewUpdateKey - Key to trigger re-fetching of reviews when changed.
+ * @returns {ReactElement} A ReactElement representing the RecipeReviews component.
+ *
+ * This component fetches, displays, edits, and deletes reviews associated with a recipe.
+ * Users who are authenticated and own a review can edit or delete their reviews.
+ * The component manages loading state and error handling for fetching and updating reviews.
+ */
+export default function RecipeReviews({ recipeId,reviewUpdateKey}) {
+>>>>>>> a90a2b080a3cc58cfa751cf04e994691e9ebd8ce
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingReviewId, setEditingReviewId] = useState(null);

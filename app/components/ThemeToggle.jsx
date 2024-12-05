@@ -1,6 +1,14 @@
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 
+/**
+ * ThemeToggle component renders a button that toggles the theme
+ * between 'light' and 'dark' when clicked. The button is an SVG
+ * icon of the current theme (moon for light, sun for dark), and
+ * rotates 90 degrees when the theme changes.
+ *
+ * @returns {JSX.Element} The rendered ThemeToggle button.
+ */
 export function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
 
