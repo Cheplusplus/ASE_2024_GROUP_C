@@ -125,7 +125,7 @@ const Navbar = () => {
 //     // Check if user is logged in, for example, by checking a token in localStorage
 //     const token = localStorage.getItem("authToken");
 //     setIsLoggedIn(!!token);
-  })
+//  })
   
  // Fetch favourites count when session changes
  useEffect(() => {
@@ -184,47 +184,6 @@ useEffect(() => {
     document.cookie = "next-auth.csrf-token=; Max-Age=0; path=/";
     router.push("/"); // Redirect to sign-in page
   };
-
-
-  const navLinks = [
-    { name: "Home", href: "/" },
-    {
-      name: "Recipes",
-      href: "/recipes",
-    },
-    {
-      name: "Favourites",
-      href: "/favourites",
-      badge: status === "authenticated" ? favouritesCount : null,
-    },
-    { name: "About", href: "/about" },
-    { name: "Contact", href: "/contact" },
-    {
-      name: "Account",
-      href: "/account",
-      sublinks: [
-        { name: "Sign Up", href: "/sign-up" },
-        { name: "Sign In", href: "/sign-in" },
-        { name: "Profile", href: "/profile" },
-      ],
-    },
-    {
-      name: "Shopping List",
-      href: "/shopping-list",
-      icon: <ShoppingCartIcon className="inline-block mr-2" />,
-    },
-  ];
-
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  const toggleMenu = () => {
-    setMenuOpen((prev) => !prev);
-  };
-
-  const favouritesLink = navLinks.find((link) => link.name === "Favourites");
-  if (favouritesLink && status === "authenticated") {
-    favouritesLink.badge = favouritesCount;
-  }
 
   return (
     <>
