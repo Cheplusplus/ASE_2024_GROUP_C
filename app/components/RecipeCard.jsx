@@ -116,6 +116,10 @@ const RecipeCard = ({
 
     fetchReviews();
     fetchFavourites();
+    const recipes = JSON.parse(localStorage.getItem("downloadedRecipes")) || [];
+    //setDownloadedRecipes(recipes);
+    
+
   }, []); // Dependency array
 
   const handleMouseEnter = () => {
