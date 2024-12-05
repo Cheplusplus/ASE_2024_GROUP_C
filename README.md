@@ -1,6 +1,29 @@
 # Recipe App 🍳
 ## Project Overview
-The Recipe App is a user-friendly web application built using Next.js that helps users explore, search, and manage a variety of recipes. Designed for food enthusiasts, it offers powerful filtering and sorting options to simplify the process of finding recipes based on categories, tags, and cooking steps. Users can view detailed recipes with step-by-step instructions and manage their preferences with ease.
+The Recipe App is your ultimate culinary companion, built with the power of Next.js to deliver a seamless and enjoyable experience for food enthusiasts. Whether you're a seasoned chef or a kitchen novice, this app simplifies your recipe discovery journey and brings delicious possibilities to your fingertips.
+
+Why You'll Love It:
+🍳 Explore Recipes with Ease
+Discover a diverse collection of recipes tailored to your tastes. Filter by categories, tags, or cooking steps to find the perfect dish for any occasion.
+
+🔍 Smart Search & Powerful Sorting
+Easily search for recipes or sort them based on your preferences, saving time and making decision-making effortless.
+
+📋 Step-by-Step Instructions
+View detailed recipes with clear, step-by-step guidance, ensuring a stress-free cooking experience from start to finish.
+
+💬 Text-to-Voice Conversion
+Turn your kitchen into a hands-free zone! With our text-to-voice feature, the app reads out instructions and content, letting you focus on cooking without missing a beat.
+
+📱 Progressive Web App (PWA)
+Take the app with you wherever you go. As a PWA, it works seamlessly across devices and offers offline access, so you can cook even when you're off the grid.
+
+💡 Manage Preferences Effortlessly
+Keep track of your favorite recipes and personalize your experience with easy preference management.
+
+Whether you're exploring new cuisines or perfecting a family classic, the Recipe App is here to inspire and guide you every step of the way.
+
+
 ## Features
 ## Core Features
 ### 🍳 Recipe Browsing
