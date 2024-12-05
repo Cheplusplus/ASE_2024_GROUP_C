@@ -4,6 +4,7 @@ import EditProfileForm from "./EditProfileForm";
 import { getUserProfile } from "@/lib/api";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import loading from "../profile/loading";
 
 export default function ProfilePage({ userId, db }) {
   const [user, setUser] = useState(null);
@@ -40,7 +41,7 @@ export default function ProfilePage({ userId, db }) {
     }, 2000); // Reset message after 3 seconds
   };
 
-  if (!user) return <p>Loading...</p>;
+  if (!user) return <loading />;
 
   return (
     <>
@@ -82,13 +83,13 @@ export default function ProfilePage({ userId, db }) {
                   <div className="absolute top-24 left-4">
                     {session.user.image ? (
                       <Image
-                      className="rounded-full w-32 h-32 border-4 border-white object-cover"
-                      src={session.user.image}
-                      alt="Profile"
-                      width={128} // Set the width of the profile image
-                      height={128} // Set the height of the profile image
-                      objectFit="cover" // Ensures the image covers the container without distortion
-                    />
+                        className="rounded-full w-32 h-32 border-4 border-white object-cover"
+                        src={session.user.image}
+                        alt="Profile"
+                        width={128} // Set the width of the profile image
+                        height={128} // Set the height of the profile image
+                        objectFit="cover" // Ensures the image covers the container without distortion
+                      />
                     ) : (
                       <div className="rounded-full w-32 h-32 text-[6rem] border-4 border-white object-cover hover:bg-slate-100 flex text-center items-center justify-center bg-slate-200 object-center">
                         {session.user.name.charAt(0)}

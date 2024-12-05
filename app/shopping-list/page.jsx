@@ -1,8 +1,10 @@
-"use client";
+"use client"
+
 import React, { useState, useEffect } from "react";
 import {ShoppingCartIcon, PlusIcon, TrashIcon, ShareIcon, CheckIcon,} from "lucide-react";
 import { useSession } from "next-auth/react";
 import {useNotification, NOTIFICATION_TYPES,} from "../components/NotificationContext";
+import ShoppingListLoading from "./loading";
 
 const ShoppingList = () => {
   const [items, setItems] = useState([]);
@@ -42,10 +44,7 @@ const ShoppingList = () => {
   }, [session, url, addNotification]);
 
   if (isLoading) {
-    return (
-      <div className="container mx-auto p-4 mt-20 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-      </div>);
+    return <ShoppingListLoading />;
   }
 
   const addItem = async () => {

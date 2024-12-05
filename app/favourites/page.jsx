@@ -3,8 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import RecipeCard from '../components/RecipeCard';
-import { TrashIcon } from 'lucide-react';
+import { TrashIcon, HeartIcon } from 'lucide-react';
 import {useNotification, NOTIFICATION_TYPES,} from "../components/NotificationContext";
+import Loading from './loading';
 
 const FavouritesPage = () => {
   const [favourites, setFavourites] = useState([]);
@@ -81,9 +82,7 @@ const FavouritesPage = () => {
 
   if (loading) {
     return (
-      <div className="container mx-auto p-4 mt-20 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-      </div>
+      <Loading/>
     );
   }
 
