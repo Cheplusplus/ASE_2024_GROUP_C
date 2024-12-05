@@ -5,6 +5,7 @@ import { Filter } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Button } from "./ui/button";
 import { Slider } from "./ui/slider";
+import { useMyContext3 } from './pageNumberReset';
 
 /**
  * FilterSortComponent provides a UI for filtering and sorting recipes.
@@ -34,6 +35,7 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
   const [displayCount, setDisplayCount] = useState(false);
   const [count, setCount] = useState(count1);
   const params = new URLSearchParams();
+  const { update } = useMyContext3();
 
   // Apply the filters by updating the URL query parameters
   const applyFilters = (value, clear = false) => {
@@ -50,7 +52,7 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
 
       setIsOpen(false);
       router.push(`/all?${params.toString()}`);
-
+      update(true)
       if (count1) {
         setDisplayCount(true);
       } else {
@@ -76,6 +78,7 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
     setIngredients('');
     setSortOption('default');
     applyFilters({}, true);
+    update(true)
   };
 
   /**
@@ -212,6 +215,7 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
                   step={1}
                   className="mt-2"
                 />
+                {numSteps}
               </div>
 
               {/* Ingredients filter */}
@@ -236,9 +240,9 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
         <Button variant="primary" onClick={applyFilters} className="mt-4 w-full">
           Apply Filters
         </Button>
-        <Button variant="outline" onClick={() => setIsOpen(false)} className="mt-2 bg-red-600 hover:bg-red-700 w-full text-white">
+        <button onClick={() => setIsOpen(false)} className="mt-2 bg-red-600 hover:bg-red-700 w-full text-white">
           Close
-        </Button>
+        </button>
       </div>
     </div>
   </div>

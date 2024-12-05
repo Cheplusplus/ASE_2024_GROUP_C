@@ -3,6 +3,7 @@ import Carousel from "./components/Carousel";
 import Link from "next/link";
 import LayoutRecipesGrid from "./components/LayoutRecipesGrid";
 import PWADownloadButton from "./components/PWADownloadButton";
+import TeamCarousel from "./components/TeamCarousel";
 
 /**
  * Home component renders the main page layout for the application.
@@ -30,34 +31,22 @@ export default function Home() {
           src={"/wallpaper2.jpg"}
           alt={"wallpaper"}
           fill
-          quality={99} // Balanced quality for performance
+          quality={99}
           sizes="(max-width: 768px) 100vw, (max-width: 2560px) 50vw, 33vw"
           style={{ objectFit: "cover" }}
           className="dark:brightness-75 brightness-100 transition-all duration-300"
         />
-        <div className="absolute top-20 left-10 z-20">
+        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 md:top-32 z-20">
           <PWADownloadButton />
         </div>
       </div>
 
       {/* Carousel Section */}
-      <div className="absolute top-52 md:top-72 z-20 left-1/2 transform -translate-x-1/2 bg-white rounded-lg w-11/12 p-4 py-4 shadow-lg">
+      <div className="absolute top-52 md:top-72 z-20 left-1/2 transform -translate-x-1/2 bg-white rounded-lg w-11/12 max-w-7xl mx-auto p-4 py-4 shadow-lg">
         <Carousel heading={"Recipes You Might Like..."} />
       </div>
 
       <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 pt-40 sm:pt-44 sm:py-16">
-        {/* Decorative Elements */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute inset-y-0 left-1/2 -z-10 overflow-hidden opacity-30">
-            <div
-              className={`absolute -left-48 w-96 h-96 rounded-full bg-gradient-to-tr from-rose-200 to-rose-50 dark:from-rose-900 dark:to-rose-800 blur-2xl transition-colors duration-300`}
-            />
-            <div
-              className={`absolute -right-48 w-96 h-96 rounded-full bg-gradient-to-tl from-blue-200 to-blue-50 dark:from-blue-900 dark:to-blue-800 blur-2xl transition-colors duration-300`}
-            />
-          </div>
-        </div>
-
         {/* Recipes Section */}
         <div className="pt-4">
           <h1 className="flex items-center md:text-3xl text-2xl font-bold text-gray-700 mb-3">
@@ -103,6 +92,12 @@ export default function Home() {
             </Link>
           </div>
         </div>
+
+        {/* Team Carousel Section */}
+        <div className="mt-16">
+          <TeamCarousel />
+        </div>
+        
       </main>
     </div>
   );

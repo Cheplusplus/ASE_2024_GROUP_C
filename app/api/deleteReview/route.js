@@ -1,6 +1,7 @@
 import connectToDatabase from "@/app/lib/connectMongoose";
 import Review from "@/app/models/reviews";
 import { NextResponse } from "next/server";
+import { setCORSHeaders } from "@/app/lib/corsMiddleware";
 
 /**
  * Handles DELETE requests to remove a specific review.
@@ -14,6 +15,15 @@ import { NextResponse } from "next/server";
  * If there's an error during the process, it returns a 500 error response.
  */
 export async function DELETE(req) {
+
+  const res = new NextResponse();
+  setCORSHeaders(res);
+
+  // Handle OPTIONS preflight request
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   await connectToDatabase();
 
   try {

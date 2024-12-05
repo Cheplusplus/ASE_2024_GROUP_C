@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useMyContext3 } from './pageNumberReset';
 
 /**
  * A search bar component for searching recipes by title with highlighted matches.
@@ -17,6 +18,7 @@ const SearchBar = ({ isOpen, onClose }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const { update } = useMyContext3();
 
   const router = useRouter();
 
@@ -27,6 +29,7 @@ const SearchBar = ({ isOpen, onClose }) => {
         fetchSuggestions(searchQuery);
         // Auto-submit search after 300ms of no typing
         router.push(`/all?search=${encodeURIComponent(searchQuery)}`);
+        update(true)
         setHasSearched(true);
       }, 300);
       return () => clearTimeout(debounceTimeout);
@@ -110,6 +113,7 @@ const SearchBar = ({ isOpen, onClose }) => {
   const handleSuggestionClick = (title) => {
     const debounceTimeout = setTimeout(()=> {
       router.push(`/all?search=${encodeURIComponent(title)}`);
+      update(true);
       onClose();
     }, 500)
     return ()=> clearTimeout(debounceTimeout)

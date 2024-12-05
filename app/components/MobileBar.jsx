@@ -1,3 +1,4 @@
+'use client'
 import Link from "next/link";
 import Image from "next/image";
 /**
@@ -8,6 +9,7 @@ import Image from "next/image";
  * @returns {JSX.Element} The MobileBar component.
  */
 export default function MobileBar() {
+
     return (
       <div className="sticky bottom-4 mx-6 ">
         <div className="justify-center rounded-3xl px-2 w-full shadow-md z-10 md:hidden backdrop-blur-md bg-white/50 dark:bg-gray-900/30  transition-colors duration-200">
@@ -19,9 +21,9 @@ export default function MobileBar() {
               <p className="text-[12px]">Shopping</p>
             </div>
             <div className="text-center flex flex-col items-center">
-              <Link href={"/search"}>
+              <button >
                 <Image width={10} height={10}  className=" w-6" src={"/search2.svg"} alt="" />
-              </Link>
+              </button>
               <p className="text-[12px]">Search</p>
             </div>
             <div className="text-center flex flex-col items-center">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AWS from "aws-sdk";
 
 /**
@@ -13,8 +13,25 @@ const RecipeTips = ({ recipe }) => {
   const [loading, setLoading] = useState(false); // Loading state
   const [answer, setAnswer] = useState("");
   const [isPlaying, setIsPlaying] = useState(false); // To track if TTS is playing
+  const [displayedText, setDisplayedText] = useState(""); // For typing effect
 
   const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+
+  useEffect(() => {
+    if (answer !== "") {
+      setDisplayedText(answer[0]);  // Reset displayedText when a new answer is set
+      let index = 0;
+      const typingInterval = setInterval(() => {
+        setDisplayedText((prev) => prev + answer[index]);
+        index += 1;
+        if (index === answer.length-1) {
+          clearInterval(typingInterval); // Stop typing when all characters are displayed
+        }
+      }, 30); // Adjust typing speed here
+
+      return () => clearInterval(typingInterval); // Clean up interval when component unmounts
+    }
+  }, [answer]); // Trigger typing effect when the answer changes
 
   // AWS Polly configuration
   AWS.config.update({
@@ -43,7 +60,6 @@ const RecipeTips = ({ recipe }) => {
 
       const audio = new Audio(audioUrl);
       audio.play();
-
       setIsPlaying(true);
 
 /**
@@ -69,10 +85,9 @@ const RecipeTips = ({ recipe }) => {
    */
   const handleAskQuestion = async () => {
     setLoading(true);
-    setAnswer("");
+    setAnswer(""); // Reset previous answer
 
     try {
-      console.log(recipe);
       const response = await fetch(`${url}/api/whisper`, {
         method: "POST",
         headers: {
@@ -184,7 +199,7 @@ const RecipeTips = ({ recipe }) => {
             </button>
 
             <h2 className="text-lg font-bold mb-4">Answer</h2>
-            <p>{answer}</p>
+            <p>{displayedText}</p>
 
             {/* Read Button */}
             <button

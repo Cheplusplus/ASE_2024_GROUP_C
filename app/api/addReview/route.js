@@ -1,6 +1,7 @@
 import connectToDatabase from "@/app/lib/connectMongoose";
 import Review from "@/app/models/reviews";
 import { NextResponse } from "next/server";
+import { setCORSHeaders } from "@/app/lib/corsMiddleware";
 
 /**
  * Handles POST requests to add a review for a recipe.
@@ -14,13 +15,21 @@ import { NextResponse } from "next/server";
  * If there's an error during the process, it returns a 500 error response.
  */
 export async function POST(req) {
+  const res = new NextResponse();
+  setCORSHeaders(res);
+
+  // Handle OPTIONS preflight request
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   await connectToDatabase();
 
   try {
     const { recipeId, comment, rating, reviewerName } = await req.json();
 
     // Validate request data
-    if ( !comment || !rating ) {
+    if (!comment || !rating) {
       return NextResponse.json(
         { error: "All fields are required" },
         { status: 400 }
@@ -43,3 +52,4 @@ export async function POST(req) {
     );
   }
 }
+

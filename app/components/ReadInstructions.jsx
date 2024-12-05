@@ -3,12 +3,10 @@ import AWS from 'aws-sdk';
 
 // AWS Polly Configuration for TTS
 AWS.config.update({
-    region: process.env.NEXT_PUBLIC_REGION,
-    accessKeyId: process.env.NEXT_PUBLIC_ACCESS_KEY_ID,
-    secretAccessKey: process.env.NEXT_PUBLIC_SECRET_ACCESS_KEY,
-  });
-  
-  
+  region: process.env.NEXT_PUBLIC_REGION,
+  accessKeyId: process.env.NEXT_PUBLIC_ACCESS_KEY_ID,
+  secretAccessKey: process.env.NEXT_PUBLIC_SECRET_ACCESS_KEY,
+});
 
 const polly = new AWS.Polly();
 
@@ -46,10 +44,10 @@ const InstructionReader = ({ instructions }) => {
   const [isListening, setIsListening] = useState(false);
   const [transcription, setTranscription] = useState('');
   const [currentInstructionIndex, setCurrentInstructionIndex] = useState(0);
-  const isReadingRef = useRef(false); // Ref to track reading state
+  const [error, setError] = useState(null); // Track errors
+  const isReadingRef = useRef(false);
   const audioRef = useRef(null);
-  const currentInstructionRef = useRef(0); // Ref for immediate access to current index
-
+  const currentInstructionRef = useRef(0);
 
   // Initialize Web Speech Recognition API
   useEffect(() => {
@@ -77,6 +75,7 @@ const InstructionReader = ({ instructions }) => {
  */
     speechRecognition.onerror = (error) => {
       console.error('Speech Recognition Error:', error);
+      setError(`Speech Recognition Error: ${error.error || 'Unknown error'}`);
     };
 
     setRecognition(speechRecognition);
@@ -102,6 +101,8 @@ const InstructionReader = ({ instructions }) => {
       return audio;
     } catch (err) {
       console.error('Error synthesizing speech:', err);
+      setError('Failed to synthesize speech. Please try again.');
+      return null; // Return null to signal failure
     }
   };
 
@@ -118,7 +119,10 @@ const InstructionReader = ({ instructions }) => {
 
  */
   const handleVoiceCommand = (command) => {
-    console.log(currentInstructionRef.current,'command:',command);
+    if (!command) return;
+
+    console.log(currentInstructionRef.current, 'command:', command);
+
     if (command.includes('pause')) {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -128,26 +132,23 @@ const InstructionReader = ({ instructions }) => {
         audioRef.current.play();
       }
     } else if (command.includes('next step')) {
-        if (currentInstructionRef.current < instructions.length - 1) {
-            stopReading(); // Stop current playback without resetting state
-            const newIndex = currentInstructionRef.current + 1;
-            currentInstructionRef.current = newIndex; // Update ref
-            setCurrentInstructionIndex(newIndex); // Sync with state
-            readInstructionAtIndex(newIndex, true); // Play new instruction and continue reading
-          }
+      if (currentInstructionRef.current < instructions.length - 1) {
+        stopReading(); // Stop current playback without resetting state
+        const newIndex = currentInstructionRef.current + 1;
+        currentInstructionRef.current = newIndex; // Update ref
+        setCurrentInstructionIndex(newIndex); // Sync with state
+        readInstructionAtIndex(newIndex, true); // Play new instruction and continue reading
+      }
     } else if (command.includes('go back')) {
-        console.log(currentInstructionRef.current);
-        if (currentInstructionRef.current > 0) {
-            stopReading(); // Stop current playback without resetting state
-            const newIndex = currentInstructionRef.current - 1;
-            currentInstructionRef.current = newIndex; // Update ref
-            setCurrentInstructionIndex(newIndex); // Sync with state
-            readInstructionAtIndex(newIndex, true); // Play new instruction and continue reading
-          }
+      if (currentInstructionRef.current > 0) {
+        stopReading(); // Stop current playback without resetting state
+        const newIndex = currentInstructionRef.current - 1;
+        currentInstructionRef.current = newIndex; // Update ref
+        setCurrentInstructionIndex(newIndex); // Sync with state
+        readInstructionAtIndex(newIndex, true); // Play new instruction and continue reading
+      }
     }
   };
-  
-  
 /**
  * Reads and plays the instruction at the given index and plays it using AWS Polly..
  * Stops any existing audio playback before starting the new instruction.
@@ -165,19 +166,21 @@ const readInstructionAtIndex = async (index, continueReading = false) => {
       audioRef.current.currentTime = 0; // Reset the audio to the start
       audioRef.current = null; // Clear the reference
     }
-  
+
     const text = instructions[index];
     const audio = await synthesizeSpeech(text);
+    if (!audio) return; // Exit if speech synthesis failed
+
     audioRef.current = audio;
-  
+
     // Play the new audio
     audio.play();
-  
+
     // Wait for the current instruction to finish playing
     await new Promise((resolve) => {
       audio.onended = resolve;
     });
-  
+
     // Continue reading the next instruction if requested
     if (continueReading && index < instructions.length - 1) {
       readInstructionAtIndex(index + 1, true); // Recursively read the next instruction
@@ -195,20 +198,21 @@ const readInstructionAtIndex = async (index, continueReading = false) => {
  * @async
  * @returns {Promise<void>}
  */
+
   const readAllInstructions = async () => {
     isReadingRef.current = true; // Mark as reading
     for (let i = currentInstructionRef.current; i < instructions.length; i++) {
       if (!isReadingRef.current) break; // Check ref for interruption
       currentInstructionRef.current = i; // Update ref
-      console.log(currentInstructionRef.current);
       setCurrentInstructionIndex(i); // Sync with state for UI updates
-  
+
       const text = instructions[i];
-      console.log(text)
       const audio = await synthesizeSpeech(text);
+      if (!audio) break; // Exit if speech synthesis failed
+
       audioRef.current = audio;
-  
       audio.play();
+
       // Wait for the current instruction to finish playing
       await new Promise((resolve) => {
         audio.onended = resolve;
@@ -230,16 +234,16 @@ const readInstructionAtIndex = async (index, continueReading = false) => {
   const stopReading = (action = '') => {
     if (audioRef.current) {
       audioRef.current.pause();
-      audioRef.current.currentTime = 0; // Reset the audio to the start
-      audioRef.current = null; // Clear the reference to the audio
+      audioRef.current.currentTime = 0;
+      audioRef.current = null;
     }
-  
+
     if (action === 'stop') {
-      // Full stop: Reset everything
-      isReadingRef.current = false; // Update ref to indicate reading has stopped
-      currentInstructionRef.current = 0; // Reset instruction index reference
-      setCurrentInstructionIndex(0); // Reset the current instruction state
-      setTranscription(''); // Clear the transcription state
+      isReadingRef.current = false;
+      currentInstructionRef.current = 0;
+      setCurrentInstructionIndex(0);
+      setTranscription('');
+      setError(null); // Clear any errors
       if (isListening) toggleListening(); // Stop listening if active
     }
   };
@@ -260,63 +264,64 @@ const readInstructionAtIndex = async (index, continueReading = false) => {
   };
 
   return (
-<div className="max-w-2xl mx-auto p-6 bg-gray-100 rounded-lg shadow-md">
-  <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
-    Voice-Controlled Instruction Reader
-  </h1>
-  
-  {/* Action Buttons */}
-  <div className="flex justify-center space-x-4 mb-4">
-    {/* Read All Instructions Button */}
-    <button
-      onClick={readAllInstructions}
-      disabled={isReadingRef.current}
-      className={`px-4 py-2 rounded-lg font-semibold transition duration-200 ${
-        isReadingRef.current
-          ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-          : 'bg-blue-600 text-white hover:bg-blue-700'
-      }`}
-    >
-      {isReadingRef.current ? 'Reading...' : 'Read All Instructions'}
-    </button>
+    <div className="max-w-2xl mx-auto p-6 bg-gray-100 rounded-lg shadow-md">
+      <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
+        Voice-Controlled Instruction Reader
+      </h1>
 
-    {/* Stop Reading Button */}
-    <button
-  onClick={()=>stopReading('stop')}
-  className={`px-4 py-2 rounded-lg font-semibold transition duration-200 ${
-    !isReadingRef.current
-      ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-      : 'bg-red-600 text-white hover:bg-red-700'
-  }`}
-  disabled={!isReadingRef.current}
->
-  Stop
-</button>
+      {/* Action Buttons */}
+      <div className="flex justify-center space-x-4 mb-4">
+        <button
+          onClick={readAllInstructions}
+          disabled={isReadingRef.current}
+          className={`px-4 py-2 rounded-lg font-semibold transition duration-200 ${
+            isReadingRef.current
+              ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+              : 'bg-blue-600 text-white hover:bg-blue-700'
+          }`}
+        >
+          {isReadingRef.current ? 'Reading...' : 'Read All Instructions'}
+        </button>
+        <button
+          onClick={() => stopReading('stop')}
+          disabled={!isReadingRef.current}
+          className={`px-4 py-2 rounded-lg font-semibold transition duration-200 ${
+            !isReadingRef.current
+              ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+              : 'bg-red-600 text-white hover:bg-red-700'
+          }`}
+        >
+          Stop
+        </button>
+        <button
+          onClick={toggleListening}
+          className={`px-4 py-2 rounded-lg font-semibold transition duration-200 ${
+            isListening
+              ? 'bg-red-600 text-white hover:bg-red-700'
+              : 'bg-green-600 text-white hover:bg-green-700'
+          }`}
+        >
+          {isListening ? 'Stop Listening' : 'Start Listening'}
+        </button>
+      </div>
 
-    {/* Toggle Listening Button */}
-    <button
-      onClick={toggleListening}
-      className={`px-4 py-2 rounded-lg font-semibold transition duration-200 ${
-        isListening
-          ? 'bg-red-600 text-white hover:bg-red-700'
-          : 'bg-green-600 text-white hover:bg-green-700'
-      }`}
-    >
-      {isListening ? 'Stop Listening' : 'Start Listening'}
-    </button>
-  </div>
-  
-  {/* Current Instruction Display */}
-  <div className="p-4 bg-white rounded-lg shadow-inner">
-    <p className="text-lg font-semibold text-gray-700 mb-2">
-      <strong>Current Instruction:</strong> {instructions[currentInstructionIndex]}
-    </p>
-    <p className="text-gray-600">
-      <strong>Transcription:</strong> {transcription || 'Waiting for voice input...'}
-    </p>
-  </div>
-</div>
+      {/* Error Display */}
+      {error && (
+        <div className="p-4 mb-4 bg-red-100 text-red-600 border border-red-200 rounded">
+          {error}
+        </div>
+      )}
 
+      {/* Current Instruction Display */}
+      <div className="p-4 bg-white rounded-lg shadow-inner">
+        <p className="text-lg font-semibold text-gray-700 mb-2">
+          <strong>Current Instruction:</strong> {instructions[currentInstructionIndex]}
+        </p>
+        <p className="text-gray-600">
+          <strong>Transcription:</strong> {transcription || 'Waiting for voice input...'}
+        </p>
+      </div>
+    </div>
   );
 };
 
