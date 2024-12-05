@@ -46,7 +46,6 @@
     "tailwind-merge": "^2.5.4"
   },
   "devDependencies": {
-    "eslint": "^8",
     "eslint-config-next": "14.2.15",
     "postcss": "^8",
     "serwist": "^9.0.10",

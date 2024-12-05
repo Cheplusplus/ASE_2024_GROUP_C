@@ -5,6 +5,21 @@ import LayoutRecipesGrid from "./components/LayoutRecipesGrid";
 import PWADownloadButton from "./components/PWADownloadButton";
 import TeamCarousel from "./components/TeamCarousel";
 
+/**
+ * Home component renders the main page layout for the application.
+ * 
+ * This component includes several sections:
+ * - A hero section with a downloadable PWA button and a background image.
+ * - A carousel section showcasing recipes.
+ * - Decorative elements with gradient backgrounds.
+ * - A section displaying a grid of recipe layouts.
+ * - A footer banner with a link to view all recipes.
+ * 
+ * The component utilizes Tailwind CSS for styling and transitions, ensuring responsiveness 
+ * and a smooth visual experience across different devices.
+ * 
+ * @returns {JSX.Element} The rendered Home page component.
+ */
 export default function Home() {
   return (
     <div className="min-h-screen bg-background transition-colors duration-300">

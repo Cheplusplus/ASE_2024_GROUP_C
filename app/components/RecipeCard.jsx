@@ -1,12 +1,11 @@
 "use client";
-import React, { useState,useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { useNotification, NOTIFICATION_TYPES } from './NotificationContext';
-import { Heart, HeartOff } from 'lucide-react';
-import { useMyContext2 } from "./favCountContext"
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useNotification, NOTIFICATION_TYPES } from "./NotificationContext";
+import { Heart, HeartOff } from "lucide-react";
+import { useMyContext2 } from "./favCountContext";
 import DownloadRecipeBtn from "./DownloadRecipeBtn";
-
 
 const MAX_VISIBLE_TAGS = 1;
 
@@ -68,9 +67,8 @@ const RecipeCard = ({
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [favourites, setFavourites] = useState([]);
-  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-  const { updateFavCount} = useMyContext2();
-
+  const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  const { updateFavCount } = useMyContext2();
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [intervalId, setIntervalId] = useState(null);
@@ -81,7 +79,7 @@ const RecipeCard = ({
 
   const fetchFavourites = async () => {
     try {
-      const response = await fetch(`${url}/api/favourites`);
+      const response = await fetch(`${url}/api/favourites/fav`);
       if (!response.ok) throw new Error("Failed to fetch favourites");
       const data = await response.json();
       data.favourites.some((fav) => fav._id === _id)
@@ -136,7 +134,7 @@ const RecipeCard = ({
     e.preventDefault(); // Prevent link navigation
 
     try {
-      const response = await fetch(`${url}/api/favourites`, {
+      const response = await fetch(`${url}/api/favourites/fav`, {
         method: isCurrentlyFavourited ? "DELETE" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ recipeId: _id }),
@@ -150,7 +148,7 @@ const RecipeCard = ({
       updateFavCount(isCurrentlyFavourited);
       // Update local favourited state
       setIsCurrentlyFavourited(!isCurrentlyFavourited);
-      
+
       // Trigger parent component callbacks if provided
       if (isCurrentlyFavourited) {
         onRemoveFromFavourites && onRemoveFromFavourites();
@@ -170,7 +168,6 @@ const RecipeCard = ({
     }
   };
 
-  
   return (
     <Link href={`/recipes/${_id}`} className="block">
       <div
@@ -181,13 +178,12 @@ const RecipeCard = ({
         {/* Main Image Container */}
         <div className="relative h-40 sm:h-40  overflow-hidden">
           <Image
-            priority="true"
             src={images[currentImageIndex]}
             alt={title}
             fill
-            style={{ objectFit: "cover" }}
-            className="transform transition-transform duration-300 group-hover:scale-105"
-            sizes="(max-width: 768px) 100vw , (max-width:1200px)  50vw ,33vw"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            priority={currentImageIndex === 0} // Preload the first image
           />
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -202,9 +198,7 @@ const RecipeCard = ({
             )}
           </button>
 
-          
-            <DownloadRecipeBtn id={_id} />
-          
+          <DownloadRecipeBtn id={_id} />
         </div>
 
         {/* Content Container */}

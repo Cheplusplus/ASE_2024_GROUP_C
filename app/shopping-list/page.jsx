@@ -6,6 +6,13 @@ import { useSession } from "next-auth/react";
 import {useNotification, NOTIFICATION_TYPES,} from "../components/NotificationContext";
 import ShoppingListLoading from "./loading";
 
+/**
+ * The ShoppingList component displays a shopping list and allows users to
+ * add, remove, and update items on the list. It also allows users to clear
+ * the entire list and share it with others.
+ * 
+ * @returns A React component that renders a shopping list
+ */
 const ShoppingList = () => {
   const [items, setItems] = useState([]);
   const [newItem, setNewItem] = useState("");
@@ -16,6 +23,19 @@ const ShoppingList = () => {
   
   // Fetch shopping list from backend
   useEffect(() => {
+/**
+ * Fetches the user's shopping list from the backend.
+ *
+ * This asynchronous function sends a GET request to the API endpoint 
+ * for retrieving the shopping list based on the authenticated user's ID.
+ * If the request is successful and the list is not empty, it updates the 
+ * state with the list of items. If the request fails, it logs an error and 
+ * sets the items to an empty array. Regardless of the outcome, it sets the 
+ * loading state to false after the fetch completes.
+ *
+ * @throws Will add an error notification if the fetch request fails for 
+ * reasons other than an empty list.
+ */
     const fetchShoppingList = async () => {
       console.log(session.user.id)
       try {
@@ -47,6 +67,21 @@ const ShoppingList = () => {
     return <ShoppingListLoading />;
   }
 
+/**
+ * Adds a new item to the shopping list.
+ *
+ * This function sends a POST request to add a new item to the user's
+ * shopping list. It uses the current user's session information to
+ * associate the item with the user. The item is initially marked as
+ * not purchased and has a default quantity of 1.
+ *
+ * If the request is successful, it updates the local items state with
+ * the response from the server and shows a success notification. If
+ * there's an error, it shows an error notification.
+ *
+ * @async
+ * @throws Will add an error notification if the request fails.
+ */
   const addItem = async () => {
     if (!newItem.trim()) return;
     
@@ -79,6 +114,20 @@ const ShoppingList = () => {
     }
   };
 
+/**
+ * Removes an item from the shopping list.
+ *
+ * This function sends a DELETE request to remove a specified item from the
+ * user's shopping list using the item's ID. It uses the current user's session
+ * information to identify the user's shopping list. If the request is
+ * successful, it updates the local items state with the response from the
+ * server and shows a warning notification. If there's an error, it shows an
+ * error notification.
+ *
+ * @async
+ * @param {string} itemId - The ID of the item to be removed.
+ * @throws Will add an error notification if the request fails.
+ */
   const removeItem = async (itemId) => {
     try {
       const response = await fetch(`${url}/api/shoppingList/item?user=${session.user.id}`, {
@@ -101,6 +150,22 @@ const ShoppingList = () => {
     }
   };
 
+  
+/**
+ * Toggles the purchased status of an item in the shopping list.
+ *
+ * This asynchronous function sends a PUT request to update the purchased status
+ * of a specified item in the user's shopping list using the item's ID. It uses
+ * the current user's session information to identify the user's shopping list.
+ * The function optimistically updates the local state before sending the request.
+ * If the request is successful, it updates the local items state with the response
+ * from the server and shows a success notification. If there's an error, it reverts
+ * the local state to its previous state and shows an error notification.
+ *
+ * @async
+ * @param {string} itemId - The ID of the item to be toggled.
+ * @throws Will add an error notification if the request fails.
+ */
   const togglePurchased = async (itemId) => {
     const itemToUpdate = items.find(item => item._id === itemId);
 
@@ -141,6 +206,23 @@ const ShoppingList = () => {
     }
   };
 
+/**
+ * Updates the quantity of a specific item in the shopping list.
+ *
+ * This asynchronous function sends a PUT request to update the quantity
+ * of a specified item in the user's shopping list using the item's ID.
+ * It uses the current user's session information to identify the user's
+ * shopping list. The function optimistically updates the local state 
+ * before sending the request. If the request is successful, it updates
+ * the local items state with the response from the server and shows a 
+ * success notification. If there's an error, it reverts the local state 
+ * to its previous state and shows an error notification.
+ *
+ * @async
+ * @param {string} itemId - The ID of the item to update.
+ * @param {number} quantity - The new quantity for the item.
+ * @throws Will add an error notification if the request fails.
+ */
   const updateQuantity = async (itemId, quantity) => {
 
     if (quantity < 1) return;
@@ -182,6 +264,18 @@ const ShoppingList = () => {
     }
   };
 
+  /**
+   * Clears the user's entire shopping list.
+   *
+   * This asynchronous function sends a DELETE request to clear the user's
+   * shopping list. It uses the current user's session information to
+   * identify the user's shopping list. If the request is successful, it
+   * updates the local items state to an empty array and shows a warning
+   * notification. If there's an error, it shows an error notification.
+   *
+   * @async
+   * @throws Will add an error notification if the request fails.
+   */
   const clearList = async () => {
     try {
       const response = await fetch(`${url}/api/shoppingList/deleteShoppingList?user=${session.user.id}`, { method: 'DELETE' });
@@ -197,6 +291,18 @@ const ShoppingList = () => {
     }
   };
 
+  /**
+   * Opens a new window with a URL that allows the user to share their shopping
+   * list on WhatsApp. The list is formatted as a string with each item on a
+   * separate line, with the name and quantity in parentheses (e.g. "Apples (3)\nBananas (2)\nCarrots (1)").
+   * The URL is built using the WhatsApp web client's URL scheme, which allows
+   * the user to share the list without having to copy and paste it.
+   * 
+   * @function
+   * @returns {void}
+   * @example
+   * shareList();
+   */
   const shareList = () => {
     const listText = items
       .map((item) => `${item.name} (${item.quantity})`)

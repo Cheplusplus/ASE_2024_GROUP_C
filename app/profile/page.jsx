@@ -36,6 +36,20 @@ import ProfilePage from "../components/ProfilePage";
 import { useSession } from "next-auth/react";
 import Loading from "./loading";
 
+/**
+ * ProfilePageRoute is a Next.js component that handles routing and rendering
+ * of the ProfilePage component based on the user's authentication status.
+ *
+ * This component uses the `useSession` hook from `next-auth/react` to
+ * determine if the user is authenticated. While the session is being fetched,
+ * it displays a loading spinner. If the user is not authenticated, it displays
+ * a message prompting the user to sign in. If the user is authenticated, it
+ * determines the appropriate database to use based on the authentication
+ * provider and passes the user's email as the userId to the ProfilePage
+ * component.
+ *
+ * @returns {React.ReactElement} The rendered component.
+ */
 export default function ProfilePageRoute() {
   const { data: session, status } = useSession();
 

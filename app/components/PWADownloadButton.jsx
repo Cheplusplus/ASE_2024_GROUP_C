@@ -1,7 +1,13 @@
-"use client"; // Ensure this runs on the client side
+"use client"; // Ensures this runs on the client side
 
 import { useState, useEffect } from "react";
 
+/**
+ * Renders a button to install a PWA, but only if the app is installable and not already in standalone mode.
+ * Listens for the `beforeinstallprompt` event and saves the event to show the native install prompt later.
+ * Listens for the `appinstalled` event to hide the button if the app is already installed.
+ * @returns {JSX.Element} A button to install the app if installable, otherwise `null`.
+ */
 export default function PWADownloadButton() {
   const [isInstallable, setIsInstallable] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -13,6 +19,12 @@ export default function PWADownloadButton() {
       return;
     }
 
+    /**
+     * Handles the `beforeinstallprompt` event by saving the event to
+     * trigger the native install prompt later, and enabling the button
+     * to install the PWA.
+     * @param {Event} event The `beforeinstallprompt` event.
+     */
     const handleBeforeInstallPrompt = (event) => {
       event.preventDefault(); // Prevent automatic display
       setDeferredPrompt(event); // Save the event to trigger later
@@ -36,6 +48,14 @@ export default function PWADownloadButton() {
     };
   }, []);
 
+/**
+ * Handles the click event for installing the PWA by using the deferred prompt.
+ * If a prompt is available, it is shown to the user, and the outcome is checked.
+ * If the installation is accepted, the install button is hidden and the prompt is cleared.
+ * If the installation is declined or fails, appropriate messages are logged.
+ * 
+ * @returns {Promise<void>}
+ */
   const handleInstallClick = async () => {
     if (deferredPrompt) {
       try {
