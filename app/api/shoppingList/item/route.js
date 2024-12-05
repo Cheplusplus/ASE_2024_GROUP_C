@@ -3,6 +3,7 @@ import ShoppingList from "@/app/models/shoppingList";
 import connectToDatabase from "@/app/lib/connectMongoose";
 import { authOptions } from "../../auth/[...nextauth]/route";
 import { NextResponse } from "next/server";
+import User from "@/app/models/user";
 
 
 // POST method handler
@@ -25,15 +26,15 @@ export async function POST(req) {
 
     // Validate input
     if (!Array.isArray(items) || items.length === 0) {
-      return new Response(JSON.stringify({ error: "Items must be a non-empty array" }), { status: 400 });
+      return NextResponse.json({ error: "Items must be a non-empty array" }, { status: 400 });
     }
 
     // Find or create the user's shopping list
-    let shoppingList = await ShoppingList.findOne({ user: user.id });
+    let shoppingList = await ShoppingList.findOne({ user: user._id });
 
     if (!shoppingList) {
       // Create a new shopping list if none exists
-      shoppingList = new ShoppingList({ user: user.id, items: [] });
+      shoppingList = new ShoppingList({ user: user._id, items: [] });
     }
 
     // Add or update items in the shopping list
@@ -60,7 +61,7 @@ export async function POST(req) {
     }, { status: 201 });
     } catch (error) {
     console.error("Error processing POST request:", error);
-    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ message: "Internal server error", details: error.message }, { status: 500 });
     }
 }
 
