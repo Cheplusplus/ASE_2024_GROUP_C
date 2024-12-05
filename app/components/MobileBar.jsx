@@ -1,11 +1,14 @@
 'use client'
 import Link from "next/link";
 import Image from "next/image";
-import { useMyContext } from "./searchContext";
-
-
+/**
+ * MobileBar component renders a sticky bottom navigation bar for mobile devices.
+ * It includes links to the shopping list, search, favorites, and downloads pages.
+ * Each link is represented by an icon and a label.
+ *
+ * @returns {JSX.Element} The MobileBar component.
+ */
 export default function MobileBar() {
-   const { toggleValue } = useMyContext();
 
     return (
       <div className="sticky bottom-4 mx-6 ">
@@ -18,7 +21,7 @@ export default function MobileBar() {
               <p className="text-[12px]">Shopping</p>
             </div>
             <div className="text-center flex flex-col items-center">
-              <button onClick={toggleValue}>
+              <button >
                 <Image width={10} height={10}  className=" w-6" src={"/search2.svg"} alt="" />
               </button>
               <p className="text-[12px]">Search</p>

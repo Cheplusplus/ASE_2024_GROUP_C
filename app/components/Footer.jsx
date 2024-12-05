@@ -1,7 +1,21 @@
-import { AiOutlineArrowRight } from 'react-icons/ai'; // Correct icon import for ArrowRight
-import { FaUtensils, FaEnvelope, FaPhone, FaMapPin, FaTwitter, FaYoutube, FaFacebook, FaInstagram } from 'react-icons/fa'; // Correct icon imports
-import Link from 'next/link'; // Corrected import for Link
+import { AiOutlineArrowRight } from "react-icons/ai"; // Correct icon import for ArrowRight
+import {
+  FaUtensils,
+  FaEnvelope,
+  FaPhone,
+  FaMapPin,
+  FaTwitter,
+  FaYoutube,
+  FaFacebook,
+  FaInstagram,
+} from "react-icons/fa"; // Correct icon imports
+import Link from "next/link"; // Corrected import for Link
 
+/**
+ * Footer component containing main footer content, social links, and copyright information.
+ *
+ * @returns {JSX.Element} The Footer component.
+ */
 const Footer = () => {
     const socialLinks = [
       { 
@@ -138,4 +152,3 @@ const Footer = () => {
 };
 
 export default Footer;
-

@@ -38,6 +38,18 @@ const DialogContent = React.forwardRef(({ className, children, ...props }, ref) 
 ))
 DialogContent.displayName = DialogPrimitive.Content.displayName
 
+/**
+ * A utility component for building the header of a dialog. This component
+ * provides sensible default styles for the header of a dialog, including
+ * centering the text horizontally on smaller screens and left-aligning the
+ * text on larger screens.
+ * 
+ * @param {Object} props The props object containing props for the component.
+ * @param {Object}  props.className The class name to be applied to the root element.
+ * @param {string} [props.className] The class name to be applied to the root element.
+ * @param {*} [props.children] The children to be rendered inside the component.
+ * @returns {React.ReactElement} The `DialogHeader` component
+ */
 const DialogHeader = ({
   className,
   ...props
@@ -49,6 +61,18 @@ const DialogHeader = ({
 )
 DialogHeader.displayName = "DialogHeader"
 
+/**
+ * A utility component for building the footer of a dialog. This component
+ * provides sensible default styles for the footer of a dialog, including
+ * centering the content horizontally on smaller screens and right-aligning
+ * the content on larger screens.
+ * 
+ * @param {Object} props The props object containing props for the component.
+ * @param {Object}  props.className The class name to be applied to the root element.
+ * @param {string} [props.className] The class name to be applied to the root element.
+ * @param {*} [props.children] The children to be rendered inside the component.
+ * @returns {React.ReactElement} The `DialogFooter` component
+ */
 const DialogFooter = ({
   className,
   ...props

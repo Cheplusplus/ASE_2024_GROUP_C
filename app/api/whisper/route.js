@@ -1,5 +1,25 @@
 export const runtime = 'nodejs'; // Ensure the handler runs in a Node.js environment
 
+/**
+ * Handles a POST request to generate a helpful cooking tip or substitution
+ * based on a given recipe and question. The request body should contain a
+ * JSON object with two properties:
+ *
+ * - `question`: A string representing the question or problem the user is
+ *   facing while cooking with the given recipe.
+ * - `recipe`: An object containing the ingredients and amounts used in the
+ *   recipe. The keys should be the ingredient names, and the values should
+ *   be strings representing the amount of each ingredient (e.g. "2 cups of
+ *   sugar" or "1/4 cup of milk").
+ *
+ * The response will be a JSON object containing a single property called
+ * `answer`, which is a string representing the helpful cooking tip or
+ * substitution.
+ *
+ * @function
+ * @param {Request} req The incoming request object.
+ * @returns {Response} The response object.
+ */
 export async function POST(req) {
   try {
     const body = await req.json(); // Parse the JSON body from the request

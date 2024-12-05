@@ -91,7 +91,7 @@ export default function Contact() {
                 Connect with Recipe Rush
               </h1>
               <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                We're here to help, collaborate, and inspire your culinary journey
+                We&#39;re here to help, collaborate, and inspire your culinary journey
               </p>
             </div>
           </div>

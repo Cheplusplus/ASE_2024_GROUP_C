@@ -1,3 +1,4 @@
+'server only'
 import Navbar from "./components/Navbar";
 import ClientNavWrapper from "./components/ClientNavWrapper";
 import Footer from "./components/Footer";
@@ -7,8 +8,9 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import MobileBar from "./components/MobileBar";
 import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
 import { NotificationProvider } from "./components/NotificationContext";
-import { MyContextProvider } from "./components/searchContext";
 import { MyContextProvider2 } from "./components/favCountContext";
+import { MyContextProvider3 } from "./components/pageNumberReset";
+import OnlineStatusNotifier from "./components/IsOnline";
 // metadata for the RootLayout
 export const metadata = {
   metadataBase: new URL('https://ase-2024-group-c.vercel.app/'),
@@ -45,26 +47,54 @@ export const metadata = {
   },
 };
 
+/**
+ * The root layout component for the entire app.
+ *
+ * This root layout component wraps the entire app in a `<html>` and `<body>` element, and
+ * provides the global layout structure for the app. It includes the main
+ * navigation bar, the main content area, the footer, and the mobile navigation
+ * bar.
+ *
+ * @param {{ children: React.ReactNode }} props The props object containing the
+ * children to be rendered as the main content of the app.
+ *
+ * @returns {React.ReactElement} The RootLayout component.
+ */
+
+/**
+ * The root layout component for the entire app. This component is
+ * responsible for setting up the overall layout structure and
+ * providing the necessary context providers for the app to function
+ * properly. It also renders the main content area for the app.
+ *
+ * @param {{ children: React.ReactNode }} props The props object containing the
+ * children to be rendered as the main content of the app.
+ *
+ * @returns {JSX.Element} The root layout component.
+ */
 export default function RootLayout({ children }) {
   return (
     <html lang="en" >
       <body className="bg-background text-foreground transition-colors duration-300">
        <SessionProvider>
-       <MyContextProvider>
        <MyContextProvider2>
+       <MyContextProvider3>
         <ThemeProvider >
           <ClientNavWrapper>
             <Navbar />
           </ClientNavWrapper>
           <NotificationProvider>
-          <main className="min-h-screen pt-16">{children}</main>
+          <main className="min-h-screen pt-16">
+            {children}
+            <OnlineStatusNotifier />
+          </main>
           </NotificationProvider>
           <Footer />
           <MobileBar/>
           <ServiceWorkerRegistration/>
           </ThemeProvider>
+          </MyContextProvider3>
           </MyContextProvider2>
-          </MyContextProvider>
         </SessionProvider>
       </body>
     </html>

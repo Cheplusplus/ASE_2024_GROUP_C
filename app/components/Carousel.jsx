@@ -4,6 +4,12 @@ import Link from "next/link";
 import Image from "next/image";
 import SkeletonGrid from "./SkeletonMain";
 
+/**
+ * A component that displays a list of recipes in a carousel.
+ * @param {Object} props Component props
+ * @param {string} props.heading The heading to display above the carousel
+ * @returns {JSX.Element} The component
+ */
 const Carousel = ({ heading, autoSlide = true, slideInterval = 3000 }) => {
   const [recipes, setRecipes] = useState([]);
   const [error, setError] = useState(null);
@@ -14,11 +20,16 @@ const Carousel = ({ heading, autoSlide = true, slideInterval = 3000 }) => {
 
   // Fetch recipes
   useEffect(() => {
+  /**
+   * Fetches 10 recipes from the API and updates the state with the data
+   * @throws {Error} If the request fails
+   * @returns {Promise<void>}
+   */
     const fetchRecipes = async () => {
       try {
         const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
         const res = await fetch(`${url}/api/10Recipes`, {
-          cache: "force-cache",
+          cache: "no-cache",
         });
         if (!res.ok) {
           throw new Error("Failed to fetch recipes");

@@ -218,7 +218,7 @@ export default function About() {
           </h2>
           
           <div className="relative max-w-6xl mx-auto">
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-6 sm:gap-12 relative z-10">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-6 sm:gap-12 relative">
               {teamMembers.map((member) => (
                 <div 
                   key={member.name} 
@@ -325,7 +325,7 @@ export default function About() {
               Join Our Culinary Journey
             </h2>
             <p className="text-base sm:text-xl text-gray-600 dark:text-gray-300 mb-6 sm:mb-8 max-w-2xl mx-auto">
-              Whether you're a home cook, professional chef, or food enthusiast, 
+              Whether you&#39;re a home cook, professional chef, or food enthusiast, 
               Recipe Rush is your platform to explore, create, and share amazing recipes.
             </p>
             <Link 
