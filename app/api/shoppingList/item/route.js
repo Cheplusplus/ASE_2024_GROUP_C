@@ -1,6 +1,5 @@
 import { getServerSession } from "next-auth";
 import ShoppingList from "@/app/models/shoppingList";
-import User from "@/app/models/user";
 import connectToDatabase from "@/app/lib/connectMongoose";
 import { authOptions } from "../../auth/[...nextauth]/route";
 

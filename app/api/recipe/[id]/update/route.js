@@ -9,7 +9,6 @@ export async function PUT(req, { params }) {
   const { description } = await req.json(); // New description from the request body
 
   await connectToDatabase();
-  console.log('update desc')
   try {
     const result = await Recipe.findByIdAndUpdate(id, { description }, { new: true });
 

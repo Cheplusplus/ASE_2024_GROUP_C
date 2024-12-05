@@ -56,7 +56,9 @@ export default function RecipeDetail({ params }) {
   useEffect(() => {
     const fetchRecipe = async (id) => {
       try {
-        const response = await fetch(`/api/recipe/${id}`);
+        const response = await fetch(`/api/recipe/${id}`, {
+          cache: "force-cache",
+        });
         if (!response.ok) {
           throw new Error(`Failed to fetch recipe: ${response.statusText}`);
         }

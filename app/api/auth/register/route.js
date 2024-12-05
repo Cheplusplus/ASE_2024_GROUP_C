@@ -7,12 +7,8 @@ import { NextResponse } from "next/server";
 export async function POST(req) {
   await connectToDatabase();
 
-  // Log to confirm request received
-  console.log("signup123");
-
   // Parse JSON from the request body
   const { email, password, name } = await req.json();
-  console.log(email, password, name);
 
   // Check if the email is already in use
   const existingUser = await User.findOne({ email });
