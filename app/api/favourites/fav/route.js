@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../auth/[...nextauth]/route';
-import Favourite from '../../models/Favourite';
-import Recipe from '../../models/Recipe';
-import User from '../../models/user';
+import { authOptions } from '../../auth/[...nextauth]/route';
+import Favourite from '../../../models/Favourite';
+import Recipe from '../../../models/Recipe';
+import User from '../../../models/user';
 import connectToDatabase from '@/app/lib/connectMongoose';
 import { setCORSHeaders } from '@/app/lib/corsMiddleware';
 
