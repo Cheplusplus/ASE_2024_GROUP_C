@@ -105,7 +105,7 @@ const RecipeDetailCard = ({ recipe, id }) => {
       <div>
         {/* New: Added flex container with ShoppingListButton */}
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-400">
             {recipe.title}
           </h1>
 
@@ -119,7 +119,7 @@ const RecipeDetailCard = ({ recipe, id }) => {
           {recipe.tags?.map((tag, index) => (
             <span
               key={index}
-              className="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full"
+              className="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full dark:text-gray-400 dark:bg-gray-700"
             >
               {tag}
             </span>
@@ -167,20 +167,20 @@ const RecipeDetailCard = ({ recipe, id }) => {
           )}
         </span>
 
-        <div className="text-lg text-gray-800 space-y-2">
-          <p>
+        <div className="text-lg text-gray-800 space-y-2 ">
+          <p className="dark:text-gray-400">
             <strong>Prep Time:</strong> {formatTime(recipe.prep || 0)}
           </p>
-          <p>
+          <p className="dark:text-gray-400">
             <strong>Cook Time:</strong> {formatTime(recipe.cook || 0)}
           </p>
-          <p>
+          <p className="dark:text-gray-400">
             <strong>Category:</strong> {recipe.category || "Uncategorized"}
           </p>
-          <p>
+          <p className="dark:text-gray-400">
             <strong>Servings:</strong> {recipe.servings || "N/A"} servings
           </p>
-          <p>
+          <p className="dark:text-gray-400">
             <strong>Published:</strong>{" "}
             {recipe.published
               ? new Date(recipe.published).toLocaleDateString()
@@ -188,11 +188,11 @@ const RecipeDetailCard = ({ recipe, id }) => {
           </p>
         </div>
 
-        <ul className="grid grid-cols-3 mt-10 border-b-2">
+        <ul className="grid grid-cols-3 mt-10 border-b-2 dark:text-gray-400 text-gray-">
           {["ingredients", "instructions", "nutrition"].map((tab) => (
             <li
               key={tab}
-              className={`text-gray-800 font-semibold text-base text-center py-3 cursor-pointer ${
+              className={`text-gray-300 font-semibold text-base text-center py-3 cursor-pointer ${
                 activeTab === tab ? "border-b-2 border-gray-800" : ""
               }`}
               onClick={() => setActiveTab(tab)}
@@ -205,8 +205,8 @@ const RecipeDetailCard = ({ recipe, id }) => {
         <div className="mt-6">
           {activeTab === "ingredients" && (
             <div>
-              <h2 className="text-2xl font-semibold mb-4">Ingredients</h2>
-              <ul className="list-disc pl-6 text-gray-700">
+              <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-400">Ingredients</h2>
+              <ul className="list-disc pl-6 text-gray-500 dark:text-gray-500">
                 {Object.entries(recipe.ingredients || {}).map(
                   ([ingredient, quantity], index) => (
                     <li key={index}>
@@ -219,8 +219,8 @@ const RecipeDetailCard = ({ recipe, id }) => {
           )}
           {activeTab === "instructions" && (
             <div>
-              <h2 className="text-2xl font-semibold mb-4">Instructions</h2>
-              <ul className="list-disc pl-6 text-gray-700">
+              <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-400">Instructions</h2>
+              <ul className="list-disc pl-6 dark:text-gray-500">
                 {recipe.instructions?.map((instruction, index) => (
                   <li key={index}>{instruction}</li>
                 ))}
@@ -234,10 +234,10 @@ const RecipeDetailCard = ({ recipe, id }) => {
           )}
           {activeTab === "nutrition" && (
             <div>
-              <h3 className="text-2xl font-semibold mb-4">
+              <h3 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-400">
                 Nutrition Information
               </h3>
-              <ul className="list-disc pl-6 text-gray-700">
+              <ul className="list-disc pl-6 dark:text-gray-500">
                 <li>Calories: {recipe.nutrition?.calories || "N/A"}</li>
                 <li>Fat: {recipe.nutrition?.fat || "N/A"}g</li>
                 <li>Saturated Fat: {recipe.nutrition?.saturated || "N/A"}g</li>
@@ -254,12 +254,20 @@ const RecipeDetailCard = ({ recipe, id }) => {
         </div>
 
         {/* Review Section */}
-        <div className="mt-8">
-          <RecipeReviews recipeId={id} reviewUpdateKey={reviewUpdateKey} />
+         {/* Review Section */}
+<div className="mt-8">
+  <div className="dark:bg-gray-700">
+    <RecipeReviews recipeId={id} reviewUpdateKey={reviewUpdateKey} />
+  </div>
 
-          <AddReview recipeId={id} onAdd={handleReviewAdded} />
-          <RecipeTips recipe={recipe.ingredients}/>
-        </div>
+  {/* Add Review Form */}
+  <div className="mt-6 dark:bg-gray-700 p-4 rounded-md">
+    <AddReview recipeId={id} onAdd={handleReviewAdded} />
+  </div>
+
+  <RecipeTips recipe={recipe.ingredients} />
+</div>
+
       </div>
     </div>
   );
