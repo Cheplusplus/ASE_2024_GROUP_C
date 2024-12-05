@@ -2,20 +2,46 @@
 "use client"
 import React, {useEffect, useState} from 'react';
 import { useRouter,useSearchParams  } from 'next/navigation';
+import { useMyContext3 } from './pageNumberReset';
 
 const RECIPES_PER_PAGE = 50; // Recipes per page
 
+/**
+ * Paginate renders a pagination component for the RecipeGrid component.
+ *
+ * @param {object} props - The component props.
+ * @param {number} props.skip - The current skip value, used to calculate the next and previous page URLs.
+ * @param {number} props.totalRecipes - The total number of recipes available for pagination.
+ * @returns {ReactElement} A ReactElement representing the Paginate component.
+ * 
+ */
 const Paginate = ({ skip, totalRecipes }) => {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1); // Track current page
   const searchParams = useSearchParams();
   const search = searchParams.get("search") || ""; 
+  const { reset,update } = useMyContext3();
 
   const category = searchParams.get('category') || '';
   const tags = searchParams.get('tags') ? searchParams.get('tags').split(',') : [];
   const numSteps = parseInt(searchParams.get('numSteps')) || '';
   const ingredients = searchParams.get('ingredients') || '';
   const sortOption = searchParams.get('sortOption') || '';
+
+  /**
+   * Handles the "Next" button click by updating the current page and pushing a new URL
+   * with the updated skip value.
+   *
+   * @param {number} newPage - The new page number to navigate to.
+   */
+
+  useEffect(()=>{
+      if(reset){
+        setCurrentPage(1);
+        update(false);
+        console.log('reset123')
+      }
+  },[reset])
 
   const handleNext = (newPage) => {
     const newSkip = skip + RECIPES_PER_PAGE;
@@ -24,6 +50,12 @@ const Paginate = ({ skip, totalRecipes }) => {
     router.push(newUrl); // Update the URL with the new skip value
   };
 
+  /**
+   * Handles the "Previous" button click by updating the current page and pushing a new URL
+   * with the updated skip value.
+   *
+   * @param {number} newPage - The new page number to navigate to.
+   */
   const handlePrevious = (newPage) => {
     const newSkip = skip > RECIPES_PER_PAGE ? skip - RECIPES_PER_PAGE : 0;
     setCurrentPage(newPage);

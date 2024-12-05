@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useMyContext3 } from './pageNumberReset';
 
 /**
  * A search bar component for searching recipes by title with highlighted matches.
@@ -17,6 +18,7 @@ const SearchBar = ({ isOpen, onClose }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const { update } = useMyContext3();
 
   const router = useRouter();
 
@@ -27,6 +29,7 @@ const SearchBar = ({ isOpen, onClose }) => {
         fetchSuggestions(searchQuery);
         // Auto-submit search after 300ms of no typing
         router.push(`/all?search=${encodeURIComponent(searchQuery)}`);
+        update(true)
         setHasSearched(true);
       }, 300);
       return () => clearTimeout(debounceTimeout);
@@ -96,9 +99,21 @@ const SearchBar = ({ isOpen, onClose }) => {
     }
   };
 
+/**
+ * Handles the click event on a suggestion.
+ *
+ * This function initiates a navigation to the search results page
+ * for the clicked suggestion title. It also closes the search bar
+ * after a delay, providing a debounce effect to prevent multiple
+ * navigations in quick succession.
+ *
+ * @param {string} title - The title of the suggestion that was clicked.
+ * @returns {Function} A cleanup function to clear the debounce timeout.
+ */
   const handleSuggestionClick = (title) => {
     const debounceTimeout = setTimeout(()=> {
       router.push(`/all?search=${encodeURIComponent(title)}`);
+      update(true);
       onClose();
     }, 500)
     return ()=> clearTimeout(debounceTimeout)

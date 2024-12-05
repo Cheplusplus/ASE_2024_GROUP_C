@@ -72,7 +72,6 @@ const DownloadRecipeBtn = ({ id }) => {
         setRecipe(data.recipe);
       } catch (error) {
         console.error("Error fetching recipe:", error);
-        setError("Failed to load recipe. Please try again later.");
       } finally {
         setLoading(false);
       }
