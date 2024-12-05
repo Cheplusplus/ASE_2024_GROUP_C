@@ -81,7 +81,7 @@ const RecipeCard = ({
 
   const fetchFavourites = async () => {
     try {
-      const response = await fetch(`${url}/api/favourites`);
+      const response = await fetch(`${url}/api/favourites/fav`);
       if (!response.ok) throw new Error("Failed to fetch favourites");
       const data = await response.json();
       data.favourites.some((fav) => fav._id === _id)
