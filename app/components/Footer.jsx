@@ -45,7 +45,7 @@ const Footer = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 py-12">
             {/* About Section */}
             <div className="space-y-4">
-              <h3 className="text-xl font-semibold flex items-center">
+              <h3 className="text-xl font-semibold flex items-center text-white dark:text-gray-400">
                 <FaUtensils className="h-6 w-6 mr-2" />
                 Recipe Rush
               </h3>
@@ -56,7 +56,7 @@ const Footer = () => {
   
             {/* Quick Links */}
             <div>
-              <h3 className="text-xl font-semibold mb-4">Quick Links</h3>
+              <h3 className="text-xl font-semibold mb-4 text-white dark:text-gray-400">Quick Links</h3>
               <ul className="space-y-2">
                 {quickLinks.map((link) => (
                   <li key={link.name}>
@@ -74,7 +74,7 @@ const Footer = () => {
   
             {/* Contact Info */}
             <div>
-              <h3 className="text-xl font-semibold mb-4">Contact Us</h3>
+              <h3 className="text-xl font-semibold mb-4 text-white dark:text-gray-400">Contact Us</h3>
               <ul className="space-y-2 text-gray-400">
                 <li className="flex items-center">
                   <FaEnvelope className="h-4 w-4 mr-2" />
@@ -93,7 +93,7 @@ const Footer = () => {
   
             {/* Newsletter */}
             <div>
-              <h3 className="text-xl font-semibold mb-4">Newsletter</h3>
+              <h3 className="text-xl font-semibold mb-4 text-white dark:text-gray-400">Newsletter</h3>
               <p className="text-gray-400 mb-4">
                 Subscribe for new recipes and cooking tips.
               </p>

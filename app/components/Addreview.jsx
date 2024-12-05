@@ -64,7 +64,7 @@ export default function AddReview({ recipeId, onAdd }) {
 
   return (
     <div className="p-4 bg-gray-50 dark:bg-gray-800 text-black dark:text-white rounded-md shadow-md mt-6">
-      <h2 className="text-lg font-bold mb-4">Add a Review</h2>
+      <h2 className="text-lg font-bold mb-4 text-black dark:text-gray-400">Add a Review</h2>
       {error && <p className="text-red-500 dark:text-red-400">{error}</p>}
       {success && <p className="text-green-500 dark:text-green-400">{success}</p>}
 
@@ -76,7 +76,7 @@ export default function AddReview({ recipeId, onAdd }) {
       />
 
       <div className="flex items-center space-x-2">
-        <label className="font-semibold">Rating:</label>
+        <label className="font-semibold text-black dark:text-gray-400">Rating:</label>
         {[1, 2, 3, 4, 5].map((star) => (
           <button
             key={star}
@@ -93,7 +93,7 @@ export default function AddReview({ recipeId, onAdd }) {
 
       <button
         onClick={submitReview}
-        className="bg-blue-500 dark:bg-blue-600 text-white px-4 py-2 rounded-md mt-4"
+        className="bg-blue-500 dark:bg-blue-600 text-white px-4 py-2 rounded-md mt-4 text-black dark:text-gray-400"
       >
         Submit Review
       </button>

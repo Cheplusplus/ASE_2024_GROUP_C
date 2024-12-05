@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 
-export default function RecipeReviews({ recipeId,reviewUpdateKey}) {
+export default function RecipeReviews({ recipeId, reviewUpdateKey }) {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingReviewId, setEditingReviewId] = useState(null);
@@ -23,7 +23,8 @@ export default function RecipeReviews({ recipeId,reviewUpdateKey}) {
       setLoading(false);
     }
   };
-  // Delete a review (authenticated user)
+
+  // Delete a review
   const deleteReview = async (id) => {
     try {
       const response = await fetch(`${url}/api/deleteReview`, {
@@ -45,7 +46,7 @@ export default function RecipeReviews({ recipeId,reviewUpdateKey}) {
     setEditRating(review.rating);
   };
 
-  // Submit edited review (authenticated user)
+  // Submit edited review
   const submitEditReview = async () => {
     try {
       const response = await fetch(`${url}/api/editReview`, {
@@ -72,11 +73,11 @@ export default function RecipeReviews({ recipeId,reviewUpdateKey}) {
 
   useEffect(() => {
     fetchReviews();
-  }, [recipeId,reviewUpdateKey]);
+  }, [recipeId, reviewUpdateKey]);
 
   return (
-    <div className="p-4 bg-gray-50 rounded-md shadow-md">
-      <h2 className="text-lg font-bold mb-4">Reviews</h2>
+    <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md shadow-md">
+      <h2 className="text-lg font-bold mb-4 text-black dark:text-gray-400">Reviews</h2>
       {loading ? (
         <p>Loading reviews...</p>
       ) : reviews.length === 0 ? (
@@ -85,9 +86,9 @@ export default function RecipeReviews({ recipeId,reviewUpdateKey}) {
         <div className="space-y-4">
           {reviews.map((review) =>
             editingReviewId === review._id ? (
-              <div key={review._id} className="border-b pb-4">
+              <div key={review._id} className="border-b pb-4 bg-white dark:bg-gray-700 p-4 rounded-md">
                 <textarea
-                  className="w-full border p-2 rounded-md mb-2"
+                  className="w-full border p-2 rounded-md mb-2 bg-white dark:bg-gray-700"
                   value={editComment}
                   onChange={(e) => setEditComment(e.target.value)}
                 />
@@ -118,17 +119,20 @@ export default function RecipeReviews({ recipeId,reviewUpdateKey}) {
                 </button>
                 <button
                   onClick={() => setEditingReviewId(null)}
-                  className="bg-gray-300 px-4 py-2 rounded-md"
+                  className="bg-gray-300 dark:bg-gray-600 text-white px-4 py-2 rounded-md"
                 >
                   Cancel
                 </button>
               </div>
             ) : (
-              <div key={review._id} className="border-b pb-4">
-                <p className="font-semibold">{review.reviewerName}</p>
+              <div
+                key={review._id}
+                className="border-b pb-4 text-black dark:text-gray-400 p-4 rounded-md"
+              >
+                <p className="font-semibold text-gray-500 dark:text-gray-300">{review.reviewerName}</p>
                 <p className="text-yellow-500">{`★`.repeat(review.rating)}</p>
-                <p>{review.comment}</p>
-                {session?.user?.name === review.reviewerName && ( // Check ownership
+                <p className="text-gray-500 dark:text-gray-400">{review.comment}</p>
+                {session?.user?.name === review.reviewerName && (
                   <div className="flex space-x-4 mt-2">
                     <button
                       onClick={() => startEditReview(review)}

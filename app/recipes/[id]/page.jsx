@@ -141,7 +141,7 @@ export default function RecipeDetail({ params }) {
         <button
           onClick={downloadRecipe}
           disabled={isDownloaded}
-          className="btn btn-primary"
+          className="btn btn-primary text-black dark:text-gray-400"
         >
           {isDownloaded ? "Downloaded" : "Download for Offline Use"}
         </button>
