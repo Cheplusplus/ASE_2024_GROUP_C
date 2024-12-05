@@ -93,57 +93,7 @@ const Navbar = () => {
     router.push("/"); // Redirect to sign-in page
   };
 
-  // Fetch favourites count when session changes
-  useEffect(() => {
-    /**
-     * Fetches the count of favourite items for the authenticated user.
-     *
-     * This function makes an API request to retrieve the user's favourites
-     * count and updates the state with the retrieved count. If the user is
-     * not authenticated, it sets the favourites count to zero.
-     *
-     * @throws Will log an error to the console if the fetch request fails.
-     */
-    const fetchFavouritesCount = async () => {
-      if (status === "authenticated") {
-        try {
-          const response = await fetch("/api/favourites");
-          if (response.ok) {
-            const data = await response.json();
-            setFavouritesCount(data.count);
-          }
-        } catch (error) {
-          console.error("Error fetching favourites count:", error);
-        }
-      } else {
-        setFavouritesCount(0);
-      }
-    };
-
-    fetchFavouritesCount();
-  }, [status]);
-
-  // Listen for favourites updates from other components
-  useEffect(() => {
-    /**
-     * Handles the "favouritesUpdated" event dispatched by other components to
-     * update the favourites count in the navbar.
-     *
-     * @param {CustomEvent} e - The event that triggered the favourites count update.
-     *        The event's detail property contains the new count of favourites.
-     */
-
-    const handleFavouritesUpdate = (e) => {
-      setFavouritesCount(e.detail.count);
-    };
-
-    document.addEventListener("favouritesUpdated", handleFavouritesUpdate);
-
-    return () => {
-      document.removeEventListener("favouritesUpdated", handleFavouritesUpdate);
-    };
-  }, []);
-
+  
   const navLinks = [
     { name: "Home", href: "/" },
     {
