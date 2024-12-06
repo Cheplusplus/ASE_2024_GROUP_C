@@ -34,7 +34,8 @@ Visit Live Demo
  ![middle part of the app](./public/Screenshot%20(125).png)
  ![bottom part of the app](./public/Screenshot%20(126).png)
  ![Inside the app](./public/Screenshot%20(132).png)
- ![Filtering](./public/Screenshot%20(128).png)
+ ![Filtering page](./public/Screenshot%20(128).png)
+ ![Filtering](./public/Screenshot%20(133).png) 
  ![Dark theme](./public/Screenshot%20(129).png)
  ![Signin page](./public/Screenshot%20(131).png)
 
