@@ -10,6 +10,7 @@ import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
 import { NotificationProvider } from "./components/NotificationContext";
 import { MyContextProvider2 } from "./components/favCountContext";
 import { MyContextProvider3 } from "./components/PageNumberReset";
+import { ShoppingListContextProvider } from "./components/shopCountContext";
 import OnlineStatusNotifier from "./components/IsOnline";
 import { MyContextProvider4 } from "./components/UpdatedNotify";
 // metadata for the RootLayout
@@ -79,6 +80,7 @@ export default function RootLayout({ children }) {
       <body className="bg-background text-foreground transition-colors duration-300">
        <SessionProvider>
        <MyContextProvider2>
+        <ShoppingListContextProvider>
        <MyContextProvider3>
        <MyContextProvider4>
         <ThemeProvider >
@@ -97,6 +99,7 @@ export default function RootLayout({ children }) {
           </ThemeProvider>
           </MyContextProvider4>
           </MyContextProvider3>
+          </ShoppingListContextProvider>
           </MyContextProvider2>
         </SessionProvider>
       </body>

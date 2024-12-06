@@ -4,10 +4,19 @@ import connectToDatabase from "@/app/lib/connectMongoose";
 import { authOptions } from "../../auth/[...nextauth]/route";
 import { NextResponse } from "next/server";
 import User from "@/app/models/user";
+import { setCORSHeaders } from "@/app/lib/corsMiddleware";
 
 
 // POST method handler
 export async function POST(req) {
+  
+  const res = new NextResponse();
+  setCORSHeaders(res);
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   try {
     await connectToDatabase();
 
@@ -68,6 +77,14 @@ export async function POST(req) {
 
 // PUT method handler
 export async function PUT(req) {
+
+  const res = new NextResponse();
+  setCORSHeaders(res);
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   try {
     await connectToDatabase();
     //const user = await initialize(req);
@@ -109,6 +126,14 @@ export async function PUT(req) {
 
 // DELETE method handler
 export async function DELETE(req) {
+
+  const res = new NextResponse();
+  setCORSHeaders(res);
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   try {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("user");
@@ -132,6 +157,14 @@ export async function DELETE(req) {
 
 
 export async function GET(req) {
+
+  const res = new NextResponse();
+  setCORSHeaders(res);
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   try {
      
     const { searchParams } = new URL(req.url);

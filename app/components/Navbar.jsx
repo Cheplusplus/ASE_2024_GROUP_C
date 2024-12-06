@@ -11,6 +11,7 @@ import { Download } from "lucide-react";
 import { ShoppingCartIcon } from "lucide-react";
 import Image from "next/image";
 import { useMyContext2 } from "./favCountContext"
+import { useShoppingListContext } from "./shopCountContext";
 /**
  * The main navigation component for the app.
  * @returns {JSX.Element} The rendered navbar component.
@@ -20,49 +21,12 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openSublinks, setOpenSublinks] = useState({});
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [shoppingListCount, setShoppingListCount] = useState(0);
   const pathname = usePathname();
   const router = useRouter(); 
   const { updateCount} = useMyContext2();
+  const {shoppingListCount} = useShoppingListContext();
 
   const { data: session } = useSession();
-
-  // Update shopping list count
-  useEffect(() => {
-    /**
-     * Updates the shopping list count state by retrieving items from localStorage.
-     *
-     * This function fetches the shopping list from localStorage, parses it,
-     * and updates the shopping list count state with the number of items.
-     */
-    const updateShoppingListCount = () => {
-      const storedItems = localStorage.getItem("shoppingList");
-      const items = storedItems ? JSON.parse(storedItems) : [];
-      setShoppingListCount(items.length);
-    };
-
-    // Initial count
-    updateShoppingListCount();
-
-    // Listen for storage changes
-    window.addEventListener("storage", updateShoppingListCount);
-
-    // Add custom event listener
-    window.addEventListener("shopping-list-updated", updateShoppingListCount);
-
-    return () => {
-      window.removeEventListener("storage", updateShoppingListCount);
-      window.removeEventListener(
-        "shopping-list-updated",
-        updateShoppingListCount
-      );
-    };
-  }, []);
-
-//   useEffect(() => {
-//     // Check if user is logged in, for example, by checking a token in localStorage
-//     const token = localStorage.getItem("authToken");
-//     setIsLoggedIn(!!token);
   
 
   /**
@@ -143,6 +107,7 @@ const Navbar = () => {
     favouritesLink.badge = favouritesCount;
   }
 
+
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/30 dark:bg-gray-900/30 shadow-lg transition-colors duration-200">
@@ -184,13 +149,28 @@ const Navbar = () => {
                   // className="font-bold text-gray-800 dark:text-gray-200"
                 >
                   <Image
+                  className="dark:hidden"
                     style={{
                       objectFit:"cover",
                       width: "auto",
                       height: "auto",
                     }}
-                    priority={true}
-                    src="/rush.png"
+                    priority='true'
+                    src='/rush.png'
+                    quality={100}
+                    alt="logo"
+                    width={50}
+                    height={50}
+                  />
+                  <Image
+                  className="dark:block hidden"
+                    style={{
+                      objectFit:"cover",
+                      width: "auto",
+                      height: "auto",
+                    }}
+                    priority='true'
+                    src='/light.png'
                     quality={100}
                     alt="logo"
                     width={50}
@@ -208,7 +188,7 @@ const Navbar = () => {
               >
                 <Heart />
                 {updateCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
+                  <span className="absolute -top-2 -right-2 bg-green-700 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center z-10">
                     {updateCount}
                   </span>
                 )}
@@ -225,7 +205,7 @@ const Navbar = () => {
               >
                 <ShoppingCartIcon />
                 {shoppingListCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  <span className="absolute -top-2 -right-2 bg-green-700 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center z-10">
                     {shoppingListCount}
                   </span>
                 )}

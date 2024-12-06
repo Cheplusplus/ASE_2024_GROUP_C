@@ -3,10 +3,12 @@ import React from 'react';
 import { ShoppingCartIcon } from 'lucide-react';
 import { useNotification, NOTIFICATION_TYPES } from './NotificationContext';
 import { useSession } from "next-auth/react";
+import { useShoppingListContext } from './shopCountContext';
 
 const ShoppingListButton = ({ ingredients, recipeName }) => {
   const { addNotification } = useNotification();
   const { data: session, status } = useSession();
+  const { updateShoppingListCount } = useShoppingListContext()
   const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
   /**
@@ -41,13 +43,15 @@ const ShoppingListButton = ({ ingredients, recipeName }) => {
         throw new Error(errorData.message ||'Failed to add items to shopping list');
       }
 
-      const { count } = await response.json();
-    
-      // Dispatch an event to update global shopping list count
-      document.dispatchEvent(new CustomEvent('shoppingListUpdated', { 
-        detail: { count } 
-      }));
-      console.log(shoppingList.count)
+
+     // Fetch the updated shopping list to get the latest count
+     const listResponse = await fetch(`${url}/api/shoppingList/item?user=${session.user.id}`);
+     if (listResponse.ok) {
+       const updatedItems = await listResponse.json();
+       updateShoppingListCount(updatedItems);
+     }
+
+      //console.log(shoppingList.count)
 
       addNotification(
         `Added ingredients from "${recipeName}" to your shopping list!`, 

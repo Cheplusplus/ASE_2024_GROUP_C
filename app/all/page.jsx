@@ -1,9 +1,9 @@
-"use client"
+
 
 import React, { Suspense } from 'react';
 import RecipeGrid from '../components/RecipeGrid';
 import SkeletonGrid from '../components/SkeletonMain'
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
 /**
@@ -14,20 +14,20 @@ import { ArrowLeft } from 'lucide-react';
  */
 const AllRecipes = ({searchParams}) => {
 
-  const router = useRouter();
+
 
   return (
     <div>
-       <button 
-          onClick={(e) => { e.preventDefault(); router.back(); }} 
-          className="mt-6 ml-6 flex items-center group text-gray-700 dark:text-gray-300 hover:text-[#26442a] dark:hover:text-[#26442a] transition-all duration-300 bg-white/10 dark:bg-gray-700/20 hover:bg-[#26442a]/10 px-4 py-2 rounded-full shadow-sm hover:shadow-md transform hover:-translate-x-2 hover:scale-105 mr-4"
+       <Link
+           href={'..'}
+          className="mt-6 ml-6 flex items-center w-36 group text-gray-700 dark:text-gray-300 hover:text-[#26442a] dark:hover:text-[#26442a] transition-all duration-300 bg-white/10 dark:bg-gray-700/20 hover:bg-[#26442a]/10 px-4 py-2 rounded-full shadow-sm hover:shadow-md transform hover:-translate-x-2 hover:scale-105 mr-4"
         >
           <ArrowLeft 
             className="mr-2 transition-transform group-hover:-translate-x-1 group-hover:scale-110 text-[#26442a] dark:text-green-500" 
             strokeWidth={2.5} 
           />
           <span className="font-semibold text-sm uppercase tracking-wider">Back</span>
-        </button>
+        </Link>
     <div className="relative pt-6">
     <section className="w-full">
     <Suspense fallback={<SkeletonGrid />}>
