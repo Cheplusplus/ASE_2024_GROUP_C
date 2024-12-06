@@ -68,13 +68,34 @@ export default function Contact() {
       
       {/* Back Button*/}
       <div className="max-w-7xl mx-auto mb-8">
-        <button 
-          onClick={() => router.back()} 
-          className="flex items-center group text-gray-700 dark:text-gray-300 hover:text-[#26442a] dark:hover:text-[#26442a] transition-all duration-300"
-        >
-          <ArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
-          <span className="group-hover:underline">Back</span>
-        </button>
+      <button 
+  onClick={() => router.back()} 
+  className="flex items-center group text-gray-700 dark:text-gray-300 
+    hover:text-[#26442a] dark:hover:text-[#26442a] 
+    transition-all duration-300 
+    bg-white/10 dark:bg-gray-700/20 
+    hover:bg-[#26442a]/10 
+    px-4 py-2 
+    rounded-full 
+    shadow-sm 
+    hover:shadow-md 
+    transform 
+    hover:-translate-x-2 
+    hover:scale-105"
+>
+  <ArrowLeft 
+    className="mr-2 
+      transition-transform 
+      group-hover:-translate-x-1 
+      group-hover:scale-110 
+      text-[#26442a] 
+      dark:text-green-500" 
+    strokeWidth={2.5} 
+  />
+  <span className="font-semibold text-sm uppercase tracking-wider">
+    Back
+  </span>
+</button>
       </div>
 
       <div className="max-w-7xl mx-auto">
