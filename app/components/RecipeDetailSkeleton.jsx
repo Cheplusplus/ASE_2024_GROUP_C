@@ -1,25 +1,5 @@
 import React from 'react';
 
-
-/**
- * A skeleton component for a recipe detail page.
- *
- * This component displays a skeleton representation of a recipe detail page,
- * including a title, subtitle, time and servings, ingredients list, and
- * instructions tabs. It is intended to be used as a fallback when the actual
- * recipe data is not available, such as during page loading or when a recipe
- * is not found.
- * 
- * This component is an example of a "skeleton" component, which is a special type of loading state that provides a low-fidelity version of the final UI.
- * Skeleton components are useful for providing a better user experience when the data for a component is not yet available.
- *
- * The skeleton is created using Tailwind CSS utility classes, and is
- * responsive to different screen sizes.
- *
- * @return {JSX.Element} The skeleton component.
- * @example
- * <RecipeSkeleton />
- */
 const RecipeSkeleton = () => {
   return (
     <div className="animate-pulse flex flex-col lg:flex-row gap-6 p-6">

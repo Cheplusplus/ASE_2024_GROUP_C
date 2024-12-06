@@ -6,6 +6,7 @@ import { useNotification, NOTIFICATION_TYPES } from "./NotificationContext";
 import { Heart, HeartOff } from "lucide-react";
 import { useMyContext2 } from "./favCountContext";
 import DownloadRecipeBtn from "./DownloadRecipeBtn";
+import { useMyContext4 } from "./UpdatedNotify";
 
 const MAX_VISIBLE_TAGS = 1;
 
@@ -57,7 +58,7 @@ const PeopleIcon = (
 );
 
 const RecipeCard = ({
-  recipe: { _id, title, images, prep, cook, servings, tags = [] },
+  recipe: { _id, title, images, prep, cook, servings, tags = [],description },
   onAddToFavourites,
   onRemoveFromFavourites,
   isFavourited = false,
@@ -69,6 +70,7 @@ const RecipeCard = ({
   const [favourites, setFavourites] = useState([]);
   const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
   const { updateFavCount } = useMyContext2();
+  const {NotifyFunc} = useMyContext4();
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [intervalId, setIntervalId] = useState(null);
@@ -76,6 +78,74 @@ const RecipeCard = ({
     useState(isFavourited);
   const remainingTags = tags.length - MAX_VISIBLE_TAGS;
   const { addNotification } = useNotification();
+  const [reviews,setReviews] = useState([]);
+
+  const [loadingUpdate, setLoadingUpdate] = useState(false); // State to show loading status
+  const [updateMessage, setUpdateMessage] = useState(""); // Message for indication
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const updateDownloadedRecipes = async () => {
+      const downloadedRecipes =
+        JSON.parse(localStorage.getItem("downloadedRecipes")) || [];
+
+      if (downloadedRecipes.length > 0) {
+        for (let i = 0; i < downloadedRecipes.length; i++) {
+          const res = downloadedRecipes[i];
+          if (res._id === _id) {
+            if (
+              res.description === description &&
+              res.reviews.length === reviews.length
+            ) {
+              console.log("The recipe already matches.");
+              break; // Exit if the recipe matches
+            } else {
+              setLoadingUpdate(true); // Show the update status
+              setUpdateMessage("Updating...");
+
+
+                          // Simulate progress bar
+            let progressValue = 0;
+            const intervalId = setInterval(() => {
+              progressValue += 10;
+              setProgress(progressValue);
+              if (progressValue >= 100) {
+                clearInterval(intervalId);
+              }
+            }, 400); // Update progress every 700ms
+
+              // Simulate a delay for demonstration purposes
+              await new Promise((resolve) => setTimeout(resolve, 3000));
+
+              // Update the particular recipe in downloadedRecipes
+              downloadedRecipes[i] = {
+                ...res,
+                description,
+                reviews,
+              };
+
+              localStorage.setItem(
+                "downloadedRecipes",
+                JSON.stringify(downloadedRecipes)
+              );
+
+              console.log("Recipe updated in downloadedRecipes.");
+              setUpdateMessage("Successfully updated!");
+              NotifyFunc(true);
+              setTimeout(() => {setLoadingUpdate(false); setUpdateMessage("")}, 8000); // Clear message after 3 seconds
+              break; // Exit after updating
+            }
+          }
+        }
+      }
+    };
+
+    const delayedUpdate = setTimeout(() => {
+      updateDownloadedRecipes();
+    }, 7000); // Delay by 7 seconds before calling
+  
+    return () => clearTimeout(delayedUpdate); // Cleanup in case of component unmount
+  }, []);
 
   const fetchFavourites = async () => {
     try {
@@ -104,6 +174,7 @@ const RecipeCard = ({
         }
 
         const reviewsData = await response2.json();
+        setReviews(reviewsData);
         setStats(reviewsData.stats);
       } catch (error) {
         setError(error.message);
@@ -114,6 +185,7 @@ const RecipeCard = ({
 
     fetchReviews();
     fetchFavourites();
+    
   }, []); // Dependency array
 
   const handleMouseEnter = () => {
@@ -197,9 +269,20 @@ const RecipeCard = ({
               <Heart className="text-gray-600 w-5 h-5" />
             )}
           </button>
-
           <DownloadRecipeBtn id={_id} />
         </div>
+{/* Indication bar with progress bar on top of the image */}
+{loadingUpdate && (
+  <div className="absolute inset-x-0 top-0 bg-gray-200 bg-opacity-75 rounded-b-lg h-6 flex items-center">
+    <div
+      className="bg-blue-500 h-full rounded-b-lg transition-all duration-400"
+      style={{ width: `${progress}%` }}
+    ></div>
+    <p className="absolute inset-0 text-center text-sm text-green-800">
+      {updateMessage}
+    </p>
+  </div>
+)}
 
         {/* Content Container */}
         <div className="p-1">

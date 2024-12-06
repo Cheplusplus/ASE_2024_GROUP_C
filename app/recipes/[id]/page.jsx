@@ -6,6 +6,7 @@ import RecipeDetailCard from "../../components/RecipeDetailCard";
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 /**
  * The RecipeDetail component renders a page displaying the details of a recipe
@@ -143,15 +144,38 @@ export default function RecipeDetail({ params }) {
         </script>
       </Head>
       <div className="p-6 max-w-6xl mx-auto font-sans pt-16">
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            router.back();
-          }}
-          className="text-gray-200 hover:text-gray-500 mb-4 flex items-center"
-        >
-          ← Back
-        </button>
+      <button
+  onClick={(e) => {
+    e.preventDefault();
+    router.back();
+  }}
+  className="flex items-center group text-gray-700 dark:text-gray-300 
+    hover:text-[#26442a] dark:hover:text-[#26442a] 
+    transition-all duration-300 
+    bg-white/10 dark:bg-gray-700/20 
+    hover:bg-[#26442a]/10 
+    px-4 py-2 
+    rounded-full 
+    shadow-sm 
+    hover:shadow-md 
+    transform 
+    hover:-translate-x-2 
+    hover:scale-105 
+    mb-4"
+>
+  <ArrowLeft 
+    className="mr-2 
+      transition-transform 
+      group-hover:-translate-x-1 
+      group-hover:scale-110 
+      text-[#26442a] 
+      dark:text-green-500" 
+    strokeWidth={2.5} 
+  />
+  <span className="font-semibold text-sm uppercase tracking-wider">
+    Back
+  </span>
+</button>
         <button
           onClick={downloadRecipe}
           // disabled={isDownloaded}

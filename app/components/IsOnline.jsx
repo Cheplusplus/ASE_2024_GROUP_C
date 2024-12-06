@@ -3,8 +3,10 @@
 import React, { useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useMyContext4 } from "./UpdatedNotify";
 
 const OnlineStatusNotifier = () => {
+    const {notify,NotifyFunc} = useMyContext4();
   useEffect(() => {
     // Check the initial status
     const notifyStatus = () => {
@@ -18,7 +20,7 @@ const OnlineStatusNotifier = () => {
     };
 
     // Notify on initial render
-    notifyStatus();
+    //notifyStatus();
 
     // Listen for online and offline events
     const handleOnline = () => toast.success("You are back online!", { autoClose: 3000 });
@@ -32,6 +34,15 @@ const OnlineStatusNotifier = () => {
       window.removeEventListener("offline", handleOffline);
     };
   }, []);
+
+
+  useEffect(()=>{
+    if(notify){
+    const updatedDownloadedRecipe = () => toast.success("Downloaded recipe has been updated.", { autoClose: 3000 });
+    updatedDownloadedRecipe();
+    NotifyFunc(false);
+    }
+  },[notify])
 
   return <ToastContainer position="bottom-right" />;
 };

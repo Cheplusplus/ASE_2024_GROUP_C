@@ -46,6 +46,7 @@ const RecipeDetailCard = ({ recipe, id }) => {
         }
         else{
       const data = await response.json();
+      console.log(data,'dat1232');
       setLatest(data);
         }
       }
