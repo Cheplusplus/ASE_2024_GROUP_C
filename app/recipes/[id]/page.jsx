@@ -27,6 +27,7 @@ export default function RecipeDetail({ params }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isDownloaded, setIsDownloaded] = useState(false);
+  const [allergens, setAllergens] = useState([]);
 
   useEffect(() => {
     const downloadedRecipes =
@@ -85,8 +86,22 @@ export default function RecipeDetail({ params }) {
       }
     };
 
+    const fetchAllergens = async () => {
+      try {
+        const response = await fetch('/api/allergens');
+        if (!response.ok) {
+          throw new Error('Failed to fetch allergens');
+        }
+        const data = await response.json();
+        setAllergens(data.allergens || []);
+      } catch (error) {
+        console.error('Error fetching allergens:', error);
+      }
+    };
+
     if (id) {
       fetchRecipe(id);
+      fetchAllergens();
     }
   }, [id]);
 
@@ -183,7 +198,11 @@ export default function RecipeDetail({ params }) {
         >
           {isDownloaded ? "Downloaded" : "Download for Offline Use"}
         </button>
-        <RecipeDetailCard recipe={recipe} id={id} />
+        <RecipeDetailCard 
+          recipe={recipe} 
+          id={id} 
+          allergens={allergens} 
+        />
       </div>
     </>
   );

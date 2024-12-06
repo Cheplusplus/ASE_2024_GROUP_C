@@ -16,7 +16,7 @@ const formatTime = (minutes) => {
   return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
 };
 
-const RecipeDetailCard = ({ recipe, id }) => {
+const RecipeDetailCard = ({ recipe, id, allergens = [] }) => {
   const [description, setDescription] = useState(recipe.description);
   const [activeTab, setActiveTab] = useState("ingredients");
   const [selectedImage, setSelectedImage] = useState(recipe.images?.[0]);
@@ -25,18 +25,21 @@ const RecipeDetailCard = ({ recipe, id }) => {
   const router = useRouter();
   const [reviewUpdateKey, setReviewUpdateKey] = useState(0);
   const { data: session } = useSession();
-  const [latest,setLatest] = useState(null)
-
+  const [latest, setLatest] = useState(null);
 
   const totalTime = (recipe.prep || 0) + (recipe.cook || 0);
   const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
+  // Determine recipe's allergens
+  const recipeAllergens = allergens.filter(allergen => 
+    Object.keys(recipe.ingredients || {}).some(ingredient => 
+      ingredient.toLowerCase().includes(allergen.toLowerCase())
+  ));
 
   // Set document title
   useEffect(() => {
     document.title = `${recipe.title} | Recipe Details`;
   }, [recipe.title]);
-
 
   useEffect(() => {
     const handleUpdate = async () => {
@@ -101,44 +104,40 @@ const RecipeDetailCard = ({ recipe, id }) => {
   return (
     <div className="grid items-start grid-cols-1 md:grid-cols-2 gap-6">
       <div className="w-full lg:sticky top-0 flex flex-col gap-3">
-  {/* Main Recipe Image */}
-  <div className="w-full relative h-[300px] md:h-[403px]">
-    <Image
-      src={selectedImage || "/fallback-image.jpg"}
-      alt={recipe.title || "Recipe Image"}
-      fill
-      priority="true"
-      sizes="(max-width: 1024px) 100vw, 50vw"
-      className="rounded-lg object-cover"
-    />
-  </div>
+        <div className="w-full relative h-[300px] md:h-[403px]">
+          <Image
+            src={selectedImage || "/fallback-image.jpg"}
+            alt={recipe.title || "Recipe Image"}
+            fill
+            priority="true"
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            className="rounded-lg object-cover"
+          />
+        </div>
 
-  {/* Thumbnail Images */}
-  <div className="flex flex-wrap gap-2 mt-4">
-    {recipe.images?.map((image, index) => (
-      <div
-        key={index}
-        className={`relative w-16 h-16 rounded-md overflow-hidden cursor-pointer ${
-          selectedImage === image ? "border-2 border-gray-800" : ""
-        }`}
-        onClick={() => setSelectedImage(image)}
-      >
-        <Image
-          src={image}
-          alt={`Thumbnail ${index}`}
-          fill
-          property="true"
-          sizes="64px"
-          className="object-cover"
-        />
+        <div className="flex flex-wrap gap-2 mt-4">
+          {recipe.images?.map((image, index) => (
+            <div
+              key={index}
+              className={`relative w-16 h-16 rounded-md overflow-hidden cursor-pointer ${
+                selectedImage === image ? "border-2 border-gray-800" : ""
+              }`}
+              onClick={() => setSelectedImage(image)}
+            >
+              <Image
+                src={image}
+                alt={`Thumbnail ${index}`}
+                fill
+                property="true"
+                sizes="64px"
+                className="object-cover"
+              />
+            </div>
+          ))}
+        </div>
       </div>
-    ))}
-  </div>
-</div>
-
 
       <div>
-        {/* New: Added flex container with ShoppingListButton */}
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
             {recipe.title}
@@ -160,6 +159,23 @@ const RecipeDetailCard = ({ recipe, id }) => {
             </span>
           ))}
         </div>
+
+        {recipeAllergens.length > 0 && (
+  <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+    <h3 className="text-lg font-semibold text-yellow-700 mb-2">🍽️ Dietary Awareness</h3>
+    <p className="text-yellow-800 mb-2">
+      This recipe contains ingredients that may trigger common allergies:
+    </p>
+    <ul className="list-disc pl-6 text-yellow-900">
+      {recipeAllergens.map((allergen, index) => (
+        <li key={index} className="font-medium">{allergen}</li>
+      ))}
+    </ul>
+    <p className="text-sm text-yellow-600 mt-2 italic">
+      Always check ingredient labels and consult with guests about dietary restrictions.
+    </p>
+  </div>
+)}
 
         <p className="text-lg italic text-gray-600 mb-6">
           Discover how to make this delicious {recipe.title}.{" "}
