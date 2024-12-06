@@ -111,14 +111,14 @@ const Carousel = ({ heading, autoSlide = true, slideInterval = 3000 }) => {
   }
 
   return (
-    <div className="relative">
-      <h2 className="text-center text-lg font-semibold mb-3">{heading}</h2>
+    <div className="relative dark:bg-gray-800 bg-white p-4 rounded-md shadow-md">
+      <h2 className="text-center text-lg font-semibold mb-3 text-gray-800 dark:text-gray-200">{heading}</h2>
 
       <div className="relative flex items-center">
         {/* Previous Button */}
         <button
           onClick={() => handleManualNavigation("prev")}
-          className="absolute left-0 z-10 bg-white/70 rounded-full p-2 shadow-md"
+          className="absolute left-0 z-10 bg-white/70 dark:bg-gray-700 dark:text-gray-200 rounded-full p-2 shadow-md rounded-full p-2 shadow-md"
         >
           ←
         </button>
@@ -126,7 +126,7 @@ const Carousel = ({ heading, autoSlide = true, slideInterval = 3000 }) => {
         {/* Carousel Scrollable Area */}
         <div
           ref={carouselRef}
-          className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth"
+          className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth "
           style={{ scrollSnapType: "x mandatory" }}
         >
           {recipes.map((recipe, index) => (
@@ -146,7 +146,7 @@ const Carousel = ({ heading, autoSlide = true, slideInterval = 3000 }) => {
                     className="object-cover rounded-sm"
                   />
                 </div>
-                <p className="text-center text-sm mt-2 truncate">
+                <p className="text-center text-sm mt-2 truncate text-black dark:text-gray-300">
                   {recipe.title}
                 </p>
               </Link>
