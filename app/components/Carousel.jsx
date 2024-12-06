@@ -146,7 +146,7 @@ const Carousel = ({ heading, autoSlide = true, slideInterval = 3000 }) => {
                     className="object-cover rounded-sm"
                   />
                 </div>
-                <p className="text-center text-sm mt-2 truncate">
+                <p className="text-center text-sm mt-2 truncate text-black dark:text-gray-300">
                   {recipe.title}
                 </p>
               </Link>
