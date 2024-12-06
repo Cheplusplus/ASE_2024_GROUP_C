@@ -29,6 +29,16 @@ Check out the live demo of the Recipe App in action! Explore recipes, leave revi
 Visit Live Demo
 
 
+## Screenshots of the App
+ ![Top of the app](./public/Screenshot%20(124).png)
+ ![middle part of the app](./public/Screenshot%20(125).png)
+ ![bottom part of the app](./public/Screenshot%20(126).png)
+ ![Inside the app](./public/Screenshot%20(132).png)
+ ![Filtering](./public/Screenshot%20(128).png)
+ ![Dark theme](./public/Screenshot%20(129).png)
+ ![Signin page](./public/Screenshot%20(131).png)
+
+
 ## Feature List
 
 ## Core Features
@@ -613,81 +623,6 @@ This API documentation should provide you with the necessary information to inte
 Feel free to adjust and extend the documentation based on your app's specific features and functionality!
 
 
-
-<!-- ##### API Documentation
-Authentication Endpoints
-Login
-httpCopyPOST /api/auth/login
-Content-Type: application/json
-
-{
-  "email": "user@example.com",
-  "password": "securepassword123"
-}
-Response:
-jsonCopy{
-  "token": "eyJhbGciOiJIUzI1...",
-  "user": {
-    "id": "user123",
-    "email": "user@example.com",
-    "name": "John Doe"
-  }
-}
-Recipe Endpoints
-Get Recipes
-httpCopyGET /api/recipes
-Query Parameters:
-  - page (number)
-  - limit (number)
-  - category (string)
-  - tags (array)
-Response:
-jsonCopy{
-  "recipes": [
-    {
-      "id": "recipe123",
-      "title": "Chocolate Cake",
-      "prepTime": "20 mins",
-      "cookTime": "35 mins",
-      "difficulty": "medium",
-      "ingredients": [
-        "2 cups flour",
-        "1 cup sugar",
-        "3/4 cup cocoa"
-      ]
-    }
-  ],
-  "total": 100,
-  "currentPage": 1
-}
-Create Recipe
-httpCopyPOST /api/recipes
-Content-Type: application/json
-Authorization: Bearer <token>
-
-{
-  "title": "New Recipe",
-  "ingredients": ["item1", "item2"],
-  "instructions": ["Step 1", "Step 2"],
-  "prepTime": "15 mins",
-  "cookTime": "30 mins"
-}
-Development Environment
-VS Code Extensions
-
-ESLint
-Prettier
-Tailwind CSS IntelliSense
-GitLens
-
-Recommended Settings
-jsonCopy{
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
-  }
-} -->
 ### Contact & Support
 
 -📧 Email: support@recipeapp.dev
