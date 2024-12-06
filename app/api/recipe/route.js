@@ -54,7 +54,6 @@ export async function GET(req) {
     const tags = searchParams.get("tags");
     const ingredients = searchParams.get("ingredients");
     const numSteps = parseInt(searchParams.get("numSteps"), 10); // Convert numSteps to integer
-    console.log(skip,"1234f");
 
     // Build the query based on the search parameter
     if (search) {
@@ -114,7 +113,6 @@ export async function GET(req) {
       default:
         break;
     }
-    console.log(Recipe.collection.name)
     // Fetch recipes with the built query and sort options, limited to 50 results
     const recipes = await Recipe.find(query)
       .sort(sortOptions)

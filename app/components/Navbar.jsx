@@ -104,14 +104,7 @@ const Navbar = () => {
       name: "Favourites",
       href: "/favourites",
       badge: status === "authenticated" ? favouritesCount : null,
-    },
-    { name: "About", href: "/about" },
-    { name: "Contact", href: "/contact" },
-    {
-      name: "Favourites",
-      href: "/favourites",
-      badge: status === "authenticated" ? favouritesCount : null,
-    },
+    },,
     { name: "About", href: "/about" },
     { name: "Contact", href: "/contact" },
     {
