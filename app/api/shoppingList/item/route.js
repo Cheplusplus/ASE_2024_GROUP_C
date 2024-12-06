@@ -1,29 +1,40 @@
 import { getServerSession } from "next-auth";
 import ShoppingList from "@/app/models/shoppingList";
-import User from "@/app/models/user";
 import connectToDatabase from "@/app/lib/connectMongoose";
 import { authOptions } from "../../auth/[...nextauth]/route";
+import { NextResponse } from "next/server";
+import User from "@/app/models/user";
 
 
 // POST method handler
 export async function POST(req) {
   try {
     await connectToDatabase();
+
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    const user = await User.findOne({ email: session.user.email });
+    if (!user) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
     
     // Parse request body
-    const { items, user } = await req.json();
+    const { items } = await req.json();
 
     // Validate input
     if (!Array.isArray(items) || items.length === 0) {
-      return new Response(JSON.stringify({ error: "Items must be a non-empty array" }), { status: 400 });
+      return NextResponse.json({ error: "Items must be a non-empty array" }, { status: 400 });
     }
 
     // Find or create the user's shopping list
-    let shoppingList = await ShoppingList.findOne({ user: user.id });
+    let shoppingList = await ShoppingList.findOne({ user: user._id });
 
     if (!shoppingList) {
       // Create a new shopping list if none exists
-      shoppingList = new ShoppingList({ user: user.id, items: [] });
+      shoppingList = new ShoppingList({ user: user._id, items: [] });
     }
 
     // Add or update items in the shopping list
@@ -44,11 +55,14 @@ export async function POST(req) {
     // Save the shopping list
     await shoppingList.save();
 
-    return new Response(JSON.stringify(shoppingList.items), { status: 201 });
-  } catch (error) {
+    return NextResponse.json({
+      items: shoppingList.items,
+      count: shoppingList.items.length
+    }, { status: 201 });
+    } catch (error) {
     console.error("Error processing POST request:", error);
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
-  }
+    return NextResponse.json({ message: "Internal server error", details: error.message }, { status: 500 });
+    }
 }
 
 

@@ -4,14 +4,39 @@ import EditProfileForm from "./EditProfileForm";
 import { getUserProfile } from "@/lib/api";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import loading from "../profile/loading";
+import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
+/**
+ * ProfilePage is a Next.js component that displays the user's profile and allows them to edit it.
+ * It fetches the user's profile from the database and displays it in a profile card.
+ * When the user clicks the "Edit Profile" button, it sets editMode to true and displays the EditProfileForm component.
+ * If the user updates their profile successfully, it sets editMode to false and displays a success message.
+ * If there is an error, it displays an error message.
+ * @param {object} props - Component props
+ * @param {string} props.userId - User ID to fetch profile for
+ * @param {string} props.db - Database to fetch profile from (either 'test' or 'devdb')
+ * @returns A React component that displays the user's profile and allows them to edit it
+ */
 export default function ProfilePage({ userId, db }) {
   const [user, setUser] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [message, setMessage] = useState({ type: "", content: "" });
   const { data: session } = useSession();
+  const router = useRouter();
 
   useEffect(() => {
+ /**
+ * Asynchronously fetches the user's profile data from the specified database and sets it to the state variable "user".
+ * If successful, updates the user state with the fetched data.
+ * If an error occurs during fetching, sets an error message.
+ * @function
+ * @async
+ * @throws {Error} If the request fails
+ *
+ * @returns {Promise<void>} A promise that resolves when the profile data is fetched and state is updated.
+ */
     async function fetchData() {
       try {
         const data = await getUserProfile(userId, db);
@@ -24,6 +49,16 @@ export default function ProfilePage({ userId, db }) {
     fetchData();
   }, [userId]);
 
+
+/**
+ * Handles a successful profile update.
+ * Updates the user state with the updated user data,
+ * sets editMode to false, and displays a success message.
+ * Resets the message after 3 seconds.
+ * @param {Object} updatedUser - The updated user data
+ * @function
+ * @private
+ */
   const handleUpdateSuccess = (updatedUser) => {
     setUser(updatedUser);
     setEditMode(false);
@@ -40,11 +75,23 @@ export default function ProfilePage({ userId, db }) {
     }, 2000); // Reset message after 3 seconds
   };
 
-  if (!user) return <p>Loading...</p>;
+  if (!user) return <loading />;
+  
 
   return (
-    <>
+    <div>
+      <button 
+          onClick={(e) => { e.preventDefault(); router.back(); }} 
+          className="mt-6 ml-6 flex items-center group text-gray-700 dark:text-gray-300 hover:text-[#26442a] dark:hover:text-[#26442a] transition-all duration-300 bg-white/10 dark:bg-gray-700/20 hover:bg-[#26442a]/10 px-4 py-2 rounded-full shadow-sm hover:shadow-md transform hover:-translate-x-2 hover:scale-105 mr-4"
+        >
+          <ArrowLeft 
+            className="mr-2 transition-transform group-hover:-translate-x-1 group-hover:scale-110 text-[#26442a] dark:text-green-500" 
+            strokeWidth={2.5} 
+          />
+          <span className="font-semibold text-sm uppercase tracking-wider">Back</span>
+        </button>
       <div className="max-w-3xl mx-auto p-6  bg-white shadow-lg rounded-lg mt-10">
+
         <h1 className="text-2xl font-bold  text-gray-800">Account & Profile</h1>
 
         {/* Success/Error Message */}
@@ -82,13 +129,13 @@ export default function ProfilePage({ userId, db }) {
                   <div className="absolute top-24 left-4">
                     {session.user.image ? (
                       <Image
-                      className="rounded-full w-32 h-32 border-4 border-white object-cover"
-                      src={session.user.image}
-                      alt="Profile"
-                      width={128} // Set the width of the profile image
-                      height={128} // Set the height of the profile image
-                      objectFit="cover" // Ensures the image covers the container without distortion
-                    />
+                        className="rounded-full w-32 h-32 border-4 border-white object-cover"
+                        src={session.user.image}
+                        alt="Profile"
+                        width={128} // Set the width of the profile image
+                        height={128} // Set the height of the profile image
+                        objectFit="cover" // Ensures the image covers the container without distortion
+                      />
                     ) : (
                       <div className="rounded-full w-32 h-32 text-[6rem] border-4 border-white object-cover hover:bg-slate-100 flex text-center items-center justify-center bg-slate-200 object-center">
                         {session.user.name.charAt(0)}
@@ -113,6 +160,6 @@ export default function ProfilePage({ userId, db }) {
           </>
         )}
       </div>
-    </>
+    </div>
   );
 }

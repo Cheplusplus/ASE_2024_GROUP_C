@@ -5,7 +5,22 @@ import { Filter } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Button } from "./ui/button";
 import { Slider } from "./ui/slider";
+import { useMyContext3 } from './PageNumberReset';
 
+/**
+ * FilterSortComponent provides a UI for filtering and sorting recipes.
+ *
+ * This component allows users to filter recipes by category, tags, number of steps, and ingredients.
+ * It also provides sorting options for the recipes. The filters and sort options are applied by
+ * updating the URL query parameters, which triggers a navigation to the filtered and sorted results.
+ *
+ * @param {Object} props - The component props.
+ * @param {Array} props.categories - The list of categories available for filtering.
+ * @param {number|null} props.count1 - The initial count of recipes, used for display purposes.
+ * @param {string} props.search - The search query string for filtering recipes.
+ *
+ * @returns {JSX.Element} - The rendered FilterSortComponent.
+ */
 const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
   const router = useRouter();
 
@@ -20,6 +35,7 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
   const [displayCount, setDisplayCount] = useState(false);
   const [count, setCount] = useState(count1);
   const params = new URLSearchParams();
+  const { update } = useMyContext3();
 
   // Apply the filters by updating the URL query parameters
   const applyFilters = (value, clear = false) => {
@@ -36,7 +52,7 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
 
       setIsOpen(false);
       router.push(`/all?${params.toString()}`);
-
+      update(true)
       if (count1) {
         setDisplayCount(true);
       } else {
@@ -49,6 +65,11 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
     }
   };
 
+
+  /**
+   * Resets all filters and sorting options to their default values and triggers a navigation to
+   * the unfiltered list of recipes.
+   */
   const clearFilters = () => {
     setSelectedCategory('');
     setSelectedTags([]);
@@ -57,12 +78,23 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
     setIngredients('');
     setSortOption('default');
     applyFilters({}, true);
+    update(true)
   };
 
+  /**
+   * Handles changes to the text input used for adding tags. It simply updates the tagInput state
+   * variable to the new value of the input field.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The change event triggered by changing the
+   *   input field.
+   */
   const handleTagInputChange = (e) => {
     setTagInput(e.target.value);
   };
 
+  /**
+   * Adds the current tag input to the list of selected tags. If the tag input is not already in the
+   * list of selected tags, it is added to the end of the list. Then, the tag input is cleared.
+   */
   const addTag = () => {
     if (tagInput && !selectedTags.includes(tagInput)) {
       setSelectedTags([...selectedTags, tagInput]);
@@ -70,6 +102,11 @@ const FilterSortComponent = ({ categories = [], count1 = null, search }) => {
     setTagInput('');
   };
 
+  /**
+   * Removes the given tag from the list of selected tags. If the tag is not in the list of
+   * selected tags, this function does nothing.
+   * @param {string} tagToRemove - The tag to remove from the list of selected tags.
+   */
   const removeTag = (tagToRemove) => {
     setSelectedTags(selectedTags.filter(tag => tag !== tagToRemove));
   };

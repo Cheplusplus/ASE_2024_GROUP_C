@@ -6,6 +6,17 @@ import { useSession, signIn } from "next-auth/react";
 import { useTheme } from "../components/ThemeProvider";
 import Image from "next/image";
 
+/**
+ * SignIn component that handles user authentication using Next-Auth
+ *
+ * @remarks
+ * This component renders a sign-in form and handles the authentication flow
+ * using Next-Auth. It uses the `useSession` hook to get the current session and
+ * the `signIn` function to authenticate the user.
+ *
+ * @param {Object} props - The component props
+ * @returns {ReactElement} The SignIn component
+ */
 const SignIn = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -14,6 +25,17 @@ const SignIn = () => {
   const [error, setError] = useState("");
   const { theme } = useTheme();
 
+/**
+ * Handles user login using credentials.
+ *
+ * This asynchronous function prevents the default form submission,
+ * sets a loading state, and authenticates the user using Next-Auth's
+ * signIn function with email and password credentials. If authentication
+ * fails, it sets an error message temporarily. On successful authentication,
+ * it redirects the user to the homepage.
+ *
+ * @param {Event} e - The DOM event triggered by form submission.
+ */
   const login = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -36,6 +58,18 @@ const SignIn = () => {
     }
   };
 
+/**
+ * Handles sign-in using Google provider.
+ *
+ * Redirects to the current page after successful sign-in
+ *
+ * @remarks
+ * This function is a wrapper around Next-Auth's signIn function and
+ * is used to handle sign-in using Google provider.This function is invoked when the user clicks the sign-in button and
+   * redirects to the Google authentication page. It sets the callback
+ * URL to the current page so that the user is redirected back to the
+ * current page after successful sign-in.
+ */
   const handleSignIn = () => {
     // Redirect to the current page after successful sign-in
     const callbackUrl = router.asPath;

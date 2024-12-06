@@ -1,9 +1,19 @@
-"use client";
+"use client"
+
 import React, { useState, useEffect } from "react";
-import {ShoppingCartIcon, PlusIcon, TrashIcon, ShareIcon, CheckIcon,} from "lucide-react";
+import {ShoppingCartIcon, PlusIcon, TrashIcon, ShareIcon, CheckIcon, ArrowLeft} from "lucide-react";
 import { useSession } from "next-auth/react";
 import {useNotification, NOTIFICATION_TYPES,} from "../components/NotificationContext";
+import ShoppingListLoading from "./loading";
+import { useRouter } from "next/navigation"; 
 
+/**
+ * The ShoppingList component displays a shopping list and allows users to
+ * add, remove, and update items on the list. It also allows users to clear
+ * the entire list and share it with others.
+ * 
+ * @returns A React component that renders a shopping list
+ */
 const ShoppingList = () => {
   const [items, setItems] = useState([]);
   const [newItem, setNewItem] = useState("");
@@ -11,9 +21,23 @@ const ShoppingList = () => {
   const { addNotification } = useNotification();
   const [isLoading, setIsLoading] = useState(true);
   const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+  const router = useRouter();
   
   // Fetch shopping list from backend
   useEffect(() => {
+/**
+ * Fetches the user's shopping list from the backend.
+ *
+ * This asynchronous function sends a GET request to the API endpoint 
+ * for retrieving the shopping list based on the authenticated user's ID.
+ * If the request is successful and the list is not empty, it updates the 
+ * state with the list of items. If the request fails, it logs an error and 
+ * sets the items to an empty array. Regardless of the outcome, it sets the 
+ * loading state to false after the fetch completes.
+ *
+ * @throws Will add an error notification if the fetch request fails for 
+ * reasons other than an empty list.
+ */
     const fetchShoppingList = async () => {
       console.log(session.user.id)
       try {
@@ -42,12 +66,24 @@ const ShoppingList = () => {
   }, [session, url, addNotification]);
 
   if (isLoading) {
-    return (
-      <div className="container mx-auto p-4 mt-20 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-      </div>);
+    return <ShoppingListLoading />;
   }
 
+/**
+ * Adds a new item to the shopping list.
+ *
+ * This function sends a POST request to add a new item to the user's
+ * shopping list. It uses the current user's session information to
+ * associate the item with the user. The item is initially marked as
+ * not purchased and has a default quantity of 1.
+ *
+ * If the request is successful, it updates the local items state with
+ * the response from the server and shows a success notification. If
+ * there's an error, it shows an error notification.
+ *
+ * @async
+ * @throws Will add an error notification if the request fails.
+ */
   const addItem = async () => {
     if (!newItem.trim()) return;
     
@@ -60,15 +96,19 @@ const ShoppingList = () => {
             name: newItem,
             quantity: 1,
             purchased: false,
-            source: `${session.user.name}`
-          }],user:session.user 
+            source: session.user.name
+          // }],user:session.user 
+          }]
         })
       });
 
-      if (!response.ok) throw new Error('Failed to add item');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to add item');
+      }
 
       const updatedItems = await response.json();
-      setItems(updatedItems);
+      setItems(updatedItems.items);
 
       addNotification(
         `Added ${newItem} to shopping list`,
@@ -80,6 +120,20 @@ const ShoppingList = () => {
     }
   };
 
+/**
+ * Removes an item from the shopping list.
+ *
+ * This function sends a DELETE request to remove a specified item from the
+ * user's shopping list using the item's ID. It uses the current user's session
+ * information to identify the user's shopping list. If the request is
+ * successful, it updates the local items state with the response from the
+ * server and shows a warning notification. If there's an error, it shows an
+ * error notification.
+ *
+ * @async
+ * @param {string} itemId - The ID of the item to be removed.
+ * @throws Will add an error notification if the request fails.
+ */
   const removeItem = async (itemId) => {
     try {
       const response = await fetch(`${url}/api/shoppingList/item?user=${session.user.id}`, {
@@ -102,6 +156,22 @@ const ShoppingList = () => {
     }
   };
 
+  
+/**
+ * Toggles the purchased status of an item in the shopping list.
+ *
+ * This asynchronous function sends a PUT request to update the purchased status
+ * of a specified item in the user's shopping list using the item's ID. It uses
+ * the current user's session information to identify the user's shopping list.
+ * The function optimistically updates the local state before sending the request.
+ * If the request is successful, it updates the local items state with the response
+ * from the server and shows a success notification. If there's an error, it reverts
+ * the local state to its previous state and shows an error notification.
+ *
+ * @async
+ * @param {string} itemId - The ID of the item to be toggled.
+ * @throws Will add an error notification if the request fails.
+ */
   const togglePurchased = async (itemId) => {
     const itemToUpdate = items.find(item => item._id === itemId);
 
@@ -142,6 +212,23 @@ const ShoppingList = () => {
     }
   };
 
+/**
+ * Updates the quantity of a specific item in the shopping list.
+ *
+ * This asynchronous function sends a PUT request to update the quantity
+ * of a specified item in the user's shopping list using the item's ID.
+ * It uses the current user's session information to identify the user's
+ * shopping list. The function optimistically updates the local state 
+ * before sending the request. If the request is successful, it updates
+ * the local items state with the response from the server and shows a 
+ * success notification. If there's an error, it reverts the local state 
+ * to its previous state and shows an error notification.
+ *
+ * @async
+ * @param {string} itemId - The ID of the item to update.
+ * @param {number} quantity - The new quantity for the item.
+ * @throws Will add an error notification if the request fails.
+ */
   const updateQuantity = async (itemId, quantity) => {
 
     if (quantity < 1) return;
@@ -183,6 +270,18 @@ const ShoppingList = () => {
     }
   };
 
+  /**
+   * Clears the user's entire shopping list.
+   *
+   * This asynchronous function sends a DELETE request to clear the user's
+   * shopping list. It uses the current user's session information to
+   * identify the user's shopping list. If the request is successful, it
+   * updates the local items state to an empty array and shows a warning
+   * notification. If there's an error, it shows an error notification.
+   *
+   * @async
+   * @throws Will add an error notification if the request fails.
+   */
   const clearList = async () => {
     try {
       const response = await fetch(`${url}/api/shoppingList/deleteShoppingList?user=${session.user.id}`, { method: 'DELETE' });
@@ -198,6 +297,18 @@ const ShoppingList = () => {
     }
   };
 
+  /**
+   * Opens a new window with a URL that allows the user to share their shopping
+   * list on WhatsApp. The list is formatted as a string with each item on a
+   * separate line, with the name and quantity in parentheses (e.g. "Apples (3)\nBananas (2)\nCarrots (1)").
+   * The URL is built using the WhatsApp web client's URL scheme, which allows
+   * the user to share the list without having to copy and paste it.
+   * 
+   * @function
+   * @returns {void}
+   * @example
+   * shareList();
+   */
   const shareList = () => {
     const listText = items
       .map((item) => `${item.name} (${item.quantity})`)
@@ -216,8 +327,21 @@ const ShoppingList = () => {
   }
 
   return (
+    <div>
+      <button 
+          onClick={(e) => { e.preventDefault(); router.back(); }} 
+          className="mt-6 ml-6 flex items-center group text-gray-700 dark:text-gray-300 hover:text-[#26442a] dark:hover:text-[#26442a] transition-all duration-300 bg-white/10 dark:bg-gray-700/20 hover:bg-[#26442a]/10 px-4 py-2 rounded-full shadow-sm hover:shadow-md transform hover:-translate-x-2 hover:scale-105 mr-4"
+        >
+          <ArrowLeft 
+            className="mr-2 transition-transform group-hover:-translate-x-1 group-hover:scale-110 text-[#26442a] dark:text-green-500" 
+            strokeWidth={2.5} 
+          />
+          <span className="font-semibold text-sm uppercase tracking-wider">Back</span>
+        </button>
     <div className="container mx-auto p-4 max-w-2xl">
+      
     <div className="flex justify-between items-center mb-4">
+  
       <h1 className="text-2xl font-bold flex items-center">
         <ShoppingCartIcon className="mr-2" /> 
         Hi, {session.user.name ? session.user.name.split(' ')[0] : 'Shopper'}
@@ -294,6 +418,7 @@ const ShoppingList = () => {
           </button>
         </div>
       ))}
+    </div>
     </div>
   );
 };

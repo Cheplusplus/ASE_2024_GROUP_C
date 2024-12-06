@@ -6,7 +6,20 @@ import RecipeDetailCard from "../../components/RecipeDetailCard";
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
+/**
+ * The RecipeDetail component renders a page displaying the details of a recipe
+ * given the id of the recipe as a parameter. It fetches the recipe from the API
+ * and renders a RecipeDetailCard component with the recipe data. If the recipe
+ * is not found, it renders a message indicating so. It also renders a button
+ * allowing the user to download the recipe for offline use, if the browser
+ * supports service workers. If the recipe is already downloaded, the button is
+ * disabled and displays "Downloaded".
+ *
+ * @param {{ params: { id: string } }} props - The id of the recipe to fetch and
+ * display.
+ */
 export default function RecipeDetail({ params }) {
   const { id } = params;
   const router = useRouter();
@@ -56,7 +69,9 @@ export default function RecipeDetail({ params }) {
   useEffect(() => {
     const fetchRecipe = async (id) => {
       try {
-        const response = await fetch(`/api/recipe/${id}`);
+        const response = await fetch(`/api/recipe/${id}`, {
+          cache: "force-cache",
+        });
         if (!response.ok) {
           throw new Error(`Failed to fetch recipe: ${response.statusText}`);
         }
@@ -129,15 +144,38 @@ export default function RecipeDetail({ params }) {
         </script>
       </Head>
       <div className="p-6 max-w-6xl mx-auto font-sans pt-16">
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            router.back();
-          }}
-          className="text-gray-200 hover:text-gray-500 mb-4 flex items-center"
-        >
-          ← Back
-        </button>
+      <button
+  onClick={(e) => {
+    e.preventDefault();
+    router.back();
+  }}
+  className="flex items-center group text-gray-700 dark:text-gray-300 
+    hover:text-[#26442a] dark:hover:text-[#26442a] 
+    transition-all duration-300 
+    bg-white/10 dark:bg-gray-700/20 
+    hover:bg-[#26442a]/10 
+    px-4 py-2 
+    rounded-full 
+    shadow-sm 
+    hover:shadow-md 
+    transform 
+    hover:-translate-x-2 
+    hover:scale-105 
+    mb-4"
+>
+  <ArrowLeft 
+    className="mr-2 
+      transition-transform 
+      group-hover:-translate-x-1 
+      group-hover:scale-110 
+      text-[#26442a] 
+      dark:text-green-500" 
+    strokeWidth={2.5} 
+  />
+  <span className="font-semibold text-sm uppercase tracking-wider">
+    Back
+  </span>
+</button>
         <button
           onClick={downloadRecipe}
           // disabled={isDownloaded}

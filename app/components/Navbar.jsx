@@ -26,10 +26,15 @@ const Navbar = () => {
   const { updateCount} = useMyContext2();
 
   const { data: session } = useSession();
-  // const [favouritesCount, setFavouritesCount] = useState(0);
 
   // Update shopping list count
   useEffect(() => {
+    /**
+     * Updates the shopping list count state by retrieving items from localStorage.
+     *
+     * This function fetches the shopping list from localStorage, parses it,
+     * and updates the shopping list count state with the number of items.
+     */
     const updateShoppingListCount = () => {
       const storedItems = localStorage.getItem("shoppingList");
       const items = storedItems ? JSON.parse(storedItems) : [];
@@ -60,6 +65,11 @@ const Navbar = () => {
 //     setIsLoggedIn(!!token);
   
 
+  /**
+   * Toggles the sublink open state for the given link name.
+   *
+   * @param {string} linkName - The name of the link to toggle.
+   */
   const handleSublinkToggle = (linkName) => {
     setOpenSublinks((prev) => ({
       ...prev,
@@ -67,6 +77,12 @@ const Navbar = () => {
     }));
   };
 
+  /**
+   * Handles the sign out process by calling the next-auth signOut function, clearing
+   * the next-auth cookies manually, and redirecting to the sign-in page.
+   *
+   * @param {Event} e - The DOM event that triggered the sign out.
+   */
   const handleSignOut = async (e) => {
     e.preventDefault();
     await signOut({ callbackUrl: "/" });
@@ -77,7 +93,7 @@ const Navbar = () => {
     router.push("/"); // Redirect to sign-in page
   };
 
-
+  
   const navLinks = [
     { name: "Home", href: "/" },
     {
@@ -88,7 +104,7 @@ const Navbar = () => {
       name: "Favourites",
       href: "/favourites",
       badge: status === "authenticated" ? favouritesCount : null,
-    },
+    },,
     { name: "About", href: "/about" },
     { name: "Contact", href: "/contact" },
     {
@@ -109,6 +125,15 @@ const Navbar = () => {
 
   const [menuOpen, setMenuOpen] = useState(false);
 
+  /**
+   * Toggles the state of the menu open variable.
+   *
+   * This function inverses the current state of the `menuOpen`
+   * variable, effectively opening the menu if it is currently closed,
+   * and closing it if it is currently open.
+   * @function Toggles the navbar's menu open state.
+   * @returns {void}
+   */
   const toggleMenu = () => {
     setMenuOpen((prev) => !prev);
   };
@@ -160,7 +185,7 @@ const Navbar = () => {
                 >
                   <Image
                     style={{
-                      objectFit: "cover",
+                      objectFit:"cover",
                       width: "auto",
                       height: "auto",
                     }}
@@ -206,7 +231,6 @@ const Navbar = () => {
                 )}
               </Link>
               <ThemeToggle />
-
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 className={`p-2 rounded-md relative text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none ${

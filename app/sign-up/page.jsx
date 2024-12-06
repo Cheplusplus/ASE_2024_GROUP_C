@@ -4,7 +4,17 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 
-
+/**
+ * SignUp component that handles user registration.
+ *
+ * @remarks
+ * This component renders a sign-up form that allows users to register using
+ * their name, email, and password. Upon successful registration, the user is
+ * redirected to the sign-in page. If registration fails, an error message is
+ * displayed temporarily. Users can also sign up using their Google account.
+ *
+ * @returns {ReactElement} The SignUp component.
+ */
 const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,6 +23,13 @@ const SignUp = () => {
   const [error, setError] = useState(null);
   const router = useRouter();
 
+/**
+ * Handles form submission. Prevents default form submission, sends a POST request
+ * to the `/api/auth/register` endpoint with the user's email, password, and name.
+ * If the registration is successful, redirects the user to the sign-in page.
+ * If registration fails, it displays an error message temporarily.
+ * @param {Event} e - Form submission event
+ */
  const handleSubmit =async (e) => {
   e.preventDefault();
   try {

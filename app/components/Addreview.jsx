@@ -1,7 +1,18 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 
-export default function AddReview({ recipeId,onAdd }) {
+/**
+ * Component for adding a review to a recipe.
+ *
+ * @param {Object} props
+ * @param {string} props.recipeId - The ID of the recipe for which the review is being added.
+ * @param {function} props.onAdd - Callback function to be called upon successful review submission.
+ *
+ * This component allows users to submit a review for a recipe, including a comment and a rating.
+ * The user must be authenticated to submit a review. On successful submission, the input fields
+ * are cleared and a success message is displayed. In case of an error, an error message is shown.
+ */
+export default function AddReview({ recipeId, onAdd }) {
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0);
   const [error, setError] = useState("");
@@ -84,7 +95,11 @@ export default function AddReview({ recipeId,onAdd }) {
             className="text-3xl"
             onClick={() => setRating(star)}
           >
-            <span className={star <= rating ? "text-yellow-500" : "text-gray-400"}>★</span>
+            <span
+              className={star <= rating ? "text-yellow-500" : "text-gray-400"}
+            >
+              ★
+            </span>
           </button>
         ))}
       </div>

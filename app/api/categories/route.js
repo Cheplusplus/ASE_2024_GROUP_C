@@ -3,6 +3,14 @@ import connectToDatabase from '@/app/lib/connectMongoose';
 import { NextResponse } from 'next/server';
 import Categories from "@/app/models/categories";
 
+/**
+ * GET /api/categories
+ *
+ * Fetches the list of categories from the database and returns it to the client.
+ *
+ * @returns {NextResponse} A JSON response containing the list of categories.
+ * @throws {Error} If there is an error fetching the categories from the database.
+ */
 export async function GET() {
     // Connect to MongoDB
     await connectToDatabase();
