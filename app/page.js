@@ -42,7 +42,7 @@ export default function Home() {
       </div>
 
       {/* Carousel Section */}
-      <div className="absolute top-52 md:top-72 z-20 left-1/2 transform -translate-x-1/2 bg-white rounded-lg w-11/12 max-w-7xl mx-auto p-4 py-4 shadow-lg">
+      <div className="absolute top-52 md:top-72 z-20 left-1/2 transform -translate-x-1/2 bg-white rounded-lg w-11/12 max-w-7xl mx-auto   shadow-lg">
         <Carousel heading={"Recipes You Might Like..."} />
       </div>
 

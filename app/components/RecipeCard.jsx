@@ -204,12 +204,12 @@ const RecipeCard = ({
         {/* Content Container */}
         <div className="p-1">
           {/* Title */}
-          <h2 className="md:text-xl  text-md font-bold text-gray-800 mb-2 line-clamp-1">
+          <h2 className="md:text-xl text-md font-bold text-gray-800 dark:text-gray-400 mb-2 line-clamp-1">
             {title}
           </h2>
 
           {/* Meta Information */}
-          <div className="flex flex-wrap gap-2 text-sm text-gray-600  mb-2 md:mb-4">
+          <div className="flex flex-wrap gap-2 text-sm text-gray-600 dark:text-gray-500 mb-2 md:mb-4 ">
             <div className="flex items-center gap-1">
               {ClockIcon}
               <span>Prep: {prep} mins</span>
@@ -229,7 +229,7 @@ const RecipeCard = ({
               {/* Find the shortest tag */}
               <span
                 key="shortest-tag"
-                className="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full"
+                className="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full dark:text-gray-400 dark:bg-gray-700"
               >
                 {tags.reduce(
                   (shortest, tag) =>
@@ -238,7 +238,7 @@ const RecipeCard = ({
                 )}
               </span>
               {remainingTags > 0 && (
-                <span className="px-3 py-1 text-xs font-medium text-gray-500 bg-gray-50 rounded-full hover:bg-gray-100 transition-colors">
+                <span className="px-3 py-1 text-xs font-medium text-gray-500 bg-gray-50 rounded-full hover:bg-gray-100 transition-colors dark:text-gray-400 dark:bg-gray-700">
                   +{remainingTags} more
                 </span>
               )}
