@@ -47,7 +47,7 @@ const ShoppingListButton = ({ ingredients, recipeName }) => {
       document.dispatchEvent(new CustomEvent('shoppingListUpdated', { 
         detail: { count } 
       }));
-      console.log(shoppingList.count)
+      //console.log(shoppingList.count)
 
       addNotification(
         `Added ingredients from "${recipeName}" to your shopping list!`, 

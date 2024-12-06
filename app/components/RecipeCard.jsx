@@ -290,34 +290,131 @@ const RecipeCard = ({
   isFavourited = false,
 }) => {
   const [stats, setStats] = useState([]);
+  const [aveRating, setAveRating] = useState(0);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [intervalId, setIntervalId] = useState(null);
-  const [isCurrentlyFavourited, setIsCurrentlyFavourited] = useState(isFavourited);
-  
+  const [favourites, setFavourites] = useState([]);
   const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
   const { updateFavCount } = useMyContext2();
+
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [intervalId, setIntervalId] = useState(null);
+  const [isCurrentlyFavourited, setIsCurrentlyFavourited] =
+    useState(isFavourited);
   const { addNotification } = useNotification();
+  const [reviews,setReviews] = useState([]);
+
+  const [loadingUpdate, setLoadingUpdate] = useState(false); // State to show loading status
+  const [updateMessage, setUpdateMessage] = useState(""); // Message for indication
+  const [progress, setProgress] = useState(0);
+
+
+  useEffect(() => {
+    const updateDownloadedRecipes = async () => {
+      const downloadedRecipes =
+        JSON.parse(localStorage.getItem("downloadedRecipes")) || [];
+
+      if (downloadedRecipes.length > 0) {
+        for (let i = 0; i < downloadedRecipes.length; i++) {
+          const res = downloadedRecipes[i];
+          if (res._id === _id) {
+            if (
+              res.description === description &&
+              res.reviews.length === reviews.length
+            ) {
+              console.log("The recipe already matches.");
+              break; // Exit if the recipe matches
+            } else {
+              setLoadingUpdate(true); // Show the update status
+              setUpdateMessage("Updating...");
+
+
+                          // Simulate progress bar
+            let progressValue = 0;
+            const intervalId = setInterval(() => {
+              progressValue += 10;
+              setProgress(progressValue);
+              if (progressValue >= 100) {
+                clearInterval(intervalId);
+              }
+            }, 400); // Update progress every 700ms
+
+              // Simulate a delay for demonstration purposes
+              await new Promise((resolve) => setTimeout(resolve, 3000));
+
+              // Update the particular recipe in downloadedRecipes
+              downloadedRecipes[i] = {
+                ...res,
+                description,
+                reviews,
+              };
+
+              localStorage.setItem(
+                "downloadedRecipes",
+                JSON.stringify(downloadedRecipes)
+              );
+
+              console.log("Recipe updated in downloadedRecipes.");
+              setUpdateMessage("Successfully updated!");
+              setTimeout(() => {setLoadingUpdate(false); setUpdateMessage("")}, 8000); // Clear message after 3 seconds
+              break; // Exit after updating
+            }
+          }
+        }
+      }
+    };
+
+    const delayedUpdate = setTimeout(() => {
+      updateDownloadedRecipes();
+    }, 7000); // Delay by 7 seconds before calling
+  
+    return () => clearTimeout(delayedUpdate); // Cleanup in case of component unmount
+  }, []);
+
+
+
+
+  const fetchFavourites = async () => {
+    try {
+      const response = await fetch(`${url}/api/favourites/fav`);
+      if (!response.ok) throw new Error("Failed to fetch favourites");
+      const data = await response.json();
+      data.favourites.some((fav) => fav._id === _id)
+        ? setIsCurrentlyFavourited(true)
+        : null;
+      setFavourites(data.favourites);
+    } catch (error) {
+      console.error("Error fetching favourites:", error);
+    }
+  };
 
   // Fetch reviews and favourites
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchReviews = async () => {
       try {
-        const reviewResponse = await fetch(`${url}/api/getReviews?recipeId=${_id}`, {
+        console.log("123");
+        const response2 = await fetch(`${url}/api/getReviews?recipeId=${_id}`, {
           cache: "force-cache",
         });
-        const reviewData = await reviewResponse.json();
-        setStats(reviewData.stats);
-        setLoading(false);
+
+        if (!response2.ok) {
+          throw new Error(`HTTP error! Status: ${response2.status}`);
+        }
+
+        const reviewsData = await response2.json();
+        setReviews(reviewsData);
+        setStats(reviewsData.stats);
       } catch (error) {
         setError(error.message);
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
-  }, [_id, url]);
+    fetchReviews();
+    fetchFavourites();
+    
+  }, []); // Dependency array
 
   // Image hover effects
   const handleMouseEnter = () => {
@@ -429,6 +526,19 @@ const RecipeCard = ({
             <DownloadRecipeBtn id={_id} />
           </div>
         </div>
+
+        {/* Indication bar with progress bar on top of the image */}
+{loadingUpdate && (
+  <div className="absolute inset-x-0 top-0 bg-gray-200 bg-opacity-75 rounded-b-lg h-6 flex items-center">
+    <div
+      className="bg-blue-500 h-full rounded-b-lg transition-all duration-400"
+      style={{ width: `${progress}%` }}
+    ></div>
+    <p className="absolute inset-0 text-center text-sm text-green-800">
+      {updateMessage}
+    </p>
+  </div>
+)}
 
         {/* Content Section */}
         <div className="flex flex-col flex-grow p-4 space-y-3">
