@@ -143,6 +143,7 @@ const Navbar = () => {
     favouritesLink.badge = favouritesCount;
   }
 
+
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/30 dark:bg-gray-900/30 shadow-lg transition-colors duration-200">
@@ -184,13 +185,28 @@ const Navbar = () => {
                   // className="font-bold text-gray-800 dark:text-gray-200"
                 >
                   <Image
+                  className="dark:hidden"
                     style={{
                       objectFit:"cover",
                       width: "auto",
                       height: "auto",
                     }}
-                    priority={true}
-                    src="/rush.png"
+                    priority='true'
+                    src='/rush.png'
+                    quality={100}
+                    alt="logo"
+                    width={50}
+                    height={50}
+                  />
+                  <Image
+                  className="dark:block hidden"
+                    style={{
+                      objectFit:"cover",
+                      width: "auto",
+                      height: "auto",
+                    }}
+                    priority='true'
+                    src='/light.png'
                     quality={100}
                     alt="logo"
                     width={50}

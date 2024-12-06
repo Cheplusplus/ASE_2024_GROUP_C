@@ -26,7 +26,7 @@ export default function AddReview({ recipeId, onAdd }) {
       setError("You must be logged in to submit a review.");
       setTimeout(() => {
         setError("");
-      }, 2000); // Reset message after 3 seconds
+      }, 2000);
       return;
     }
 
@@ -37,7 +37,7 @@ export default function AddReview({ recipeId, onAdd }) {
         setError("All fields are required.");
         setTimeout(() => {
           setError("");
-        }, 2000); // Reset message after 3 seconds
+        }, 2000);
         return;
       }
 
@@ -50,7 +50,7 @@ export default function AddReview({ recipeId, onAdd }) {
           recipeId,
           comment,
           rating,
-          reviewerName: session.user.name, // Use logged-in user name
+          reviewerName: session.user.name,
         }),
       });
 
@@ -63,31 +63,31 @@ export default function AddReview({ recipeId, onAdd }) {
       onAdd();
       setTimeout(() => {
         setSuccess("");
-      }, 2000); // Reset message after 3 seconds
+      }, 2000);
     } catch (error) {
       console.error("Error submitting review:", error);
       setError("Failed to submit review. Please try again.");
       setTimeout(() => {
         setError("");
-      }, 2000); // Reset message after 3 seconds
+      }, 2000);
     }
   };
 
   return (
-    <div className="p-4 bg-gray-50 rounded-md shadow-md mt-6">
-      <h2 className="text-lg font-bold mb-4">Add a Review</h2>
-      {error && <p className="text-red-500">{error}</p>}
-      {success && <p className="text-green-500">{success}</p>}
+    <div className="p-4 bg-gray-50 dark:bg-gray-800 text-black dark:text-white rounded-md shadow-md mt-6">
+      <h2 className="text-lg font-bold mb-4 text-black dark:text-gray-400">Add a Review</h2>
+      {error && <p className="text-red-500 dark:text-red-400">{error}</p>}
+      {success && <p className="text-green-500 dark:text-green-400">{success}</p>}
 
       <textarea
         placeholder="Your Comment"
         value={comment}
         onChange={(e) => setComment(e.target.value)}
-        className="w-full border p-2 rounded-md"
+        className="w-full border p-2 rounded-md bg-white dark:bg-gray-700 text-black dark:text-white"
       />
 
       <div className="flex items-center space-x-2">
-        <label className="font-semibold">Rating:</label>
+        <label className="font-semibold text-black dark:text-gray-400">Rating:</label>
         {[1, 2, 3, 4, 5].map((star) => (
           <button
             key={star}
@@ -95,9 +95,7 @@ export default function AddReview({ recipeId, onAdd }) {
             className="text-3xl"
             onClick={() => setRating(star)}
           >
-            <span
-              className={star <= rating ? "text-yellow-500" : "text-gray-400"}
-            >
+            <span className={star <= rating ? "text-yellow-500" : "text-gray-400 dark:text-gray-600"}>
               ★
             </span>
           </button>
@@ -106,7 +104,7 @@ export default function AddReview({ recipeId, onAdd }) {
 
       <button
         onClick={submitReview}
-        className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4"
+        className="bg-blue-500 dark:bg-blue-600 text-white px-4 py-2 rounded-md mt-4 text-black dark:text-gray-400"
       >
         Submit Review
       </button>

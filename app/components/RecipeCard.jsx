@@ -284,7 +284,7 @@ import { useMyContext2 } from "./favCountContext";
 import DownloadRecipeBtn from "./DownloadRecipeBtn";
 
 const RecipeCard = ({
-  recipe: { _id, title, images, prep, cook, servings, tags = [] },
+  recipe: { _id, title, images, prep, cook, servings, tags = [],description },
   onAddToFavourites,
   onRemoveFromFavourites,
   isFavourited = false,
