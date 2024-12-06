@@ -6,7 +6,7 @@ import AddReview from "./Addreview";
 import { useRouter } from "next/navigation";
 import RecipeReviews from "./Reviews";
 import InstructionReader from "./ReadInstructions";
-import RecipeTips from './AskAI';
+import RecipeTips from "./AskAI";
 import ShoppingListButton from "./ShoppingListButton";
 import { useSession } from "next-auth/react";
 
@@ -16,7 +16,7 @@ const formatTime = (minutes) => {
   return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
 };
 
-const RecipeDetailCard = ({ recipe, id }) => {
+const RecipeDetailCard = ({ recipe, id, allergens = [] }) => {
   const [description, setDescription] = useState(recipe.description);
   const [activeTab, setActiveTab] = useState("ingredients");
   const [selectedImage, setSelectedImage] = useState(recipe.images?.[0]);
@@ -25,35 +25,36 @@ const RecipeDetailCard = ({ recipe, id }) => {
   const router = useRouter();
   const [reviewUpdateKey, setReviewUpdateKey] = useState(0);
   const { data: session } = useSession();
-  const [latest,setLatest] = useState(null)
-
+  const [latest, setLatest] = useState(null);
 
   const totalTime = (recipe.prep || 0) + (recipe.cook || 0);
   const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
+  // Determine recipe's allergens
+  const recipeAllergens = allergens.filter((allergen) =>
+    Object.keys(recipe.ingredients || {}).some((ingredient) =>
+      ingredient.toLowerCase().includes(allergen.toLowerCase())
+    )
+  );
 
   // Set document title
   useEffect(() => {
     document.title = `${recipe.title} | Recipe Details`;
   }, [recipe.title]);
 
-
   useEffect(() => {
     const handleUpdate = async () => {
       const response = await fetch(`${url}/api/editDescLatest?recipeId=${id}`);
-        if (!response.ok) {
-          setLatest(null)
-        }
-        else{
-      const data = await response.json();
-      console.log(data,'dat1232');
-      setLatest(data);
-        }
+      if (!response.ok) {
+        setLatest(null);
+      } else {
+        const data = await response.json();
+        setLatest(data);
       }
+    };
 
-      handleUpdate()
-    
-  },[]);
+    handleUpdate();
+  }, [id, url]);
 
   const handleReviewAdded = () => {
     setReviewUpdateKey((prevKey) => prevKey + 1);
@@ -73,17 +74,18 @@ const RecipeDetailCard = ({ recipe, id }) => {
         setMessage("Recipe updated successfully!");
       } else {
         setMessage("Failed to update recipe.");
-        setTimeout(() => {
-          setMessage("");
-        }, 2000);
       }
 
-      const res = await fetch(`${url}/api/editDesc`, {
+      setTimeout(() => {
+        setMessage("");
+      }, 2000);
+
+      await fetch(`${url}/api/editDesc`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username:session.user.name,recipeId:id }),
+        body: JSON.stringify({ username: session.user.name, recipeId: id }),
       });
 
       setOpenTextArea(false);
@@ -91,56 +93,50 @@ const RecipeDetailCard = ({ recipe, id }) => {
     } catch (error) {
       console.error(error);
       setMessage("An error occurred while updating.");
-      setOpenTextArea(false);
       setTimeout(() => {
         setMessage("");
       }, 2000);
     }
   };
-  
+
   return (
     <div className="grid items-start grid-cols-1 md:grid-cols-2 gap-6">
       <div className="w-full lg:sticky top-0 flex flex-col gap-3">
-  {/* Main Recipe Image */}
-  <div className="w-full relative h-[300px] md:h-[403px]">
-    <Image
-      src={selectedImage || "/fallback-image.jpg"}
-      alt={recipe.title || "Recipe Image"}
-      fill
-      priority="true"
-      sizes="(max-width: 1024px) 100vw, 50vw"
-      className="rounded-lg object-cover"
-    />
-  </div>
+        <div className="w-full relative h-[300px] md:h-[403px]">
+          <Image
+            src={selectedImage || "/fallback-image.jpg"}
+            alt={recipe.title || "Recipe Image"}
+            fill
+            priority={true}
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            className="rounded-lg object-cover"
+          />
+        </div>
 
-  {/* Thumbnail Images */}
-  <div className="flex flex-wrap gap-2 mt-4">
-    {recipe.images?.map((image, index) => (
-      <div
-        key={index}
-        className={`relative w-16 h-16 rounded-md overflow-hidden cursor-pointer ${
-          selectedImage === image ? "border-2 border-gray-800" : ""
-        }`}
-        onClick={() => setSelectedImage(image)}
-      >
-        <Image
-          src={image}
-          alt={`Thumbnail ${index}`}
-          fill
-          property="true"
-          sizes="64px"
-          className="object-cover"
-        />
+        <div className="flex flex-wrap gap-2 mt-4">
+          {recipe.images?.map((image, index) => (
+            <div
+              key={index}
+              className={`relative w-16 h-16 rounded-md overflow-hidden cursor-pointer ${
+                selectedImage === image ? "border-2 border-gray-800" : ""
+              }`}
+              onClick={() => setSelectedImage(image)}
+            >
+              <Image
+                src={image}
+                alt={`Thumbnail ${index}`}
+                fill
+                sizes="64px"
+                className="object-cover"
+              />
+            </div>
+          ))}
+        </div>
       </div>
-    ))}
-  </div>
-</div>
-
 
       <div>
-        {/* New: Added flex container with ShoppingListButton */}
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-400">
             {recipe.title}
           </h1>
 
@@ -154,12 +150,33 @@ const RecipeDetailCard = ({ recipe, id }) => {
           {recipe.tags?.map((tag, index) => (
             <span
               key={index}
-              className="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full"
+              className="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full dark:text-gray-400 dark:bg-gray-700"
             >
               {tag}
             </span>
           ))}
         </div>
+
+        {recipeAllergens.length > 0 && (
+          <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <h3 className="text-lg font-semibold text-yellow-700 mb-2">
+              🍽️ Dietary Awareness
+            </h3>
+            <p className="text-yellow-800 mb-2">
+              This recipe contains ingredients that may trigger common allergies:
+            </p>
+            <ul className="list-disc pl-6 text-yellow-900">
+              {recipeAllergens.map((allergen, index) => (
+                <li key={index} className="font-medium">
+                  {allergen}
+                </li>
+              ))}
+            </ul>
+            <p className="text-sm text-yellow-600 mt-2 italic">
+              Always check ingredient labels and consult with guests about dietary restrictions.
+            </p>
+          </div>
+        )}
 
         <p className="text-lg italic text-gray-600 mb-6">
           Discover how to make this delicious {recipe.title}.{" "}
@@ -172,57 +189,52 @@ const RecipeDetailCard = ({ recipe, id }) => {
           </p>
         )}
 
-        <span className="text-lg italic text-gray-600 mb-6">
-          {openTextArea ? (
-            <div className="flex-1">
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="block p-2.5 w-[300px] text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Type here..."
-              />
-              <button
-                onClick={() => {
-                  handleUpdate();
-                  setOpenTextArea(false);
-                }}
-                className="w-20 bg-green-400 rounded hover:bg-green-500 text-black font-bold m-2"
-              >
-                Submit
-              </button>
-              <button
-                onClick={() => {
-                  setOpenTextArea(false);
-                }}
-                className="w-20 bg-red-400 rounded hover:bg-red-500 text-black font-bold m-2"
-              >
-                Close
-              </button>
-            </div>
-          ) : session? (
+        {openTextArea ? (
+          <div className="flex-1">
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="block p-2.5 w-[300px] text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Type here..."
+            />
+            <button
+              onClick={handleUpdate}
+              className="w-20 bg-green-400 rounded hover:bg-green-500 text-black font-bold m-2"
+            >
+              Submit
+            </button>
+            <button
+              onClick={() => setOpenTextArea(false)}
+              className="w-20 bg-red-400 rounded hover:bg-red-500 text-black font-bold m-2"
+            >
+              Close
+            </button>
+          </div>
+        ) : (
+          session && (
             <button
               onClick={() => setOpenTextArea(true)}
               className="w-12 mb-4 bg-blue-400 rounded hover:bg-blue-500 text-black font-bold"
             >
               Edit
             </button>
-          ) : null}
-        </span>
+          )
+        )}
 
         <div className="text-lg text-gray-800 space-y-2">
-          <p>
+          <p className="dark:text-gray-400">
             <strong>Prep Time:</strong> {formatTime(recipe.prep || 0)}
           </p>
-          <p>
+          <p className="dark:text-gray-400">
             <strong>Cook Time:</strong> {formatTime(recipe.cook || 0)}
           </p>
-          <p>
+          <p className="dark:text-gray-400">
             <strong>Category:</strong> {recipe.category || "Uncategorized"}
           </p>
-          <p>
+          <p className="dark:text-gray-400">
             <strong>Servings:</strong> {recipe.servings || "N/A"} servings
           </p>
-          <p>
+          <p className="dark:text-gray-400">
             <strong>Published:</strong>{" "}
             {recipe.published
               ? new Date(recipe.published).toLocaleDateString()
@@ -230,12 +242,12 @@ const RecipeDetailCard = ({ recipe, id }) => {
           </p>
         </div>
 
-        <ul className="grid grid-cols-3 mt-10 border-b-2">
+        <ul className="grid grid-cols-3 mt-10 border-b-2 dark:text-gray-400 text-gray-">
           {["ingredients", "instructions", "nutrition"].map((tab) => (
             <li
               key={tab}
-              className={`text-gray-800 font-semibold text-base text-center py-3 cursor-pointer ${
-                activeTab === tab ? "border-b-2 border-gray-800" : ""
+              className={`text-gray-300 font-semibold text-base text-center py-3 cursor-pointer ${
+                activeTab === tab ? "border-b-4 border-black" : ""
               }`}
               onClick={() => setActiveTab(tab)}
             >
@@ -244,60 +256,40 @@ const RecipeDetailCard = ({ recipe, id }) => {
           ))}
         </ul>
 
-        <div className="mt-6">
+        <div className="mt-8">
           {activeTab === "ingredients" && (
-            <div>
-              <h2 className="text-2xl font-semibold mb-4">Ingredients</h2>
-              <ul className="list-disc pl-6 text-gray-700">
-                {Object.entries(recipe.ingredients || {}).map(
-                  ([ingredient, quantity], index) => (
-                    <li key={index}>
-                      {ingredient}: {quantity}
-                    </li>
-                  )
-                )}
-              </ul>
-            </div>
+            <ul className="list-disc list-inside">
+              {Object.entries(recipe.ingredients || {}).map(([name, amount], i) => (
+                <li key={i}>
+                  <span className="capitalize">{name}</span>: {amount}
+                </li>
+              ))}
+            </ul>
           )}
           {activeTab === "instructions" && (
-            <div>
-              <h2 className="text-2xl font-semibold mb-4">Instructions</h2>
-              <ul className="list-disc pl-6 text-gray-700">
-                {recipe.instructions?.map((instruction, index) => (
-                  <li key={index}>{instruction}</li>
-                ))}
-              </ul>
-              <div className="p-4">
-                <InstructionReader instructions={recipe.instructions} />
-              </div>
-            </div>
+            <InstructionReader instructions={recipe.instructions} />
           )}
           {activeTab === "nutrition" && (
-            <div>
-              <h3 className="text-2xl font-semibold mb-4">
-                Nutrition Information
-              </h3>
-              <ul className="list-disc pl-6 text-gray-700">
-                <li>Calories: {recipe.nutrition?.calories || "N/A"}</li>
-                <li>Fat: {recipe.nutrition?.fat || "N/A"}g</li>
-                <li>Saturated Fat: {recipe.nutrition?.saturated || "N/A"}g</li>
-                <li>Sodium: {recipe.nutrition?.sodium || "N/A"}mg</li>
-                <li>
-                  Carbohydrates: {recipe.nutrition?.carbohydrates || "N/A"}g
+            <ul>
+              {Object.entries(recipe.nutrition || {}).map(([name, value], i) => (
+                <li key={i}>
+                  <strong>{name}</strong>: {value}
                 </li>
-                <li>Fiber: {recipe.nutrition?.fiber || "N/A"}g</li>
-                <li>Sugar: {recipe.nutrition?.sugar || "N/A"}g</li>
-                <li>Protein: {recipe.nutrition?.protein || "N/A"}g</li>
-              </ul>
-            </div>
+              ))}
+            </ul>
           )}
         </div>
 
-        {/* Review Section */}
         <div className="mt-8">
-          <RecipeReviews recipeId={id} reviewUpdateKey={reviewUpdateKey} />
+          <div className="dark:bg-gray-700">
+            <RecipeReviews recipeId={id} reviewUpdateKey={reviewUpdateKey} />
+          </div>
 
-          <AddReview recipeId={id} onAdd={handleReviewAdded} />
+          {/* Add Review Form */}
+          <div className="mt-6 dark:bg-gray-700 p-4 rounded-md">
+            <AddReview recipeId={id} onAdd={handleReviewAdded} />
+          </div>
+
           <RecipeTips recipe={recipe.ingredients} />
         </div>
       </div>
@@ -306,5 +298,3 @@ const RecipeDetailCard = ({ recipe, id }) => {
 };
 
 export default RecipeDetailCard;
-
-
