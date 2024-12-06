@@ -11,7 +11,6 @@ import { Download } from "lucide-react";
 import { ShoppingCartIcon } from "lucide-react";
 import Image from "next/image";
 import { useMyContext2 } from "./favCountContext"
-import { useTheme } from "next-themes"; 
 /**
  * The main navigation component for the app.
  * @returns {JSX.Element} The rendered navbar component.
