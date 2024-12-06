@@ -171,7 +171,7 @@ const RecipeCard = ({
   return (
     <Link href={`/recipes/${_id}`} className="block">
       <div
-        className="group relative bg-card text-card-foreground rounded-sm overflow-hidden transition-all duration-300 hover:shadow-lg"
+        className="group relative bg-card text-card-foreground rounded-sm overflow-hidden transition-all duration-300 shadow-2xl"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
